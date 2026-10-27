@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  username     String
+  passwordHash String
+  settings     String?     @default("{\"bitrate\":\"high\",\"normalization\":true,\"crossfade\":2,\"eqEnabled\":true,\"eqPreset\":\"Flat\",\"eqBands\":[0,0,0,0,0,0]}")
+  playlists    Playlist[]
+  likes        UserLike[]
+  history      Telemetry[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Track {
+  id          String          @id @default(cuid())
+  youtubeId   String          @unique
+  title       String
+  artist      String
+  album       String?
+  isrc        String?
+  duration    Int             // in seconds
+  thumbnail   String
+  embedding   String?         // JSON float vector for discovery similarity
+  audioUrl    String?
+  lyrics      String?         // LRC formatted or JSON sync lines
+  likes       UserLike[]
+  playlistMap PlaylistTrack[]
+  history     Telemetry[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model Playlist {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  coverImage  String?
+  isPublic    Boolean         @default(true)
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tracks      PlaylistTrack[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model PlaylistTrack {
+  id         String   @id @default(cuid())
+  playlistId String
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  trackId    String
+  track      Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  position   Int      @default(0)
+  addedAt    DateTime @default(now())
+
+  @@unique([playlistId, trackId])
+}
+
+model UserLike {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackId   String
+  track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, trackId])
+}
+
+model Telemetry {
+  id              String   @id @default(cuid())
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackId         String
+  track           Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  event           String   // 'track_start' | 'track_progress' | 'track_skip' | 'track_complete'
+  progressSeconds Float    @default(0)
+  durationSeconds Float    @default(0)
+  weight          Float    @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model ImportJob {
+  id               String   @id @default(cuid())
+  userId           String?
+  source           String   // 'spotify' | 'apple_music'
+  sourceUrl        String
+  playlistTitle    String?
+  totalTracks      Int      @default(0)
+  matchedTracks    Int      @default(0)
+  status           String   @default("pending") // 'pending' | 'processing' | 'completed' | 'failed'
+  unresolvedTracks String?  // JSON serialized array of track exceptions
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

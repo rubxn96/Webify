@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-canvas: #0A0A0C;
+  --color-sidebar: #121216;
+  --color-card: #1A1A22;
+  --color-hover: #24242F;
+  --color-border: #22222E;
+  --color-primary: #F4F4F6;
+  --color-secondary: #8E8E9E;
+  --color-accent: #E11D48;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.02em;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Tabular nums for timecodes & indices */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #22222E;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #323242;
+}
+
+/* Vertical equalizer input slider cross-browser */
+input[type=range].slider-vertical {
+  -webkit-appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
+}
+
+/* Subtle fade in keyframe */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 12s linear infinite;
+}
