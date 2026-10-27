@@ -1,4 +1,5 @@
 import { Track, AITasteProfile } from '@/types';
+import { cleanSongTitle, normalizeKey } from '@/lib/youtube/search';
 
 /**
  * Computes Cosine Similarity between two N-dimensional numerical vectors.
@@ -134,40 +135,80 @@ export function generateAIRecommendations(
     };
   });
 
-  // 4. Generate "AI Recommended For You" (Top scored AI tracks)
-  const aiRecommendations = [...scoredCatalog]
+  // 4. Identify all listened songs to strictly exclude them from recommendations
+  const listenedTrackIds = new Set<string>();
+  const listenedSongKeys = new Set<string>();
+  const listenedTitles = new Set<string>();
+
+  for (const item of interactions) {
+    if (item.trackId) {
+      listenedTrackIds.add(item.trackId);
+      const tr = catalog.find((t) => t.id === item.trackId || t.youtubeId === item.trackId);
+      if (tr) {
+        listenedTrackIds.add(tr.id);
+        listenedTrackIds.add(tr.youtubeId);
+        listenedSongKeys.add(`${normalizeKey(tr.artist)}:::${normalizeKey(cleanSongTitle(tr.title))}`);
+        listenedTitles.add(normalizeKey(cleanSongTitle(tr.title)));
+      }
+    }
+  }
+
+  const isAlreadyListened = (track: Track): boolean => {
+    if (listenedTrackIds.has(track.id) || listenedTrackIds.has(track.youtubeId)) return true;
+    const key = `${normalizeKey(track.artist)}:::${normalizeKey(cleanSongTitle(track.title))}`;
+    const tKey = normalizeKey(cleanSongTitle(track.title));
+    return listenedSongKeys.has(key) || listenedTitles.has(tKey);
+  };
+
+  // Fresh unlistened catalog tracks
+  const unlistenedTracks = scoredCatalog.filter((t) => !isAlreadyListened(t));
+  const candidatePool = unlistenedTracks.length >= 6 ? unlistenedTracks : scoredCatalog;
+
+  // 5. Generate "AI Recommended For You" (Top AI acoustic matches that user has NOT listened to)
+  const aiRecommendations = [...candidatePool]
     .sort((a, b) => b.aiScore - a.aiScore)
     .slice(0, 6);
 
-  // 5. Generate "Based on Your Listening History"
-  const listenedTrackIds = new Set(
-    interactions.filter((i) => i.weight > 0).map((i) => i.trackId)
-  );
+  const aiRecIds = new Set(aiRecommendations.map((t) => t.id));
 
-  const historyBasedTracks = scoredCatalog
+  // 6. Generate "Based on Your Listening History"
+  // Recommends FRESH, unlistened songs matching the artists and genres from user's history
+  const historyBasedCandidates = [...candidatePool]
+    .filter((t) => !aiRecIds.has(t.id))
     .filter((t) => {
       const artWeight = artistWeights.get(t.artist) || 0;
-      return artWeight > 0 || listenedTrackIds.has(t.id);
+      return artWeight > 0 || (t.aiScore && t.aiScore > 0.72);
     })
-    .sort((a, b) => (trackWeights.get(b.id) || 0) - (trackWeights.get(a.id) || 0))
+    .sort((a, b) => {
+      const aArt = artistWeights.get(a.artist) || 0;
+      const bArt = artistWeights.get(b.artist) || 0;
+      if (bArt !== aArt) return bArt - aArt;
+      return (b.aiScore || 0) - (a.aiScore || 0);
+    })
     .slice(0, 6);
 
-  const finalHistoryTracks = historyBasedTracks.length >= 3 ? historyBasedTracks : scoredCatalog.slice(2, 8);
+  const finalHistoryTracks =
+    historyBasedCandidates.length >= 3
+      ? historyBasedCandidates
+      : candidatePool.filter((t) => !aiRecIds.has(t.id)).slice(0, 6);
 
-  // 6. Heavy Rotation & Discovery Mix
+  const historyIds = new Set(finalHistoryTracks.map((t) => t.id));
+
+  // 7. Heavy Rotation (Top played tracks for hero shelf or quick replay)
   const heavyRotation = [...catalog]
     .sort((a, b) => (trackWeights.get(b.id) || 0) - (trackWeights.get(a.id) || 0))
     .slice(0, 6);
 
-  const discoveryMix = scoredCatalog
-    .filter((t) => (trackWeights.get(t.id) || 0) < 1.0)
+  // 8. Discovery Mix (Fresh unlistened songs with high vector score and low familiarity)
+  const discoveryMix = [...candidatePool]
+    .filter((t) => !aiRecIds.has(t.id) && !historyIds.has(t.id))
     .sort((a, b) => b.aiScore - a.aiScore)
     .slice(0, 6);
 
-  // 7. Top Artist Spotlight
+  // 9. Top Artist Spotlight (Unlistened tracks by favorite artist)
   const sortedArtists = Object.entries(Object.fromEntries(artistWeights)).sort((a, b) => b[1] - a[1]);
   const topArtist = sortedArtists.length > 0 ? sortedArtists[0][0] : catalog[0]?.artist || 'Queen';
-  const artistTracks = catalog
+  const artistTracks = candidatePool
     .filter((t) => t.artist.toLowerCase().includes(topArtist.toLowerCase()))
     .slice(0, 6);
 

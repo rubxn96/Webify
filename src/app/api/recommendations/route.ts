@@ -59,8 +59,11 @@ export async function GET(req: NextRequest) {
       aiTasteProfile,
     } = generateAIRecommendations(catalog, interactions);
 
-    // Quick Access Grid (2x3 = 6 top picks)
-    const quickAccess = catalog.slice(0, 6);
+    // Quick Access Grid (2x3 = 6 fresh daily top picks)
+    const quickAccess =
+      aiRecommendations.length >= 6
+        ? aiRecommendations.slice(0, 6)
+        : [...aiRecommendations, ...discoveryMix, ...catalog].slice(0, 6);
 
     return NextResponse.json({
       hero: heavyRotation[0] || catalog[0] || null,

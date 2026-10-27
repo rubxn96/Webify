@@ -1,11 +1,7 @@
 import prisma from '@/lib/db/prisma';
 import { Track } from '@/types';
-import { cleanSongTitle } from './search';
+import { cleanSongTitle, normalizeKey, searchYouTubeDirect } from './search';
 import { cosineSimilarity } from '../recommender/vectorEngine';
-
-function normalizeKey(str: string): string {
-  return str.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
 
 function parseDurationText(durationText?: string): number {
   if (!durationText) return 180;
@@ -33,7 +29,7 @@ export async function getSimilarTracks(
     artist: string;
     embedding?: number[];
   },
-  limit: number = 15
+  limit: number = 20
 ): Promise<Track[]> {
   const currentKey = `${normalizeKey(currentTrack.artist)}:::${normalizeKey(cleanSongTitle(currentTrack.title))}`;
   const currentCleanTitle = normalizeKey(cleanSongTitle(currentTrack.title));
@@ -101,92 +97,32 @@ export async function getSimilarTracks(
       .replace(/Topic|VEVO|Official|Records|Music/gi, '')
       .trim();
 
-    const query = `${cleanArtist} songs mix playlist`;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3500);
+    const ytResults = await searchYouTubeDirect(`${cleanArtist} greatest hits radio mix`, limit);
 
-    const res = await fetch(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
-    });
-    clearTimeout(timeout);
+    for (const yt of ytResults) {
+      const cleanedTitle = cleanSongTitle(yt.title);
+      const songCleanTitle = normalizeKey(cleanedTitle);
+      const songKey = `${normalizeKey(yt.artist)}:::${songCleanTitle}`;
 
-    if (res.ok) {
-      const html = await res.text();
-      const match =
-        html.match(/ytInitialData\s*=\s*({[\s\S]+?});<\/script>/) ||
-        html.match(/ytInitialData\s*=\s*({[\s\S]+?});/);
-
-      if (match) {
-        const data = JSON.parse(match[1]);
-        const contents =
-          data.contents?.twoColumnSearchResultsRenderer?.primaryContents?.sectionListRenderer?.contents;
-
-        if (Array.isArray(contents)) {
-          for (const section of contents) {
-            const itemSection = section.itemSectionRenderer?.contents;
-            if (Array.isArray(itemSection)) {
-              for (const item of itemSection) {
-                const vr = item.videoRenderer;
-                if (vr && vr.videoId) {
-                  let rawTitle = vr.title?.runs?.map((r: { text: string }) => r.text).join('') || vr.title?.simpleText || '';
-                  let artist = vr.ownerText?.runs?.map((r: { text: string }) => r.text).join('') || cleanArtist;
-                  const duration = parseDurationText(vr.lengthText?.simpleText);
-
-                  // Skip 1-hour loops
-                  if (duration > 900) continue;
-
-                  let title = rawTitle;
-                  if (rawTitle.includes(' - ')) {
-                    const parts = rawTitle.split(' - ');
-                    if (!artist || artist.includes('Topic') || artist.includes('VEVO')) {
-                      artist = parts[0].trim();
-                    }
-                    title = parts.slice(1).join(' - ');
-                  }
-
-                  const cleanedTitle = cleanSongTitle(title);
-                  const songCleanTitle = normalizeKey(cleanedTitle);
-                  const songKey = `${normalizeKey(artist)}:::${songCleanTitle}`;
-
-                  // CRITICAL: Strictly skip if this song is the SAME as current playing song
-                  // or if it's a lyrical/audio duplicate!
-                  if (
-                    songCleanTitle === currentCleanTitle ||
-                    seenSongKeys.has(songKey) ||
-                    seenYouTubeIds.has(vr.videoId) ||
-                    rawTitle.toLowerCase().includes('lyrics')
-                  ) {
-                    continue;
-                  }
-
-                  seenSongKeys.add(songKey);
-                  seenYouTubeIds.add(vr.videoId);
-
-                  similarList.push({
-                    id: `yt-${vr.videoId}`,
-                    youtubeId: vr.videoId,
-                    title: cleanedTitle || title,
-                    artist,
-                    duration,
-                    thumbnail:
-                      vr.thumbnail?.thumbnails?.slice(-1)[0]?.url ||
-                      `https://img.youtube.com/vi/${vr.videoId}/hqdefault.jpg`,
-                    source: 'youtube',
-                  });
-
-                  if (similarList.length >= limit) break;
-                }
-              }
-            }
-            if (similarList.length >= limit) break;
-          }
-        }
+      // CRITICAL: Strictly skip if this song is the SAME as current playing song
+      // or if it's already in the list
+      if (
+        songCleanTitle === currentCleanTitle ||
+        seenSongKeys.has(songKey) ||
+        seenYouTubeIds.has(yt.youtubeId)
+      ) {
+        continue;
       }
+
+      seenSongKeys.add(songKey);
+      seenYouTubeIds.add(yt.youtubeId);
+
+      similarList.push({
+        ...yt,
+        title: cleanedTitle || yt.title,
+      });
+
+      if (similarList.length >= limit) break;
     }
   } catch (err) {
     console.warn('Similar tracks fetch error:', err);

@@ -14,11 +14,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'youtubeId, title, or artist is required' }, { status: 400 });
     }
 
-    const tracks = await getSimilarTracks({
-      youtubeId,
-      title,
-      artist,
-    });
+    const limit = parseInt(searchParams.get('limit') || '20', 10);
+
+    const tracks = await getSimilarTracks(
+      {
+        youtubeId,
+        title,
+        artist,
+      },
+      limit
+    );
 
     return NextResponse.json({ tracks, count: tracks.length });
   } catch (error) {

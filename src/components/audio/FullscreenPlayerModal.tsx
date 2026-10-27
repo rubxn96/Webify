@@ -14,6 +14,8 @@ import {
   Sparkles,
   Sliders,
   ChevronDown,
+  ListMusic,
+  Trash2,
 } from 'lucide-react';
 import { useAudio } from './AudioProvider';
 import { formatTime, parseLRC } from '@/lib/audio/timeFormat';
@@ -38,9 +40,13 @@ export const FullscreenPlayerModal: React.FC = () => {
     isFullPlayerOpen,
     setIsFullPlayerOpen,
     visualizerData,
+    queue,
+    queueIndex,
+    removeFromQueue,
+    playTrack,
   } = useAudio();
 
-  const [activeTab, setActiveTab] = useState<'visualizer' | 'lyrics'>('visualizer');
+  const [activeTab, setActiveTab] = useState<'visualizer' | 'lyrics' | 'queue'>('visualizer');
 
   if (!isFullPlayerOpen || !currentTrack) return null;
 
@@ -89,6 +95,17 @@ export const FullscreenPlayerModal: React.FC = () => {
             <Sparkles className="w-3.5 h-3.5 text-obsidian-accent" />
             Lyrics
           </button>
+          <button
+            onClick={() => setActiveTab('queue')}
+            className={`px-3 py-1 rounded-full transition-all flex items-center gap-1.5 ${
+              activeTab === 'queue'
+                ? 'bg-obsidian-hover text-obsidian-primary font-medium shadow-sm'
+                : 'text-obsidian-secondary hover:text-obsidian-primary'
+            }`}
+          >
+            <ListMusic className="w-3.5 h-3.5 text-obsidian-accent" />
+            Queue ({queue.length})
+          </button>
         </div>
 
         <button
@@ -128,7 +145,7 @@ export const FullscreenPlayerModal: React.FC = () => {
               })}
             </div>
           </div>
-        ) : (
+        ) : activeTab === 'lyrics' ? (
           /* Lyrics Mode */
           <div className="w-full max-w-2xl h-[320px] sm:h-[420px] overflow-y-auto space-y-6 text-center px-4 py-8 scroll-smooth scrollbar-thin">
             {parsedLyrics.length === 0 ? (
@@ -153,6 +170,69 @@ export const FullscreenPlayerModal: React.FC = () => {
                 );
               })
             )}
+          </div>
+        ) : (
+          /* Dynamic Queue Mode */
+          <div className="w-full max-w-2xl h-[320px] sm:h-[420px] overflow-y-auto space-y-2 text-left px-2 sm:px-4 py-4 scroll-smooth scrollbar-thin bg-obsidian-card/40 border border-obsidian-border/50 rounded-2xl">
+            <div className="flex items-center justify-between pb-2 border-b border-obsidian-border text-xs text-obsidian-secondary font-mono">
+              <span>Next In Queue (Dynamic Radio)</span>
+              <span className="text-emerald-400 font-semibold">{queue.length} Tracks</span>
+            </div>
+
+            {queue.map((t, idx) => {
+              const isCurrent = currentTrack?.id === t.id || idx === queueIndex;
+              return (
+                <div
+                  key={`${t.id}-${idx}`}
+                  className={`flex items-center justify-between p-2 rounded-xl transition-all ${
+                    isCurrent
+                      ? 'bg-obsidian-card border border-obsidian-border text-obsidian-primary shadow-sm'
+                      : 'hover:bg-obsidian-hover/60 text-obsidian-secondary hover:text-obsidian-primary'
+                  }`}
+                >
+                  <div
+                    onClick={() => playTrack(t)}
+                    className="flex items-center gap-3 cursor-pointer flex-1 truncate mr-2"
+                  >
+                    <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-obsidian-sidebar flex-shrink-0">
+                      <Image
+                        src={t.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'}
+                        alt={t.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="truncate flex-1">
+                      <div
+                        className={`text-xs truncate ${
+                          isCurrent ? 'font-bold text-obsidian-accent' : 'font-medium'
+                        }`}
+                      >
+                        {t.title}
+                      </div>
+                      <div className="text-[11px] text-obsidian-secondary truncate">{t.artist}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-obsidian-secondary">
+                      {formatTime(t.duration)}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFromQueue(idx);
+                      }}
+                      title="Remove and auto-fill with another similar song"
+                      className="p-1.5 rounded-lg text-obsidian-secondary hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

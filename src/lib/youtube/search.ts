@@ -20,7 +20,7 @@ export function cleanSongTitle(rawTitle: string): string {
     .trim();
 }
 
-function normalizeKey(str: string): string {
+export function normalizeKey(str: string): string {
   return str.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
@@ -102,7 +102,7 @@ async function fetchDirectYouTubeVideo(videoId: string): Promise<Track | null> {
 /**
  * Searches YouTube directly and deduplicates lyrical/audio duplicates of the same song.
  */
-async function searchYouTubeDirect(query: string, limit: number = 25): Promise<Track[]> {
+export async function searchYouTubeDirect(query: string, limit: number = 25): Promise<Track[]> {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 4000);

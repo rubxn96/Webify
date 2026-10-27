@@ -70,7 +70,7 @@ export default function HomePage() {
             </span>
           </div>
           <p className="text-xs text-obsidian-secondary">
-            Neural vector matching scored against your personal acoustic centroid and harmonic preference.
+            Fresh unlistened tracks scored against your personal acoustic centroid and harmonic preference.
           </p>
 
           <CuratedRail
@@ -90,7 +90,7 @@ export default function HomePage() {
             </h2>
           </div>
           <p className="text-xs text-obsidian-secondary">
-            Generated from tracks you have completed, repeated, and saved to favorites.
+            Fresh discoveries matching the artists and genres from your completed listening sessions.
           </p>
 
           <CuratedRail

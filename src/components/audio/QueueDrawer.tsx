@@ -50,6 +50,9 @@ export const QueueDrawer: React.FC = () => {
           <span className="text-xs text-obsidian-secondary font-mono">
             ({queue.length})
           </span>
+          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold hidden sm:inline">
+            Dynamic
+          </span>
         </div>
         <button
           onClick={() => setIsQueueOpen(false)}

@@ -6,6 +6,7 @@ import { AudioGraph } from '@/lib/audio/AudioGraph';
 import { DEFAULT_USER_SETTINGS, EQ_PRESETS, EQPresetName } from '@/lib/audio/dspPresets';
 import { HiddenYouTubeFallback } from './HiddenYouTubeFallback';
 import { emitTelemetryBeacon } from '@/lib/telemetry/beacon';
+import { cleanSongTitle } from '@/lib/youtube/search';
 
 interface AudioContextType {
   currentTrack: Track | null;
@@ -90,6 +91,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Debounced settings sync timer
   const settingsSyncTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Dynamic queue replenishment lock ref
+  const isReplenishingRef = useRef<boolean>(false);
 
   // 1. Initialize AudioGraph & LocalStorage settings
   useEffect(() => {
@@ -226,16 +230,42 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }),
       }).catch(() => {});
 
-      const baseTitle = cleanNorm(track.title);
+      const baseTitle = cleanNorm(cleanSongTitle(track.title));
 
-      // Sanitize queue: strictly filter out alternate versions or lyric clones of the current playing song!
+      // Sanitize and strictly deduplicate queue: ensure no song appears more than once!
       let initialQueue: Track[] = [];
       if (newQueue && newQueue.length > 0) {
-        initialQueue = newQueue.filter((t) => {
-          if (t.youtubeId === track.youtubeId) return true;
-          const tBase = cleanNorm(t.title);
-          return tBase !== baseTitle;
-        });
+        const seenIds = new Set<string>();
+        const seenKeys = new Set<string>();
+        const seenTitles = new Set<string>();
+
+        for (const t of newQueue) {
+          const tClean = cleanNorm(cleanSongTitle(t.title));
+          const tKey = `${cleanNorm(t.artist)}:::${tClean}`;
+
+          if (t.youtubeId === track.youtubeId) {
+            seenIds.add(t.youtubeId);
+            seenKeys.add(tKey);
+            seenTitles.add(tClean);
+            initialQueue.push(t);
+            continue;
+          }
+
+          // Strictly filter out duplicate versions or lyric clones of the current playing song, and existing queue duplicates
+          if (
+            tClean === baseTitle ||
+            seenIds.has(t.youtubeId) ||
+            seenKeys.has(tKey) ||
+            seenTitles.has(tClean)
+          ) {
+            continue;
+          }
+
+          seenIds.add(t.youtubeId);
+          seenKeys.add(tKey);
+          seenTitles.add(tClean);
+          initialQueue.push(t);
+        }
       } else {
         initialQueue = [track];
       }
@@ -248,22 +278,26 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       fetch(
         `/api/tracks/similar?youtubeId=${track.youtubeId}&title=${encodeURIComponent(
           track.title
-        )}&artist=${encodeURIComponent(track.artist)}`
+        )}&artist=${encodeURIComponent(track.artist)}&limit=20`
       )
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (data?.tracks && data.tracks.length > 0) {
             setQueue((prevQueue) => {
               const seenIds = new Set(prevQueue.map((q) => q.youtubeId));
-              const seenKeys = new Set(prevQueue.map((q) => `${cleanNorm(q.artist)}:::${cleanNorm(q.title)}`));
+              const seenKeys = new Set(
+                prevQueue.map((q) => `${cleanNorm(q.artist)}:::${cleanNorm(cleanSongTitle(q.title))}`)
+              );
+              const seenTitles = new Set(prevQueue.map((q) => cleanNorm(cleanSongTitle(q.title))));
 
               const freshSimilar = data.tracks.filter((st: Track) => {
-                const stKey = `${cleanNorm(st.artist)}:::${cleanNorm(st.title)}`;
-                const stBase = cleanNorm(st.title);
+                const stKey = `${cleanNorm(st.artist)}:::${cleanNorm(cleanSongTitle(st.title))}`;
+                const stBase = cleanNorm(cleanSongTitle(st.title));
                 return (
                   stBase !== baseTitle &&
                   !seenIds.has(st.youtubeId) &&
-                  !seenKeys.has(stKey)
+                  !seenKeys.has(stKey) &&
+                  !seenTitles.has(stBase)
                 );
               });
 
@@ -358,13 +392,89 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     [duration, playbackMode]
   );
 
+  // Dynamic Queue Replenishment (like YouTube/Spotify Radio)
+  // Ensures queue is always filled with fresh, non-duplicate similar songs
+  const replenishQueue = useCallback(
+    async (baseTrack?: Track | null, currentQueueOverride?: Track[]) => {
+      const base = baseTrack || currentTrack;
+      if (!base || isReplenishingRef.current) return;
+      isReplenishingRef.current = true;
+
+      try {
+        const res = await fetch(
+          `/api/tracks/similar?youtubeId=${base.youtubeId}&title=${encodeURIComponent(
+            base.title
+          )}&artist=${encodeURIComponent(base.artist)}&limit=20`
+        );
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.tracks && data.tracks.length > 0) {
+            setQueue((prevQueue) => {
+              const activeQ = currentQueueOverride || prevQueue;
+              const seenIds = new Set(activeQ.map((q) => q.youtubeId));
+              const seenKeys = new Set(
+                activeQ.map((q) => `${cleanNorm(q.artist)}:::${cleanNorm(cleanSongTitle(q.title))}`)
+              );
+              const seenTitles = new Set(activeQ.map((q) => cleanNorm(cleanSongTitle(q.title))));
+              const baseTitle = cleanNorm(cleanSongTitle(base.title));
+
+              const fresh: Track[] = [];
+              for (const candidate of data.tracks) {
+                const cKey = `${cleanNorm(candidate.artist)}:::${cleanNorm(cleanSongTitle(candidate.title))}`;
+                const cTitle = cleanNorm(cleanSongTitle(candidate.title));
+
+                if (
+                  cTitle !== baseTitle &&
+                  !seenIds.has(candidate.youtubeId) &&
+                  !seenKeys.has(cKey) &&
+                  !seenTitles.has(cTitle)
+                ) {
+                  fresh.push(candidate);
+                  seenIds.add(candidate.youtubeId);
+                  seenKeys.add(cKey);
+                  seenTitles.add(cTitle);
+                  // Add 2-4 fresh songs per replenishment
+                  if (fresh.length >= 3) break;
+                }
+              }
+
+              if (fresh.length > 0) {
+                return [...activeQ, ...fresh];
+              }
+              return activeQ;
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Queue replenishment error:', err);
+      } finally {
+        isReplenishingRef.current = false;
+      }
+    },
+    [currentTrack]
+  );
+
   const nextTrack = useCallback(() => {
     if (queue.length === 0) return;
-    const nextIdx = (queueIndex + 1) % queue.length;
-    setQueueIndex(nextIdx);
-    const nextSong = queue[nextIdx];
-    playTrack(nextSong, queue);
-  }, [queue, queueIndex, playTrack]);
+    const nextIdx = queueIndex + 1;
+
+    if (nextIdx < queue.length) {
+      setQueueIndex(nextIdx);
+      const nextSong = queue[nextIdx];
+      playTrack(nextSong, queue);
+
+      // Auto-replenish if approaching end of queue (fewer than 4 songs ahead)
+      if (queue.length - nextIdx <= 4) {
+        replenishQueue(nextSong);
+      }
+    } else {
+      // Reached the end: dynamically extend queue with fresh similar tracks
+      if (currentTrack) {
+        replenishQueue(currentTrack);
+      }
+    }
+  }, [queue, queueIndex, playTrack, currentTrack, replenishQueue]);
 
   const prevTrack = useCallback(() => {
     if (queue.length === 0) return;
@@ -445,24 +555,65 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     [likedTrackIds]
   );
 
+  // Strictly ensures no track is present more than once in the queue
   const addToQueue = useCallback((track: Track) => {
-    setQueue((prev) => [...prev, track]);
+    setQueue((prev) => {
+      const trackKey = `${cleanNorm(track.artist)}:::${cleanNorm(cleanSongTitle(track.title))}`;
+      const trackTitle = cleanNorm(cleanSongTitle(track.title));
+
+      const alreadyExists = prev.some(
+        (t) =>
+          t.youtubeId === track.youtubeId ||
+          `${cleanNorm(t.artist)}:::${cleanNorm(cleanSongTitle(t.title))}` === trackKey ||
+          cleanNorm(cleanSongTitle(t.title)) === trackTitle
+      );
+
+      if (alreadyExists) {
+        return prev;
+      }
+
+      return [...prev, track];
+    });
   }, []);
 
   const reorderQueue = useCallback((newQueue: Track[]) => {
-    setQueue(newQueue);
+    // Deduplicate when reordering
+    const seenIds = new Set<string>();
+    const seenKeys = new Set<string>();
+    const deduped: Track[] = [];
+
+    for (const t of newQueue) {
+      const key = `${cleanNorm(t.artist)}:::${cleanNorm(cleanSongTitle(t.title))}`;
+      if (!seenIds.has(t.youtubeId) && !seenKeys.has(key)) {
+        seenIds.add(t.youtubeId);
+        seenKeys.add(key);
+        deduped.push(t);
+      }
+    }
+    setQueue(deduped);
   }, []);
 
+  // Dynamically backfills the queue when a track is removed
   const removeFromQueue = useCallback(
     (index: number) => {
-      setQueue((prev) => prev.filter((_, i) => i !== index));
+      let updatedQueue: Track[] = [];
+      setQueue((prev) => {
+        updatedQueue = prev.filter((_, i) => i !== index);
+        return updatedQueue;
+      });
+
       if (index === queueIndex) {
         nextTrack();
       } else if (index < queueIndex) {
-        setQueueIndex((prev) => prev - 1);
+        setQueueIndex((prev) => Math.max(0, prev - 1));
+      }
+
+      // Dynamic backfill: when a user removes a song, immediately fetch and fill with a similar track
+      if (currentTrack) {
+        replenishQueue(currentTrack, updatedQueue);
       }
     },
-    [queueIndex, nextTrack]
+    [queueIndex, nextTrack, currentTrack, replenishQueue]
   );
 
   const syncSettingsToBackend = useCallback((settings: UserSettings) => {
