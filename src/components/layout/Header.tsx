@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Search, Heart, Youtube, Disc, Loader2, Play, Menu } from 'lucide-react';
+import { Search, Heart, Youtube, Disc, Loader2, Play, Menu, LogIn, LogOut, User, ChevronDown } from 'lucide-react';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { Track, UserProfile } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
@@ -20,12 +20,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
   const [query, setQuery] = useState('');
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Live search preview state
   const [previewResults, setPreviewResults] = useState<Track[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -36,6 +38,31 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
       })
       .catch(() => {});
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch {
+      // ignore
+    } finally {
+      setUser(null);
+      setIsProfileOpen(false);
+      router.refresh();
+    }
+  };
+
+  // Click outside to close profile dropdown
+  useEffect(() => {
+    const handleProfileClickOutside = (e: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    };
+    if (isProfileOpen) {
+      document.addEventListener('mousedown', handleProfileClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleProfileClickOutside);
+  }, [isProfileOpen]);
 
   // Debounced live search preview as user types
   useEffect(() => {
@@ -233,23 +260,59 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
         </Link>
 
         {user ? (
-          <div className="flex items-center gap-2 pl-2 border-l border-white/[0.08]">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-xs font-mono font-bold text-white">
-              {user.username.slice(0, 2).toUpperCase()}
-            </div>
-            <div className="hidden md:block text-left">
-              <div className="text-xs font-semibold text-white tracking-tight">
-                {user.username}
+          <div ref={profileMenuRef} className="relative">
+            <button
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="flex items-center gap-2 p-1 sm:p-1.5 rounded-full glass-pill hover:bg-white/10 transition-all border border-white/10"
+              title="User Account"
+            >
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-xs font-mono font-bold text-white shadow-sm flex-shrink-0">
+                {user.username.slice(0, 2).toUpperCase()}
               </div>
-              <div className="text-[10px] text-white/40">Obsidian Hi-Fi</div>
-            </div>
+              <div className="hidden md:block text-left pr-1">
+                <div className="text-xs font-semibold text-white tracking-tight truncate max-w-[120px]">
+                  {user.username}
+                </div>
+                <div className="text-[10px] text-white/40">Obsidian Hi-Fi</div>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-white/40 hidden md:block mr-1" />
+            </button>
+
+            {isProfileOpen && (
+              <div className="absolute right-0 top-12 w-56 glass-panel rounded-2xl shadow-2xl p-2 z-50 border border-white/10 space-y-1 animate-fadeIn backdrop-blur-3xl">
+                <div className="px-3 py-2 border-b border-white/[0.06]">
+                  <div className="text-xs font-semibold text-white truncate">{user.username}</div>
+                  <div className="text-[11px] text-white/40 truncate">{user.email}</div>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    setIsAuthOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white/70 hover:text-white hover:bg-white/10 transition-colors text-left"
+                >
+                  <User className="w-3.5 h-3.5 text-white/60" />
+                  <span>Switch Account</span>
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left font-medium"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-rose-400" />
+                  <span>Log Out</span>
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <button
             onClick={() => setIsAuthOpen(true)}
-            className="px-4 py-1.5 rounded-full glass-pill text-white text-xs font-medium transition-all"
+            className="px-4 py-1.5 rounded-full bg-white text-black text-xs font-semibold hover:bg-white/90 active:scale-95 transition-all shadow-md flex items-center gap-1.5"
           >
-            Sign In
+            <LogIn className="w-3.5 h-3.5" />
+            <span>Log In</span>
           </button>
         )}
       </div>

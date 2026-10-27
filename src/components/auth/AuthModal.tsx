@@ -56,31 +56,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-obsidian-card border border-obsidian-border rounded-2xl w-full max-w-md p-6 sm:p-8 space-y-6 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn select-none">
+      <div className="glass-panel border border-white/10 rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-6 shadow-2xl relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover transition-colors"
+          className="absolute top-5 right-5 p-1.5 rounded-full glass-pill text-white/60 hover:text-white transition-all"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
 
-        <div className="text-center space-y-1">
-          <div className="w-10 h-10 rounded-xl bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent mx-auto flex items-center justify-center mb-3">
+        <div className="text-center space-y-1.5">
+          <div className="w-11 h-11 rounded-2xl glass-pill text-obsidian-accent mx-auto flex items-center justify-center mb-3 shadow-md">
             <Lock className="w-5 h-5" />
           </div>
-          <h3 className="text-xl font-bold tracking-tightest text-obsidian-primary">
-            {isRegister ? 'Create an Obsidian Account' : 'Welcome to Obsidian'}
+          <h3 className="text-2xl font-bold tracking-tight text-white">
+            {isRegister ? 'Create an Account' : 'Log In to Obsidian'}
           </h3>
-          <p className="text-xs text-obsidian-secondary">
+          <p className="text-xs text-white/50">
             {isRegister
-              ? 'Join our high-fidelity audiophile community.'
-              : 'Sign in to sync your EQ, telemetry, and custom playlists.'}
+              ? 'Join our high-fidelity streaming community.'
+              : 'Log in to sync your favorites, playlists, and DSP EQ settings.'}
           </p>
         </div>
 
         {error && (
-          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
+          <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
             {error}
           </div>
         )}
@@ -88,53 +88,53 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
             <div className="space-y-1.5">
-              <label className="text-xs font-mono text-obsidian-secondary uppercase tracking-wider">
+              <label className="text-xs font-mono text-white/50 uppercase tracking-wider">
                 Username
               </label>
               <div className="relative">
-                <UserIcon className="w-4 h-4 text-obsidian-secondary absolute left-3 top-3" />
+                <UserIcon className="w-4 h-4 text-white/40 absolute left-3.5 top-3" />
                 <input
                   type="text"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Audiophile"
-                  className="w-full bg-obsidian-sidebar border border-obsidian-border focus:border-obsidian-accent rounded-lg pl-9 pr-4 py-2 text-sm text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none"
+                  className="w-full glass-pill rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30"
                 />
               </div>
             </div>
           )}
 
           <div className="space-y-1.5">
-            <label className="text-xs font-mono text-obsidian-secondary uppercase tracking-wider">
+            <label className="text-xs font-mono text-white/50 uppercase tracking-wider">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-obsidian-secondary absolute left-3 top-3" />
+              <Mail className="w-4 h-4 text-white/40 absolute left-3.5 top-3" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="user@obsidian.audio"
-                className="w-full bg-obsidian-sidebar border border-obsidian-border focus:border-obsidian-accent rounded-lg pl-9 pr-4 py-2 text-sm text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none"
+                className="w-full glass-pill rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-mono text-obsidian-secondary uppercase tracking-wider">
+            <label className="text-xs font-mono text-white/50 uppercase tracking-wider">
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-obsidian-secondary absolute left-3 top-3" />
+              <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-3" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full bg-obsidian-sidebar border border-obsidian-border focus:border-obsidian-accent rounded-lg pl-9 pr-4 py-2 text-sm text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none"
+                className="w-full glass-pill rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30"
               />
             </div>
           </div>
@@ -142,26 +142,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 rounded-lg bg-obsidian-accent hover:bg-obsidian-accent-hover text-white text-sm font-semibold transition-all shadow-md flex items-center justify-center gap-2 mt-2"
+            className="w-full py-3 rounded-2xl bg-white text-black text-sm font-semibold hover:bg-white/90 active:scale-95 transition-all shadow-xl flex items-center justify-center gap-2 mt-2"
           >
             {isRegister ? (
               <>
-                <UserPlus className="w-4 h-4" />
-                <span>{loading ? 'Creating Account...' : 'Sign Up'}</span>
+                <UserPlus className="w-4 h-4 text-black" />
+                <span>{loading ? 'Creating Account...' : 'Create Account'}</span>
               </>
             ) : (
               <>
-                <LogIn className="w-4 h-4" />
-                <span>{loading ? 'Signing In...' : 'Sign In'}</span>
+                <LogIn className="w-4 h-4 text-black" />
+                <span>{loading ? 'Logging In...' : 'Log In'}</span>
               </>
             )}
           </button>
         </form>
 
-        <div className="flex items-center justify-between text-xs pt-2 border-t border-obsidian-border">
+        <div className="flex items-center justify-between text-xs pt-3 border-t border-white/[0.06]">
           <button
             onClick={fillDemo}
-            className="text-obsidian-accent hover:underline font-mono"
+            className="text-obsidian-accent hover:underline font-mono text-[11px]"
           >
             Fill Demo Account
           </button>
@@ -171,9 +171,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               setIsRegister(!isRegister);
               setError(null);
             }}
-            className="text-obsidian-secondary hover:text-obsidian-primary"
+            className="text-white/50 hover:text-white transition-colors"
           >
-            {isRegister ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
+            {isRegister ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
           </button>
         </div>
       </div>

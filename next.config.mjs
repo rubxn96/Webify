@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false, // Prevents double AudioContext initialization in dev
+  generateBuildId: async () => 'production',
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'i.ytimg.com' },
