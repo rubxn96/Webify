@@ -14,7 +14,9 @@ import {
   Globe,
   Lock,
   X,
+  Heart,
 } from 'lucide-react';
+import { useAudio } from '@/components/audio/AudioProvider';
 import { Playlist } from '@/types';
 
 interface SidebarProps {
@@ -25,6 +27,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { likedTrackIds } = useAudio();
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState('');
@@ -134,8 +137,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
           })}
         </nav>
 
+        {/* Pinned Liked Songs / Favorites Folder */}
+        <div className="px-3 pt-2">
+          <Link
+            href="/favorites"
+            onClick={() => onCloseMobile && onCloseMobile()}
+            className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold tracking-tightest transition-all ${
+              pathname === '/favorites'
+                ? 'bg-gradient-to-r from-rose-950/60 to-obsidian-card text-obsidian-primary border border-rose-500/30 shadow-md'
+                : 'text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover/50'
+            }`}
+          >
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-sm flex-shrink-0">
+              <Heart className="w-3.5 h-3.5 fill-white" />
+            </div>
+            <div className="truncate flex-1">
+              <span>Liked Songs</span>
+            </div>
+            {likedTrackIds.size > 0 && (
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-rose-500/15 text-rose-400 font-bold border border-rose-500/20">
+                {likedTrackIds.size}
+              </span>
+            )}
+          </Link>
+        </div>
+
         {/* Divider */}
-        <div className="mx-4 my-3 border-t border-obsidian-border" />
+        <div className="mx-4 my-2 border-t border-obsidian-border" />
 
         {/* Playlists Shelf */}
         <div className="flex-1 overflow-y-auto px-3 space-y-2">

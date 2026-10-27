@@ -49,96 +49,48 @@ export async function resolveYouTubeAudio(
     };
   }
 
-  // 2. Try Piped API instances
-  for (const instance of PIPED_INSTANCES) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 2500);
+  // Fast direct stream probe (500ms max timeout to prevent blocking playback)
+  try {
+    const probeController = new AbortController();
+    const probeTimeout = setTimeout(() => probeController.abort(), 500);
 
-      const res = await fetch(`${instance}/streams/${videoId}`, {
-        signal: controller.signal,
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-      });
-      clearTimeout(timeout);
-
-      if (res.ok) {
+    const fastProbe = fetch(`${PIPED_INSTANCES[0]}/streams/${videoId}`, {
+      signal: probeController.signal,
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+    })
+      .then(async (res) => {
+        if (!res.ok) return null;
         const data = await res.json();
         if (data && Array.isArray(data.audioStreams) && data.audioStreams.length > 0) {
-          // Sort by bitrate descending or matching preferredBitrate
-          const streams = data.audioStreams.sort((a: { bitrate: number }, b: { bitrate: number }) => b.bitrate - a.bitrate);
-          const chosen = preferredBitrate === 'normal' 
-            ? streams.find((s: { bitrate: number }) => s.bitrate <= 130000) || streams[0] 
-            : streams[0];
-
+          const streams = data.audioStreams.sort(
+            (a: { bitrate: number }, b: { bitrate: number }) => b.bitrate - a.bitrate
+          );
+          const chosen = streams[0];
           if (chosen && chosen.url) {
-            const result: AudioStreamResult = {
+            return {
               audioUrl: chosen.url,
               mimeType: chosen.mimeType || 'audio/webm',
               bitrate: Math.round((chosen.bitrate || 160000) / 1000),
-              source: 'direct',
+              source: 'direct' as const,
               duration: data.duration,
             };
-
-            // Cache for 45 minutes
-            streamCache.set(videoId, {
-              ...result,
-              expiresAt: Date.now() + 45 * 60 * 1000,
-            });
-
-            return result;
           }
         }
-      }
-    } catch {
-      // Continue to next mirror
+        return null;
+      })
+      .catch(() => null)
+      .finally(() => clearTimeout(probeTimeout));
+
+    const result = await fastProbe;
+    if (result) {
+      streamCache.set(videoId, { ...result, expiresAt: Date.now() + 45 * 60 * 1000 });
+      return result;
     }
+  } catch {
+    // Continue directly to iframe
   }
 
-  // 3. Try Invidious API instances
-  for (const instance of INVIDIOUS_INSTANCES) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 2500);
-
-      const res = await fetch(`${instance}/api/v1/videos/${videoId}`, {
-        signal: controller.signal,
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
-      });
-      clearTimeout(timeout);
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data && Array.isArray(data.adaptiveFormats)) {
-          const audioFormats = data.adaptiveFormats
-            .filter((f: { type: string }) => f.type && f.type.startsWith('audio/'))
-            .sort((a: { bitrate: number }, b: { bitrate: number }) => (b.bitrate || 0) - (a.bitrate || 0));
-
-          if (audioFormats.length > 0 && audioFormats[0].url) {
-            const chosen = audioFormats[0];
-            const result: AudioStreamResult = {
-              audioUrl: chosen.url,
-              mimeType: chosen.type || 'audio/webm',
-              bitrate: Math.round((chosen.bitrate || 160000) / 1000),
-              source: 'direct',
-              duration: data.lengthSeconds,
-            };
-
-            streamCache.set(videoId, {
-              ...result,
-              expiresAt: Date.now() + 45 * 60 * 1000,
-            });
-
-            return result;
-          }
-        }
-      }
-    } catch {
-      // Continue to next
-    }
-  }
-
-  // 4. Default to Embedded Iframe Fallback Mode
-  // When restricted or direct stream manifest unavailable, hidden YouTube Iframe API plays perfectly!
+  // Fast, instant embedded playback mode (starts immediately without double-tap or lag)
   const fallbackResult: AudioStreamResult = {
     audioUrl: null,
     mimeType: 'audio/youtube-iframe',
@@ -148,7 +100,7 @@ export async function resolveYouTubeAudio(
 
   streamCache.set(videoId, {
     ...fallbackResult,
-    expiresAt: Date.now() + 10 * 60 * 1000,
+    expiresAt: Date.now() + 60 * 60 * 1000,
   });
 
   return fallbackResult;

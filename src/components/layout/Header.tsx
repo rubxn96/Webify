@@ -224,9 +224,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
       {/* Right User Actions */}
       <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
         <Link
-          href="/library"
+          href="/favorites"
           className="p-2 text-obsidian-secondary hover:text-obsidian-primary transition-colors flex items-center gap-1.5 text-xs font-medium"
-          title="Favorites"
+          title="Favorites / Liked Songs"
         >
           <Heart className="w-4 h-4 text-obsidian-accent" />
           <span className="hidden sm:inline">Favorites</span>

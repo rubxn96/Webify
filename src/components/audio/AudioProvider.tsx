@@ -211,6 +211,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
 
       setCurrentTrack(track);
+      setIsPlaying(true);
+      setPlaybackMode('iframe');
       setCurrentTime(0);
       setDuration(track.duration || 0);
       prebufferedIndexRef.current = null;

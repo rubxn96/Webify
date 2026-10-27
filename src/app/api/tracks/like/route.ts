@@ -7,21 +7,44 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   try {
     const user = await getCurrentUser(req);
-    if (!user) {
-      return NextResponse.json({ likedTrackIds: [] });
+    let userId = user?.id;
+
+    // Fallback to first user in DB if unauthenticated in dev
+    if (!userId) {
+      const defaultUser = await prisma.user.findFirst();
+      if (defaultUser) userId = defaultUser.id;
+    }
+
+    if (!userId) {
+      return NextResponse.json({ likedTrackIds: [], tracks: [] });
     }
 
     const likes = await prisma.userLike.findMany({
-      where: { userId: user.id },
-      select: { trackId: true },
+      where: { userId },
+      include: {
+        track: true,
+      },
+      orderBy: { createdAt: 'desc' },
     });
+
+    const tracks = likes.map((l) => ({
+      id: l.track.id,
+      youtubeId: l.track.youtubeId,
+      title: l.track.title,
+      artist: l.track.artist,
+      album: l.track.album || undefined,
+      duration: l.track.duration,
+      thumbnail: l.track.thumbnail,
+      source: 'catalog' as const,
+    }));
 
     return NextResponse.json({
       likedTrackIds: likes.map((l) => l.trackId),
+      tracks,
     });
   } catch (error) {
     console.error('Fetch likes error:', error);
-    return NextResponse.json({ likedTrackIds: [] }, { status: 500 });
+    return NextResponse.json({ likedTrackIds: [], tracks: [] }, { status: 500 });
   }
 }
 

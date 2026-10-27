@@ -144,6 +144,11 @@ export const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({ isOpen, 
           </div>
         </div>
 
+        {/* Subtitle / Helper */}
+        <div className="text-[11px] text-obsidian-secondary font-medium">
+          Select the playlist you want to add this song to:
+        </div>
+
         {/* Quick Create New Playlist */}
         {isCreating ? (
           <form onSubmit={handleCreateAndAdd} className="space-y-2 pt-1">
@@ -234,13 +239,20 @@ export const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({ isOpen, 
                   </div>
 
                   {isAdded ? (
-                    <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-400 font-semibold">
+                    <span className="flex items-center gap-1 text-[11px] font-mono text-emerald-400 font-semibold px-2 py-1 rounded bg-emerald-500/15 border border-emerald-500/30">
                       <Check className="w-3.5 h-3.5" /> Added
                     </span>
                   ) : (
-                    <span className="text-[11px] text-obsidian-secondary hover:text-obsidian-primary">
-                      + Add
-                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToPlaylist(playlist.id);
+                      }}
+                      className="px-2.5 py-1 rounded bg-obsidian-card hover:bg-obsidian-accent hover:text-white border border-obsidian-border text-[11px] font-medium text-obsidian-secondary transition-colors"
+                    >
+                      + Select
+                    </button>
                   )}
                 </div>
               );

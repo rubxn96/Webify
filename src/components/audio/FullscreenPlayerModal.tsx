@@ -20,6 +20,7 @@ import {
 import { useAudio } from './AudioProvider';
 import { formatTime, parseLRC } from '@/lib/audio/timeFormat';
 import Link from 'next/link';
+import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
 
 export const FullscreenPlayerModal: React.FC = () => {
   const {
@@ -229,6 +230,8 @@ export const FullscreenPlayerModal: React.FC = () => {
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
+
+                    <TrackContextMenu track={t} />
                   </div>
                 </div>
               );
@@ -249,16 +252,19 @@ export const FullscreenPlayerModal: React.FC = () => {
               {currentTrack.artist}
             </p>
           </div>
-          <button
-            onClick={() => toggleLike(currentTrack)}
-            className="p-2 text-obsidian-secondary hover:text-obsidian-primary transition-transform active:scale-125 flex-shrink-0"
-          >
-            <Heart
-              className={`w-5 h-5 sm:w-6 sm:h-6 ${
-                isLiked ? 'fill-obsidian-accent text-obsidian-accent' : ''
-              }`}
-            />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => toggleLike(currentTrack)}
+              className="p-2 text-obsidian-secondary hover:text-obsidian-primary transition-transform active:scale-125 flex-shrink-0"
+            >
+              <Heart
+                className={`w-5 h-5 sm:w-6 sm:h-6 ${
+                  isLiked ? 'fill-obsidian-accent text-obsidian-accent' : ''
+                }`}
+              />
+            </button>
+            <TrackContextMenu track={currentTrack} />
+          </div>
         </div>
 
         {/* Scrub Bar */}

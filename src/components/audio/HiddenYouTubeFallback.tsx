@@ -73,11 +73,28 @@ export const HiddenYouTubeFallback: React.FC<HiddenYouTubeFallbackProps> = ({
     }
   }, []);
 
-  // Initialize or re-create player when videoId changes
+  // Initialize or seamlessly load video when videoId changes
   useEffect(() => {
     if (!videoId) return;
 
     let isCancelled = false;
+
+    // Fast-path: If player already exists and ready, seamlessly load the new video immediately!
+    // This avoids destroying/recreating the iframe, prevents white flashes, and avoids autoplay blocks!
+    if (playerRef.current && isReadyRef.current) {
+      try {
+        if (typeof (playerRef.current as any).loadVideoById === 'function') {
+          (playerRef.current as any).loadVideoById(videoId, 0);
+          playerRef.current.setVolume(Math.round(volume * 100));
+          if (isPlaying) {
+            playerRef.current.playVideo();
+          }
+          return;
+        }
+      } catch {
+        // Fall back to full initialization
+      }
+    }
 
     const initPlayer = () => {
       if (!window.YT || !window.YT.Player || !containerRef.current || isCancelled) return;

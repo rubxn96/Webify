@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch all catalog tracks
     const dbTracks = await prisma.track.findMany({
-      take: 60,
+      take: 120,
       orderBy: { createdAt: 'desc' },
     });
 

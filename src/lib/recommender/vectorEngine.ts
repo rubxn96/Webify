@@ -164,20 +164,20 @@ export function generateAIRecommendations(
   const unlistenedTracks = scoredCatalog.filter((t) => !isAlreadyListened(t));
   const candidatePool = unlistenedTracks.length >= 6 ? unlistenedTracks : scoredCatalog;
 
-  // 5. Generate "AI Recommended For You" (Top AI acoustic matches that user has NOT listened to)
+  // 5. Generate "AI Recommended For You" (Top AI acoustic matches that user has NOT listened to - up to 18 songs)
   const aiRecommendations = [...candidatePool]
     .sort((a, b) => b.aiScore - a.aiScore)
-    .slice(0, 6);
+    .slice(0, 18);
 
   const aiRecIds = new Set(aiRecommendations.map((t) => t.id));
 
   // 6. Generate "Based on Your Listening History"
-  // Recommends FRESH, unlistened songs matching the artists and genres from user's history
+  // Recommends FRESH, unlistened songs matching the artists and genres from user's history - up to 18 songs
   const historyBasedCandidates = [...candidatePool]
     .filter((t) => !aiRecIds.has(t.id))
     .filter((t) => {
       const artWeight = artistWeights.get(t.artist) || 0;
-      return artWeight > 0 || (t.aiScore && t.aiScore > 0.72);
+      return artWeight > 0 || (t.aiScore && t.aiScore > 0.7);
     })
     .sort((a, b) => {
       const aArt = artistWeights.get(a.artist) || 0;
@@ -185,32 +185,32 @@ export function generateAIRecommendations(
       if (bArt !== aArt) return bArt - aArt;
       return (b.aiScore || 0) - (a.aiScore || 0);
     })
-    .slice(0, 6);
+    .slice(0, 18);
 
   const finalHistoryTracks =
-    historyBasedCandidates.length >= 3
+    historyBasedCandidates.length >= 6
       ? historyBasedCandidates
-      : candidatePool.filter((t) => !aiRecIds.has(t.id)).slice(0, 6);
+      : candidatePool.filter((t) => !aiRecIds.has(t.id)).slice(0, 18);
 
   const historyIds = new Set(finalHistoryTracks.map((t) => t.id));
 
   // 7. Heavy Rotation (Top played tracks for hero shelf or quick replay)
   const heavyRotation = [...catalog]
     .sort((a, b) => (trackWeights.get(b.id) || 0) - (trackWeights.get(a.id) || 0))
-    .slice(0, 6);
+    .slice(0, 12);
 
-  // 8. Discovery Mix (Fresh unlistened songs with high vector score and low familiarity)
+  // 8. Discovery Mix (Fresh unlistened songs with high vector score and low familiarity - up to 18 songs)
   const discoveryMix = [...candidatePool]
     .filter((t) => !aiRecIds.has(t.id) && !historyIds.has(t.id))
     .sort((a, b) => b.aiScore - a.aiScore)
-    .slice(0, 6);
+    .slice(0, 18);
 
-  // 9. Top Artist Spotlight (Unlistened tracks by favorite artist)
+  // 9. Top Artist Spotlight (Unlistened tracks by favorite artist - up to 12 songs)
   const sortedArtists = Object.entries(Object.fromEntries(artistWeights)).sort((a, b) => b[1] - a[1]);
   const topArtist = sortedArtists.length > 0 ? sortedArtists[0][0] : catalog[0]?.artist || 'Queen';
   const artistTracks = candidatePool
     .filter((t) => t.artist.toLowerCase().includes(topArtist.toLowerCase()))
-    .slice(0, 6);
+    .slice(0, 12);
 
   // 8. Natural Language AI Taste Profile Summary
   const energy = userCentroid[0];

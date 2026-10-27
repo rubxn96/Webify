@@ -328,6 +328,8 @@ export default function PlaylistDetailPage() {
                   </button>
 
                   <TrackContextMenu track={track} />
+
+                  <TrackContextMenu track={track} />
                 </div>
               </div>
             );

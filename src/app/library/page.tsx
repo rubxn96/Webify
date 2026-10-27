@@ -6,8 +6,10 @@ import Image from 'next/image';
 import { Library, Plus, Heart, Globe, Lock, Music2 } from 'lucide-react';
 import { Playlist } from '@/types';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useAudio } from '@/components/audio/AudioProvider';
 
 export default function LibraryPage() {
+  const { likedTrackIds } = useAudio();
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -110,6 +112,33 @@ export default function LibraryPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {/* Permanent Liked Songs / Favorites Card */}
+          <Link
+            href="/favorites"
+            className="group col-span-2 bg-gradient-to-br from-rose-950/70 via-purple-950/40 to-obsidian-card hover:border-rose-500/50 border border-rose-500/30 rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between shadow-xl relative overflow-hidden"
+          >
+            <div className="space-y-2 relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
+                <Heart className="w-6 h-6 fill-white" />
+              </div>
+              <h3 className="text-xl font-bold tracking-tightest text-obsidian-primary group-hover:text-rose-300 transition-colors pt-2">
+                Liked Songs
+              </h3>
+              <p className="text-xs text-obsidian-secondary line-clamp-2">
+                Your automatically collected favorites from your listening sessions and live search.
+              </p>
+            </div>
+
+            <div className="pt-6 flex items-center justify-between relative z-10">
+              <span className="text-xs font-mono font-semibold text-rose-400">
+                {likedTrackIds.size} Liked Tracks
+              </span>
+              <div className="w-9 h-9 rounded-full bg-obsidian-primary text-obsidian-canvas flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Heart className="w-4 h-4 fill-obsidian-canvas" />
+              </div>
+            </div>
+          </Link>
+
           {playlists.map((playlist) => (
             <Link
               key={playlist.id}

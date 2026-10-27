@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { X, ListMusic, Trash2, Play, ArrowUp, ArrowDown } from 'lucide-react';
 import { useAudio } from './AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
+import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
 
 export const QueueDrawer: React.FC = () => {
   const {
@@ -173,10 +174,12 @@ export const QueueDrawer: React.FC = () => {
                   <button
                     onClick={() => removeFromQueue(idx)}
                     className="p-1 text-obsidian-secondary hover:text-red-400 transition-colors ml-1"
-                    title="Remove from queue"
+                    title="Remove and auto-fill with another similar song"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
+
+                  <TrackContextMenu track={track} />
                 </div>
               </div>
             );
