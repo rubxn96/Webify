@@ -20,6 +20,7 @@ import { Playlist, Track } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
 
 export default function PlaylistDetailPage() {
   const { id } = useParams();
@@ -325,6 +326,8 @@ export default function PlaylistDetailPage() {
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
+
+                  <TrackContextMenu track={track} />
                 </div>
               </div>
             );

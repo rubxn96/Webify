@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
 import { getCurrentUser } from '@/lib/auth/jwt';
-import { generateDiscoveryRails } from '@/lib/recommender/vectorEngine';
+import { generateAIRecommendations, TelemetryInteraction } from '@/lib/recommender/vectorEngine';
 import { Track } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
     // Fetch all catalog tracks
     const dbTracks = await prisma.track.findMany({
-      take: 50,
+      take: 60,
       orderBy: { createdAt: 'desc' },
     });
 
@@ -27,37 +27,50 @@ export async function GET(req: NextRequest) {
       thumbnail: t.thumbnail,
       embedding: t.embedding ? JSON.parse(t.embedding) : undefined,
       lyrics: t.lyrics || undefined,
+      source: 'catalog',
     }));
 
     // Fetch user telemetry interactions
-    let interactions: Array<{ trackId: string; weight: number }> = [];
+    let interactions: TelemetryInteraction[] = [];
     if (user) {
       const dbTelemetry = await prisma.telemetry.findMany({
         where: { userId: user.id },
-        select: { trackId: true, weight: true },
-        take: 100,
+        select: { trackId: true, weight: true, event: true, createdAt: true },
+        take: 150,
+        orderBy: { createdAt: 'desc' },
       });
       interactions = dbTelemetry;
+    } else {
+      // Global fallback telemetry if unauthenticated
+      const globalTelemetry = await prisma.telemetry.findMany({
+        select: { trackId: true, weight: true, event: true, createdAt: true },
+        take: 100,
+        orderBy: { createdAt: 'desc' },
+      });
+      interactions = globalTelemetry;
     }
 
-    const { heavyRotation, discoveryMix, artistSpotlight } = generateDiscoveryRails(
-      catalog,
-      interactions
-    );
+    const {
+      aiRecommendations,
+      historyBasedTracks,
+      heavyRotation,
+      discoveryMix,
+      artistSpotlight,
+      aiTasteProfile,
+    } = generateAIRecommendations(catalog, interactions);
 
     // Quick Access Grid (2x3 = 6 top picks)
     const quickAccess = catalog.slice(0, 6);
 
-    // Jump Back In (recent listening or liked)
-    const jumpBackIn = catalog.slice(2, 8);
-
     return NextResponse.json({
       hero: heavyRotation[0] || catalog[0] || null,
       quickAccess,
+      aiRecommendations,
+      historyBasedTracks,
       heavyRotation,
       discoveryMix,
       artistSpotlight,
-      jumpBackIn,
+      aiTasteProfile,
     });
   } catch (error) {
     console.error('Recommendations error:', error);

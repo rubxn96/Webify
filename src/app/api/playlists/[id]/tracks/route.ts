@@ -13,10 +13,11 @@ export async function POST(
     }
 
     const { id: playlistId } = params;
-    const { trackId } = await req.json();
+    const body = await req.json();
+    const trackId = body.trackId;
 
-    if (!trackId) {
-      return NextResponse.json({ error: 'Track ID is required' }, { status: 400 });
+    if (!trackId && !body.youtubeId) {
+      return NextResponse.json({ error: 'Track ID or youtubeId is required' }, { status: 400 });
     }
 
     const playlist = await prisma.playlist.findUnique({
@@ -32,19 +33,47 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    // Resolve or upsert track
+    let targetTrack = await prisma.track.findFirst({
+      where: {
+        OR: [
+          { id: trackId || '' },
+          { youtubeId: trackId || body.youtubeId || '' },
+        ],
+      },
+    });
+
+    if (!targetTrack && (body.youtubeId || trackId)) {
+      const yId = body.youtubeId || trackId;
+      targetTrack = await prisma.track.create({
+        data: {
+          youtubeId: yId,
+          title: body.title || 'YouTube Song',
+          artist: body.artist || 'Unknown Artist',
+          duration: body.duration || 180,
+          thumbnail: body.thumbnail || `https://img.youtube.com/vi/${yId}/hqdefault.jpg`,
+          embedding: JSON.stringify([0.7, 0.6, 0.6, 0.2, 0.65, 0.05, 0.05, 0.2]),
+        },
+      });
+    }
+
+    if (!targetTrack) {
+      return NextResponse.json({ error: 'Track not found' }, { status: 404 });
+    }
+
     const currentCount = playlist.tracks.length;
 
     await prisma.playlistTrack.upsert({
       where: {
         playlistId_trackId: {
           playlistId,
-          trackId,
+          trackId: targetTrack.id,
         },
       },
       update: {},
       create: {
         playlistId,
-        trackId,
+        trackId: targetTrack.id,
         position: currentCount,
       },
     });

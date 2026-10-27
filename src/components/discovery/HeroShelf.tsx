@@ -6,6 +6,7 @@ import { Play, Pause, Flame, Heart } from 'lucide-react';
 import { Track } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
+import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
 
 interface HeroShelfProps {
   heroTrack: Track | null;
@@ -84,6 +85,8 @@ export const HeroShelf: React.FC<HeroShelfProps> = ({ heroTrack, allTracks }) =>
             >
               <Heart className={`w-4 h-4 ${isLiked ? 'fill-obsidian-accent' : ''}`} />
             </button>
+
+            <TrackContextMenu track={heroTrack} />
           </div>
         </div>
 

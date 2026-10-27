@@ -40,3 +40,4 @@ export const MobileNavBar: React.FC = () => {
     </nav>
   );
 };
+

@@ -6,12 +6,12 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const youtubeId = searchParams.get('youtubeId');
+    const youtubeId = searchParams.get('youtubeId') || '';
     const title = searchParams.get('title') || '';
     const artist = searchParams.get('artist') || '';
 
-    if (!youtubeId) {
-      return NextResponse.json({ error: 'youtubeId is required' }, { status: 400 });
+    if (!youtubeId && !title && !artist) {
+      return NextResponse.json({ error: 'youtubeId, title, or artist is required' }, { status: 400 });
     }
 
     const tracks = await getSimilarTracks({
@@ -26,3 +26,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ tracks: [] }, { status: 500 });
   }
 }
+

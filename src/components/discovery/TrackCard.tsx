@@ -2,10 +2,11 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Play, Pause, Heart, Youtube, Disc } from 'lucide-react';
+import { Play, Pause, Heart, Youtube, Disc, Sparkles } from 'lucide-react';
 import { Track } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
+import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
 
 interface TrackCardProps {
   track: Track;
@@ -85,24 +86,40 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track, playlistContext }) 
           )}
         </div>
 
-        {/* Like Button on Artwork Top Right */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleLike(track);
-          }}
-          className={`absolute top-2 right-2 p-1.5 rounded-full bg-black/50 backdrop-blur-sm transition-all duration-150 ${
-            isLiked ? 'opacity-100 text-obsidian-accent' : 'opacity-0 group-hover:opacity-100 text-white hover:scale-110'
-          }`}
-        >
-          <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-obsidian-accent' : ''}`} />
-        </button>
+        {/* AI Match Badge (if available from AI engine) */}
+        {track.aiMatch && (
+          <div className="absolute bottom-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-obsidian-accent/90 text-white backdrop-blur-sm text-[10px] font-mono font-bold shadow-md">
+            <Sparkles className="w-2.5 h-2.5" />
+            <span>{track.aiMatch}% Match</span>
+          </div>
+        )}
+
+        {/* Top Right Action Buttons: Like + 3-Dot Contextual Menu */}
+        <div className="absolute top-2 right-2 flex items-center gap-1">
+          {/* Like Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleLike(track);
+            }}
+            className={`p-1.5 rounded-full bg-black/60 backdrop-blur-sm transition-all duration-150 ${
+              isLiked ? 'opacity-100 text-obsidian-accent' : 'opacity-0 group-hover:opacity-100 text-white hover:scale-110'
+            }`}
+          >
+            <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-obsidian-accent' : ''}`} />
+          </button>
+
+          {/* 3-Dot Contextual Menu (Add to Queue, Add to Favorites, Add to Playlist) */}
+          <TrackContextMenu track={track} />
+        </div>
 
         {/* Duration badge */}
-        <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[10px] font-mono text-obsidian-primary">
-          {formatTime(track.duration)}
-        </div>
+        {!track.aiMatch && (
+          <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[10px] font-mono text-obsidian-primary">
+            {formatTime(track.duration)}
+          </div>
+        )}
       </div>
 
       {/* Track Metadata */}

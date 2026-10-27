@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Play, Pause } from 'lucide-react';
 import { Track } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
+import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
 
 interface QuickAccessGridProps {
   tracks: Track[];
@@ -39,11 +40,11 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
             <div
               key={track.id}
               onClick={handleTileClick}
-              className={`group flex items-center justify-between bg-obsidian-card hover:bg-obsidian-hover border rounded-xl overflow-hidden cursor-pointer transition-all pr-4 ${
+              className={`group flex items-center justify-between bg-obsidian-card hover:bg-obsidian-hover border rounded-xl overflow-hidden cursor-pointer transition-all pr-3 ${
                 isCurrent ? 'border-obsidian-accent shadow-sm' : 'border-obsidian-border'
               }`}
             >
-              <div className="flex items-center gap-3.5 truncate flex-1">
+              <div className="flex items-center gap-3.5 truncate flex-1 min-w-0">
                 <div className="relative w-16 h-16 flex-shrink-0 bg-obsidian-sidebar">
                   <Image
                     src={track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200'}
@@ -65,17 +66,22 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
                 </div>
               </div>
 
-              {/* Play Button on Hover/Active */}
-              <div
-                className={`w-9 h-9 rounded-full bg-obsidian-primary text-obsidian-canvas flex items-center justify-center shadow-md transition-all flex-shrink-0 ${
-                  isCurrent ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-hover:scale-105'
-                }`}
-              >
-                {isCurrent && isPlaying ? (
-                  <Pause className="w-4 h-4 fill-obsidian-canvas" />
-                ) : (
-                  <Play className="w-4 h-4 fill-obsidian-canvas ml-0.5" />
-                )}
+              {/* Action buttons on tile right */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <TrackContextMenu track={track} />
+
+                {/* Play Button */}
+                <div
+                  className={`w-9 h-9 rounded-full bg-obsidian-primary text-obsidian-canvas flex items-center justify-center shadow-md transition-all ${
+                    isCurrent ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-hover:scale-105'
+                  }`}
+                >
+                  {isCurrent && isPlaying ? (
+                    <Pause className="w-4 h-4 fill-obsidian-canvas" />
+                  ) : (
+                    <Play className="w-4 h-4 fill-obsidian-canvas ml-0.5" />
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -84,4 +90,3 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
     </div>
   );
 };
-

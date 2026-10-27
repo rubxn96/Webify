@@ -12,6 +12,16 @@ export interface Track {
   lyrics?: string; // LRC formatted string or JSON
   isLiked?: boolean;
   source?: 'youtube' | 'catalog';
+  aiMatch?: number; // AI match percentage (e.g. 96)
+}
+
+export interface AITasteProfile {
+  summary: string;
+  dominantGenres: string[];
+  energyLevel: number;
+  danceability: number;
+  acousticness: number;
+  totalListens: number;
 }
 
 export interface Playlist {
