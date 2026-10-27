@@ -15,12 +15,13 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
   const { currentTrack, isPlaying, playTrack, togglePlay } = useAudio();
 
   const displayTracks = tracks.slice(0, 6);
+  if (displayTracks.length === 0) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-obsidian-secondary font-mono">
-          Daily Top Picks &bull; Quick Access
+        <h3 className="text-xl font-bold tracking-tight text-white">
+          Quick Picks
         </h3>
       </div>
 
@@ -40,46 +41,50 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
             <div
               key={track.id}
               onClick={handleTileClick}
-              className={`group flex items-center justify-between bg-obsidian-card hover:bg-obsidian-hover border rounded-xl overflow-hidden cursor-pointer transition-all pr-3 ${
-                isCurrent ? 'border-obsidian-accent shadow-sm' : 'border-obsidian-border'
+              className={`glass-card group flex items-center justify-between rounded-2xl p-2 pr-3.5 cursor-pointer transition-all duration-200 ${
+                isCurrent ? 'ring-1 ring-obsidian-accent/50 bg-white/[0.08]' : ''
               }`}
             >
-              <div className="flex items-center gap-3.5 truncate flex-1 min-w-0">
-                <div className="relative w-16 h-16 flex-shrink-0 bg-obsidian-sidebar">
+              <div className="flex items-center gap-3 truncate flex-1 min-w-0">
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-white/[0.04] shadow-md shadow-black/30">
                   <Image
                     src={track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200'}
                     alt={track.title}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
 
                 <div className="truncate pr-2">
                   <h4
-                    className={`text-sm font-semibold tracking-tightest truncate ${
-                      isCurrent ? 'text-obsidian-accent' : 'text-obsidian-primary'
+                    className={`text-sm font-semibold tracking-tight truncate ${
+                      isCurrent ? 'text-obsidian-accent' : 'text-white/95'
                     }`}
                   >
                     {track.title}
                   </h4>
-                  <p className="text-xs text-obsidian-secondary truncate">{track.artist}</p>
+                  <p className="text-xs text-white/55 truncate mt-0.5">{track.artist}</p>
                 </div>
               </div>
 
               {/* Action buttons on tile right */}
               <div className="flex items-center gap-2 flex-shrink-0">
-                <TrackContextMenu track={track} />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <TrackContextMenu track={track} />
+                </div>
 
-                {/* Play Button */}
+                {/* Glass Play Button */}
                 <div
-                  className={`w-9 h-9 rounded-full bg-obsidian-primary text-obsidian-canvas flex items-center justify-center shadow-md transition-all ${
-                    isCurrent ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-hover:scale-105'
+                  className={`w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-lg transition-all ${
+                    isCurrent
+                      ? 'opacity-100'
+                      : 'opacity-0 group-hover:opacity-100 group-hover:scale-105'
                   }`}
                 >
                   {isCurrent && isPlaying ? (
-                    <Pause className="w-4 h-4 fill-obsidian-canvas" />
+                    <Pause className="w-4 h-4 fill-black" />
                   ) : (
-                    <Play className="w-4 h-4 fill-obsidian-canvas ml-0.5" />
+                    <Play className="w-4 h-4 fill-black ml-0.5" />
                   )}
                 </div>
               </div>

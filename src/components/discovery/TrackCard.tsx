@@ -2,10 +2,9 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Play, Pause, Heart, Youtube, Disc, Sparkles } from 'lucide-react';
+import { Play, Pause, Heart } from 'lucide-react';
 import { Track } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
-import { formatTime } from '@/lib/audio/timeFormat';
 import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
 
 interface TrackCardProps {
@@ -45,93 +44,75 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track, playlistContext }) 
   return (
     <div
       onClick={handleCardClick}
-      className="group relative bg-obsidian-card hover:bg-obsidian-hover border border-obsidian-border rounded-xl p-3.5 transition-all duration-200 cursor-pointer flex flex-col justify-between"
+      className={`glass-card p-3 rounded-2xl group cursor-pointer transition-all duration-300 flex flex-col justify-between ${
+        isCurrent ? 'ring-1 ring-obsidian-accent/50 bg-white/[0.06]' : ''
+      }`}
     >
-      {/* Artwork */}
-      <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-obsidian-sidebar mb-3">
+      {/* Pristine Album Artwork */}
+      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white/[0.04] mb-2.5 shadow-md shadow-black/30">
         <Image
           src={track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400'}
           alt={track.title}
           fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Hover / Active Play Button Overlay */}
+        {/* Hover / Playing Glass Overlay */}
         <div
-          className={`absolute inset-0 bg-black/40 flex items-center justify-center transition-opacity duration-200 ${
+          className={`absolute inset-0 bg-black/35 backdrop-blur-[2px] flex items-center justify-center transition-all duration-200 ${
             isCurrent ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
           }`}
         >
-          <div className="w-11 h-11 rounded-full bg-obsidian-primary text-obsidian-canvas flex items-center justify-center shadow-lg transform transition-transform group-hover:scale-105">
+          <div className="w-11 h-11 rounded-full bg-white text-black flex items-center justify-center shadow-2xl transform transition-transform group-hover:scale-105 active:scale-95">
             {isCurrent && isPlaying ? (
-              <Pause className="w-5 h-5 fill-obsidian-canvas" />
+              <Pause className="w-5 h-5 fill-black" />
             ) : (
-              <Play className="w-5 h-5 fill-obsidian-canvas ml-0.5" />
+              <Play className="w-5 h-5 fill-black ml-0.5" />
             )}
           </div>
         </div>
 
-        {/* Source Badge (YouTube vs Stored Catalog) */}
-        <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-sm text-[10px] font-mono text-white">
-          {track.source === 'youtube' ? (
-            <>
-              <Youtube className="w-3 h-3 text-red-500 fill-red-500" />
-              <span>YouTube</span>
-            </>
-          ) : (
-            <>
-              <Disc className="w-3 h-3 text-obsidian-accent" />
-              <span>Catalog</span>
-            </>
-          )}
-        </div>
-
-        {/* AI Match Badge (if available from AI engine) */}
-        {track.aiMatch && (
-          <div className="absolute bottom-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-obsidian-accent/90 text-white backdrop-blur-sm text-[10px] font-mono font-bold shadow-md">
-            <Sparkles className="w-2.5 h-2.5" />
-            <span>{track.aiMatch}% Match</span>
-          </div>
-        )}
-
-        {/* Top Right Action Buttons: Like + 3-Dot Contextual Menu */}
-        <div className="absolute top-2 right-2 flex items-center gap-1">
-          {/* Like Button */}
+        {/* Top Right Actions: Subtle Frosted Glass Heart + 3-Dot Menu */}
+        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               toggleLike(track);
             }}
-            className={`p-1.5 rounded-full bg-black/60 backdrop-blur-sm transition-all duration-150 ${
-              isLiked ? 'opacity-100 text-obsidian-accent' : 'opacity-0 group-hover:opacity-100 text-white hover:scale-110'
+            className={`w-7 h-7 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center transition-all duration-200 ${
+              isLiked
+                ? 'opacity-100 text-obsidian-accent'
+                : 'opacity-0 group-hover:opacity-100 text-white/90 hover:scale-110 hover:bg-black/60'
             }`}
+            title={isLiked ? 'Remove from Liked' : 'Add to Liked'}
           >
             <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-obsidian-accent' : ''}`} />
           </button>
 
-          {/* 3-Dot Contextual Menu (Add to Queue, Add to Favorites, Add to Playlist) */}
-          <TrackContextMenu track={track} />
-        </div>
-
-        {/* Duration badge */}
-        {!track.aiMatch && (
-          <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-[10px] font-mono text-obsidian-primary">
-            {formatTime(track.duration)}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`transition-opacity duration-200 ${
+              isCurrent ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            }`}
+          >
+            <TrackContextMenu track={track} />
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Track Metadata */}
-      <div>
+      {/* Clean Track Metadata */}
+      <div className="px-0.5">
         <h4
-          className={`text-sm font-semibold tracking-tightest truncate ${
-            isCurrent ? 'text-obsidian-accent' : 'text-obsidian-primary'
+          className={`text-sm font-semibold tracking-tight truncate ${
+            isCurrent ? 'text-obsidian-accent' : 'text-white/95'
           }`}
         >
           {track.title}
         </h4>
-        <p className="text-xs text-obsidian-secondary truncate mt-0.5">{track.artist}</p>
+        <p className="text-xs text-white/55 truncate mt-0.5 font-normal hover:text-white/80 transition-colors">
+          {track.artist}
+        </p>
       </div>
     </div>
   );

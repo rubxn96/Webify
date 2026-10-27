@@ -50,18 +50,18 @@ export default function LibraryPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-16">
+    <div className="max-w-7xl mx-auto space-y-8 pb-20 animate-fadeIn select-none">
       {/* Header */}
-      <div className="flex items-center justify-between pb-6 border-b border-obsidian-border">
+      <div className="flex items-center justify-between pb-6 border-b border-white/[0.06]">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-obsidian-card border border-obsidian-border text-obsidian-accent">
+          <div className="p-2.5 rounded-2xl glass-pill text-obsidian-accent">
             <Library className="w-6 h-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tightest text-obsidian-primary">
+            <h1 className="text-2xl font-bold tracking-tight text-white">
               Your Library & Playlists
             </h1>
-            <p className="text-xs text-obsidian-secondary mt-0.5">
+            <p className="text-xs text-white/50 mt-0.5">
               Curated audio collections, imported Spotify playlists & favorite tracks.
             </p>
           </div>
@@ -69,34 +69,34 @@ export default function LibraryPage() {
 
         <button
           onClick={() => setIsCreating(true)}
-          className="px-4 py-2 rounded-lg bg-obsidian-accent hover:bg-obsidian-accent-hover text-white text-xs font-semibold flex items-center gap-2 transition-all shadow-md"
+          className="px-5 py-2 rounded-full bg-white text-black text-xs font-semibold flex items-center gap-2 hover:bg-white/90 active:scale-95 transition-all shadow-lg"
         >
           <Plus className="w-4 h-4" />
-          <span>Create Playlist</span>
+          <span>New Playlist</span>
         </button>
       </div>
 
       {/* Quick Create Modal / Inline */}
       {isCreating && (
-        <form onSubmit={handleCreate} className="p-4 bg-obsidian-card border border-obsidian-border rounded-xl flex gap-3 max-w-md">
+        <form onSubmit={handleCreate} className="p-4 glass-panel rounded-2xl flex gap-3 max-w-md border border-white/10">
           <input
             type="text"
             autoFocus
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="Enter playlist name..."
-            className="flex-1 bg-obsidian-sidebar border border-obsidian-border focus:border-obsidian-accent rounded-lg px-3 py-1.5 text-xs text-obsidian-primary outline-none"
+            className="flex-1 glass-card rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/40 outline-none focus:border-white/30"
           />
           <button
             type="submit"
-            className="px-4 py-1.5 rounded-lg bg-obsidian-accent text-white text-xs font-medium hover:bg-obsidian-accent-hover transition-colors"
+            className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-white/90 transition-all"
           >
             Create
           </button>
           <button
             type="button"
             onClick={() => setIsCreating(false)}
-            className="px-3 py-1.5 rounded-lg border border-obsidian-border text-xs text-obsidian-secondary hover:text-obsidian-primary"
+            className="px-3 py-1.5 rounded-xl glass-pill text-xs text-white/60 hover:text-white"
           >
             Cancel
           </button>
@@ -107,7 +107,7 @@ export default function LibraryPage() {
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-60 rounded-xl" />
+            <Skeleton key={i} className="h-60 rounded-2xl" />
           ))}
         </div>
       ) : (
@@ -115,26 +115,26 @@ export default function LibraryPage() {
           {/* Permanent Liked Songs / Favorites Card */}
           <Link
             href="/favorites"
-            className="group col-span-2 bg-gradient-to-br from-rose-950/70 via-purple-950/40 to-obsidian-card hover:border-rose-500/50 border border-rose-500/30 rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between shadow-xl relative overflow-hidden"
+            className="group col-span-2 glass-card rounded-3xl p-6 bg-gradient-to-br from-rose-950/40 via-purple-950/20 to-white/[0.03] border border-rose-500/30 hover:border-rose-500/50 transition-all duration-300 flex flex-col justify-between shadow-xl relative overflow-hidden"
           >
             <div className="space-y-2 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
                 <Heart className="w-6 h-6 fill-white" />
               </div>
-              <h3 className="text-xl font-bold tracking-tightest text-obsidian-primary group-hover:text-rose-300 transition-colors pt-2">
+              <h3 className="text-xl font-bold tracking-tight text-white group-hover:text-rose-300 transition-colors pt-2">
                 Liked Songs
               </h3>
-              <p className="text-xs text-obsidian-secondary line-clamp-2">
+              <p className="text-xs text-white/60 line-clamp-2">
                 Your automatically collected favorites from your listening sessions and live search.
               </p>
             </div>
 
             <div className="pt-6 flex items-center justify-between relative z-10">
-              <span className="text-xs font-mono font-semibold text-rose-400">
+              <span className="text-xs font-mono font-semibold text-rose-400 tabular-nums">
                 {likedTrackIds.size} Liked Tracks
               </span>
-              <div className="w-9 h-9 rounded-full bg-obsidian-primary text-obsidian-canvas flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <Heart className="w-4 h-4 fill-obsidian-canvas" />
+              <div className="w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Heart className="w-4 h-4 fill-black" />
               </div>
             </div>
           </Link>
@@ -143,25 +143,25 @@ export default function LibraryPage() {
             <Link
               key={playlist.id}
               href={`/playlists/${playlist.id}`}
-              className="group bg-obsidian-card hover:bg-obsidian-hover border border-obsidian-border rounded-xl p-3.5 transition-all duration-200 flex flex-col justify-between"
+              className="group glass-card rounded-2xl p-3 border border-white/[0.06] hover:bg-white/[0.08] transition-all duration-300 flex flex-col justify-between"
             >
-              <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-obsidian-sidebar mb-3">
+              <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white/[0.04] mb-3 shadow-md shadow-black/30">
                 <Image
                   src={playlist.coverImage || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400'}
                   alt={playlist.name}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute top-2 right-2 p-1 rounded bg-black/60 backdrop-blur-sm text-obsidian-primary">
+                <div className="absolute top-2 right-2 p-1.5 rounded-full bg-black/50 backdrop-blur-md text-white/90">
                   {playlist.isPublic ? <Globe className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
                 </div>
               </div>
 
-              <div>
-                <h4 className="text-sm font-semibold tracking-tightest text-obsidian-primary truncate group-hover:text-obsidian-accent transition-colors">
+              <div className="px-0.5">
+                <h4 className="text-sm font-semibold tracking-tight text-white/95 truncate group-hover:text-obsidian-accent transition-colors">
                   {playlist.name}
                 </h4>
-                <p className="text-xs text-obsidian-secondary truncate mt-0.5">
+                <p className="text-xs text-white/50 truncate mt-0.5">
                   {playlist.trackCount || playlist.tracks?.length || 0} tracks &bull; {playlist.isPublic ? 'Public' : 'Private'}
                 </p>
               </div>

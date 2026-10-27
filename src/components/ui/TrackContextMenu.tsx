@@ -83,14 +83,14 @@ export const TrackContextMenu: React.FC<TrackContextMenuProps> = ({ track, class
             e.stopPropagation();
             setIsOpen(!isOpen);
           }}
-          className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-obsidian-secondary hover:text-obsidian-primary transition-colors backdrop-blur-sm shadow-md"
+          className="w-7 h-7 rounded-full bg-black/40 hover:bg-black/70 text-white/70 hover:text-white transition-all backdrop-blur-md border border-white/10 flex items-center justify-center shadow-md"
           title="More options"
         >
-          <MoreVertical className="w-4 h-4" />
+          <MoreVertical className="w-3.5 h-3.5" />
         </button>
 
         {isOpen && (
-          <div className="absolute right-0 bottom-full mb-1.5 sm:bottom-auto sm:top-full sm:mt-1.5 w-48 bg-obsidian-card border border-obsidian-border rounded-xl shadow-2xl p-1 z-50 animate-fadeIn text-xs">
+          <div className="absolute right-0 bottom-full mb-1.5 sm:bottom-auto sm:top-full sm:mt-1.5 w-48 glass-panel border border-white/10 rounded-2xl shadow-2xl p-1.5 z-50 animate-fadeIn text-xs backdrop-blur-2xl">
             {actionNotice ? (
               <div className="p-2.5 text-center text-emerald-400 font-medium flex items-center justify-center gap-1.5">
                 <Check className="w-3.5 h-3.5" />
@@ -101,7 +101,7 @@ export const TrackContextMenu: React.FC<TrackContextMenuProps> = ({ track, class
                 <button
                   type="button"
                   onClick={handlePlayNext}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover transition-colors text-left"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors text-left"
                 >
                   <PlaySquare className="w-3.5 h-3.5 text-obsidian-accent" />
                   <span>Play Next</span>
@@ -110,7 +110,7 @@ export const TrackContextMenu: React.FC<TrackContextMenuProps> = ({ track, class
                 <button
                   type="button"
                   onClick={handleAddToQueue}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover transition-colors text-left"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors text-left"
                 >
                   <ListPlus className="w-3.5 h-3.5" />
                   <span>Add to Queue</span>
@@ -119,18 +119,18 @@ export const TrackContextMenu: React.FC<TrackContextMenuProps> = ({ track, class
                 <button
                   type="button"
                   onClick={handleToggleLike}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover transition-colors text-left"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors text-left"
                 >
                   <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-obsidian-accent text-obsidian-accent' : ''}`} />
                   <span>{isLiked ? 'Liked Song' : 'Add to Favorites'}</span>
                 </button>
 
-                <div className="my-1 border-t border-obsidian-border/50" />
+                <div className="my-1 border-t border-white/[0.06]" />
 
                 <button
                   type="button"
                   onClick={handleOpenPlaylistModal}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover transition-colors text-left"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10 transition-colors text-left"
                 >
                   <FolderPlus className="w-3.5 h-3.5 text-blue-400" />
                   <span>Add to Playlist...</span>

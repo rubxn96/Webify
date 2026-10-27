@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { TrackCard } from './TrackCard';
 import { Track } from '@/types';
-import { Sparkles, Compass, ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface CuratedRailProps {
   title: string;
@@ -16,7 +16,6 @@ export const CuratedRail: React.FC<CuratedRailProps> = ({
   title,
   subtitle,
   tracks,
-  isVectorDiscovery,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   if (tracks.length === 0) return null;
@@ -25,35 +24,31 @@ export const CuratedRail: React.FC<CuratedRailProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            {isVectorDiscovery && (
-              <Compass className="w-4 h-4 text-obsidian-accent animate-spin-slow" />
+      {(title || tracks.length > 12) && (
+        <div className="flex items-center justify-between">
+          <div>
+            {title && (
+              <h3 className="text-xl font-bold tracking-tight text-white">
+                {title}
+              </h3>
             )}
-            <h3 className="text-lg font-bold tracking-tightest text-obsidian-primary">
-              {title}
-            </h3>
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-obsidian-card border border-obsidian-border text-obsidian-secondary">
-              {tracks.length} Songs
-            </span>
+            {subtitle && (
+              <p className="text-xs text-white/50 mt-0.5">{subtitle}</p>
+            )}
           </div>
-          {subtitle && (
-            <p className="text-xs text-obsidian-secondary mt-0.5">{subtitle}</p>
+
+          {tracks.length > 12 && (
+            <button
+              type="button"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="glass-pill flex items-center gap-1.5 text-xs font-medium text-white/80 hover:text-white px-3 py-1.5 rounded-full transition-all"
+            >
+              <span>{isExpanded ? 'Show Less' : `Show All (${tracks.length})`}</span>
+              {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
           )}
         </div>
-
-        {tracks.length > 12 && (
-          <button
-            type="button"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-1 text-xs font-semibold text-obsidian-secondary hover:text-obsidian-primary px-2.5 py-1 rounded-lg bg-obsidian-card border border-obsidian-border transition-colors"
-          >
-            <span>{isExpanded ? 'Show Less' : `Show All (${tracks.length})`}</span>
-            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
-        )}
-      </div>
+      )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {displayTracks.map((track) => (

@@ -17,7 +17,7 @@ export const MobileNavBar: React.FC = () => {
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 h-14 bg-obsidian-sidebar/95 backdrop-blur-xl border-t border-obsidian-border z-40 flex items-center justify-around px-2 select-none shadow-2xl">
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 h-14 glass-panel border-t border-white/[0.08] z-40 flex items-center justify-around px-2 select-none shadow-2xl backdrop-blur-3xl">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
@@ -26,10 +26,10 @@ export const MobileNavBar: React.FC = () => {
           <Link
             key={tab.href}
             href={tab.href}
-            className={`flex flex-col items-center justify-center w-14 py-1 rounded-lg transition-colors ${
+            className={`flex flex-col items-center justify-center w-14 py-1 rounded-xl transition-all ${
               isActive
                 ? 'text-obsidian-accent font-semibold'
-                : 'text-obsidian-secondary hover:text-obsidian-primary'
+                : 'text-white/50 hover:text-white'
             }`}
           >
             <Icon className="w-4 h-4 mb-0.5" />

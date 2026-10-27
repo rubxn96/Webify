@@ -11,39 +11,41 @@ export const EqualizerGraph: React.FC = () => {
   const presets: EQPresetName[] = ['Flat', 'Bass Boost', 'Vocal', 'Acoustic', 'Electronic', 'Custom'];
 
   return (
-    <div className="bg-obsidian-card border border-obsidian-border rounded-xl p-6 space-y-6">
+    <div className="glass-panel border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl select-none">
       {/* Header & Master Toggle */}
-      <div className="flex items-center justify-between pb-4 border-b border-obsidian-border">
-        <div className="flex items-center gap-2.5">
-          <Sliders className="w-5 h-5 text-obsidian-accent" />
+      <div className="flex items-center justify-between pb-5 border-b border-white/[0.06]">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl glass-pill text-obsidian-accent">
+            <Sliders className="w-5 h-5" />
+          </div>
           <div>
-            <h3 className="text-base font-semibold tracking-tightest text-obsidian-primary">
+            <h3 className="text-base font-bold tracking-tight text-white">
               10-Band DSP Graphic Equalizer
             </h3>
-            <p className="text-xs text-obsidian-secondary">
+            <p className="text-xs text-white/50">
               Real-time BiquadFilter frequency shaping with ±12dB gain range.
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-obsidian-secondary">
+          <span className="text-xs font-mono text-white/50">
             {userSettings.eqEnabled ? 'ACTIVE' : 'BYPASS'}
           </span>
           <button
             onClick={() => updateSettings({ eqEnabled: !userSettings.eqEnabled })}
             className={`w-12 h-6 rounded-full transition-colors p-1 flex items-center ${
-              userSettings.eqEnabled ? 'bg-obsidian-accent justify-end' : 'bg-obsidian-hover justify-start'
+              userSettings.eqEnabled ? 'bg-obsidian-accent justify-end' : 'bg-white/10 justify-start'
             }`}
           >
-            <div className="w-4 h-4 rounded-full bg-obsidian-primary shadow-sm" />
+            <div className="w-4 h-4 rounded-full bg-white shadow-md" />
           </button>
         </div>
       </div>
 
       {/* Preset Selector */}
       <div className="space-y-2">
-        <label className="text-xs font-mono text-obsidian-secondary uppercase tracking-wider">
+        <label className="text-xs font-mono text-white/40 uppercase tracking-wider">
           Tuning Presets
         </label>
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -53,10 +55,10 @@ export const EqualizerGraph: React.FC = () => {
               <button
                 key={preset}
                 onClick={() => setEqPreset(preset)}
-                className={`px-3 py-2 rounded-lg text-xs font-medium border transition-all text-center flex items-center justify-center gap-1.5 ${
+                className={`px-3 py-2 rounded-xl text-xs font-medium transition-all text-center flex items-center justify-center gap-1.5 ${
                   isSelected
-                    ? 'bg-obsidian-accent text-obsidian-primary border-obsidian-accent shadow-sm'
-                    : 'bg-obsidian-sidebar border-obsidian-border text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover'
+                    ? 'bg-white text-black font-semibold shadow-lg'
+                    : 'glass-pill text-white/60 hover:text-white'
                 }`}
               >
                 {isSelected && <Check className="w-3 h-3 flex-shrink-0" />}
@@ -69,14 +71,14 @@ export const EqualizerGraph: React.FC = () => {
 
       {/* Multi-Band Graphic EQ Sliders */}
       <div className={`space-y-4 transition-opacity ${userSettings.eqEnabled ? 'opacity-100' : 'opacity-40 pointer-events-none'}`}>
-        <div className="flex justify-between items-center text-xs font-mono text-obsidian-secondary px-1">
+        <div className="flex justify-between items-center text-xs font-mono text-white/40 px-1">
           <span>+12 dB</span>
           <span className="text-[10px]">0 dB (BASELINE)</span>
           <span>-12 dB</span>
         </div>
 
         {/* Vertical Equalizer Sliders Container */}
-        <div className="bg-obsidian-sidebar/60 border border-obsidian-border rounded-xl p-4 sm:p-6 grid grid-cols-5 sm:grid-cols-10 gap-3 sm:gap-2">
+        <div className="glass-card border border-white/[0.06] rounded-2xl p-4 sm:p-6 grid grid-cols-5 sm:grid-cols-10 gap-3 sm:gap-2">
           {EQ_BAND_LABELS.map((label, index) => {
             const gain = userSettings.eqBands[index] ?? 0;
 

@@ -61,36 +61,43 @@ export const FullscreenPlayerModal: React.FC = () => {
   });
 
   return (
-    <div className="fixed inset-0 z-50 bg-obsidian-canvas/98 backdrop-blur-2xl flex flex-col justify-between p-4 sm:p-6 md:p-10 overflow-hidden animate-fadeIn">
+    <div className="fixed inset-0 z-50 bg-[#0A0A0C]/95 backdrop-blur-3xl flex flex-col justify-between p-4 sm:p-6 md:p-10 overflow-hidden animate-fadeIn select-none">
+      {/* Liquid Ambient Blurred Backdrops */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden -z-10">
+        <div className="absolute -top-[20%] -left-[10%] w-[55vw] h-[55vw] rounded-full bg-obsidian-accent/15 blur-[140px] animate-liquidFloat" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[55vw] h-[55vw] rounded-full bg-indigo-600/15 blur-[140px] animate-liquidFloat" style={{ animationDelay: '4s' }} />
+        <div className="absolute top-[30%] left-[30%] w-[40vw] h-[40vw] rounded-full bg-rose-500/10 blur-[130px] animate-liquidFloat" style={{ animationDelay: '8s' }} />
+      </div>
+
       {/* Top Header Bar */}
-      <div className="flex items-center justify-between max-w-5xl mx-auto w-full gap-2">
+      <div className="flex items-center justify-between max-w-5xl mx-auto w-full gap-2 relative z-10">
         <button
           onClick={() => setIsFullPlayerOpen(false)}
-          className="p-2 rounded-full bg-obsidian-card border border-obsidian-border text-obsidian-secondary hover:text-obsidian-primary transition-colors flex items-center gap-1.5"
+          className="p-2.5 rounded-full glass-pill text-white/70 hover:text-white transition-all flex items-center gap-1.5"
           title="Minimize Player"
         >
           <ChevronDown className="w-4 h-4" />
           <span className="text-xs hidden sm:inline">Minimize</span>
         </button>
 
-        {/* Tab switch */}
-        <div className="flex items-center bg-obsidian-card border border-obsidian-border rounded-full p-1 text-xs">
+        {/* Apple Segmented Glass Pill Switcher */}
+        <div className="flex items-center glass-pill rounded-full p-1 text-xs">
           <button
             onClick={() => setActiveTab('visualizer')}
-            className={`px-3 py-1 rounded-full transition-all ${
+            className={`px-3.5 py-1.5 rounded-full transition-all ${
               activeTab === 'visualizer'
-                ? 'bg-obsidian-hover text-obsidian-primary font-medium shadow-sm'
-                : 'text-obsidian-secondary hover:text-obsidian-primary'
+                ? 'bg-white/20 text-white font-semibold shadow-sm'
+                : 'text-white/60 hover:text-white'
             }`}
           >
-            Artwork & DSP
+            Now Playing
           </button>
           <button
             onClick={() => setActiveTab('lyrics')}
-            className={`px-3 py-1 rounded-full transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
               activeTab === 'lyrics'
-                ? 'bg-obsidian-hover text-obsidian-primary font-medium shadow-sm'
-                : 'text-obsidian-secondary hover:text-obsidian-primary'
+                ? 'bg-white/20 text-white font-semibold shadow-sm'
+                : 'text-white/60 hover:text-white'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-obsidian-accent" />
@@ -98,10 +105,10 @@ export const FullscreenPlayerModal: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('queue')}
-            className={`px-3 py-1 rounded-full transition-all flex items-center gap-1.5 ${
+            className={`px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 ${
               activeTab === 'queue'
-                ? 'bg-obsidian-hover text-obsidian-primary font-medium shadow-sm'
-                : 'text-obsidian-secondary hover:text-obsidian-primary'
+                ? 'bg-white/20 text-white font-semibold shadow-sm'
+                : 'text-white/60 hover:text-white'
             }`}
           >
             <ListMusic className="w-3.5 h-3.5 text-obsidian-accent" />
@@ -111,18 +118,18 @@ export const FullscreenPlayerModal: React.FC = () => {
 
         <button
           onClick={() => setIsFullPlayerOpen(false)}
-          className="p-2 rounded-full bg-obsidian-card border border-obsidian-border text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover transition-colors"
+          className="p-2.5 rounded-full glass-pill text-white/70 hover:text-white transition-all"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       {/* Main Center Area */}
-      <div className="flex-1 max-w-4xl mx-auto w-full flex items-center justify-center my-3 sm:my-6 overflow-hidden">
+      <div className="flex-1 max-w-4xl mx-auto w-full flex items-center justify-center my-3 sm:my-6 overflow-hidden relative z-10">
         {activeTab === 'visualizer' ? (
           <div className="flex flex-col items-center max-w-md w-full">
-            {/* Artwork Card */}
-            <div className="relative w-52 h-52 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden border border-obsidian-border shadow-2xl group bg-obsidian-card">
+            {/* Artwork Card with Ambient Glow */}
+            <div className="relative w-56 h-56 sm:w-76 sm:h-76 md:w-88 md:h-88 rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-black/90 group bg-white/[0.04]">
               <Image
                 src={currentTrack.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600'}
                 alt={currentTrack.title}
@@ -132,14 +139,14 @@ export const FullscreenPlayerModal: React.FC = () => {
             </div>
 
             {/* Real-time Web Audio Visualizer Bars */}
-            <div className="flex items-end justify-center gap-1.5 h-10 sm:h-12 w-full mt-4 sm:mt-6 px-4">
+            <div className="flex items-end justify-center gap-1.5 h-10 sm:h-12 w-full mt-6 px-4">
               {Array.from({ length: 24 }).map((_, i) => {
                 const val = visualizerData[i] || 10;
                 const heightPercent = Math.max(8, (val / 255) * 100);
                 return (
                   <div
                     key={i}
-                    className="w-1.5 rounded-full bg-gradient-to-t from-obsidian-accent to-rose-400 transition-all duration-75"
+                    className="w-1.5 rounded-full bg-gradient-to-t from-obsidian-accent via-rose-400 to-white/90 transition-all duration-75 shadow-[0_0_6px_rgba(250,45,72,0.4)]"
                     style={{ height: `${heightPercent}%` }}
                   />
                 );
@@ -147,11 +154,11 @@ export const FullscreenPlayerModal: React.FC = () => {
             </div>
           </div>
         ) : activeTab === 'lyrics' ? (
-          /* Lyrics Mode */
-          <div className="w-full max-w-2xl h-[320px] sm:h-[420px] overflow-y-auto space-y-6 text-center px-4 py-8 scroll-smooth scrollbar-thin">
+          /* Apple Music Style Synchronized Lyrics Mode */
+          <div className="w-full max-w-2xl h-[340px] sm:h-[440px] overflow-y-auto space-y-7 text-center px-4 py-8 scroll-smooth scrollbar-thin">
             {parsedLyrics.length === 0 ? (
-              <div className="h-full flex items-center justify-center text-obsidian-secondary text-sm">
-                No synchronized lyrics available for this song.
+              <div className="h-full flex items-center justify-center text-white/50 text-sm">
+                No synchronized lyrics available for this track.
               </div>
             ) : (
               parsedLyrics.map((line, idx) => {
@@ -160,10 +167,10 @@ export const FullscreenPlayerModal: React.FC = () => {
                   <div
                     key={idx}
                     onClick={() => seek(line.time)}
-                    className={`cursor-pointer transition-all duration-300 font-sans tracking-tight ${
+                    className={`cursor-pointer transition-all duration-300 font-bold tracking-tight select-none ${
                       isActive
-                        ? 'text-obsidian-primary font-bold text-xl sm:text-2xl md:text-3xl scale-105'
-                        : 'text-obsidian-secondary/40 text-base sm:text-lg hover:text-obsidian-secondary'
+                        ? 'text-white text-2xl sm:text-3xl md:text-4xl scale-105 drop-shadow-[0_0_24px_rgba(255,255,255,0.4)]'
+                        : 'text-white/25 text-lg sm:text-xl md:text-2xl hover:text-white/60'
                     }`}
                   >
                     {line.text}
@@ -174,9 +181,9 @@ export const FullscreenPlayerModal: React.FC = () => {
           </div>
         ) : (
           /* Dynamic Queue Mode */
-          <div className="w-full max-w-2xl h-[320px] sm:h-[420px] overflow-y-auto space-y-2 text-left px-2 sm:px-4 py-4 scroll-smooth scrollbar-thin bg-obsidian-card/40 border border-obsidian-border/50 rounded-2xl">
-            <div className="flex items-center justify-between pb-2 border-b border-obsidian-border text-xs text-obsidian-secondary font-mono">
-              <span>Next In Queue (Dynamic Radio)</span>
+          <div className="w-full max-w-2xl h-[340px] sm:h-[440px] overflow-y-auto space-y-2 text-left px-3 sm:px-5 py-4 scroll-smooth scrollbar-thin glass-card rounded-2xl border border-white/10">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08] text-xs text-white/60 font-mono">
+              <span>Playing Next</span>
               <span className="text-emerald-400 font-semibold">{queue.length} Tracks</span>
             </div>
 
@@ -185,17 +192,17 @@ export const FullscreenPlayerModal: React.FC = () => {
               return (
                 <div
                   key={`${t.id}-${idx}`}
-                  className={`flex items-center justify-between p-2 rounded-xl transition-all ${
+                  className={`flex items-center justify-between p-2.5 rounded-xl transition-all ${
                     isCurrent
-                      ? 'bg-obsidian-card border border-obsidian-border text-obsidian-primary shadow-sm'
-                      : 'hover:bg-obsidian-hover/60 text-obsidian-secondary hover:text-obsidian-primary'
+                      ? 'bg-white/10 text-white font-semibold shadow-sm'
+                      : 'hover:bg-white/[0.05] text-white/60 hover:text-white'
                   }`}
                 >
                   <div
                     onClick={() => playTrack(t)}
                     className="flex items-center gap-3 cursor-pointer flex-1 truncate mr-2"
                   >
-                    <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-obsidian-sidebar flex-shrink-0">
+                    <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-white/[0.04] flex-shrink-0 shadow-sm">
                       <Image
                         src={t.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'}
                         alt={t.title}
@@ -206,17 +213,17 @@ export const FullscreenPlayerModal: React.FC = () => {
                     <div className="truncate flex-1">
                       <div
                         className={`text-xs truncate ${
-                          isCurrent ? 'font-bold text-obsidian-accent' : 'font-medium'
+                          isCurrent ? 'font-bold text-obsidian-accent' : 'font-medium text-white'
                         }`}
                       >
                         {t.title}
                       </div>
-                      <div className="text-[11px] text-obsidian-secondary truncate">{t.artist}</div>
+                      <div className="text-[11px] text-white/50 truncate mt-0.5">{t.artist}</div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-obsidian-secondary">
+                    <span className="text-[10px] font-mono text-white/40 tabular-nums">
                       {formatTime(t.duration)}
                     </span>
                     <button
@@ -225,8 +232,8 @@ export const FullscreenPlayerModal: React.FC = () => {
                         e.stopPropagation();
                         removeFromQueue(idx);
                       }}
-                      title="Remove and auto-fill with another similar song"
-                      className="p-1.5 rounded-lg text-obsidian-secondary hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                      title="Remove from queue"
+                      className="p-1.5 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -241,21 +248,21 @@ export const FullscreenPlayerModal: React.FC = () => {
       </div>
 
       {/* Bottom Controls Area */}
-      <div className="max-w-xl mx-auto w-full space-y-3 sm:space-y-4">
+      <div className="max-w-xl mx-auto w-full space-y-4 relative z-10">
         {/* Track Details & Like */}
         <div className="flex items-center justify-between">
           <div className="truncate pr-4">
-            <h2 className="text-lg sm:text-2xl font-bold tracking-tightest text-obsidian-primary truncate">
+            <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight text-white truncate">
               {currentTrack.title}
             </h2>
-            <p className="text-xs sm:text-sm text-obsidian-secondary truncate mt-0.5">
+            <p className="text-sm sm:text-base text-white/60 truncate mt-0.5 font-normal">
               {currentTrack.artist}
             </p>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={() => toggleLike(currentTrack)}
-              className="p-2 text-obsidian-secondary hover:text-obsidian-primary transition-transform active:scale-125 flex-shrink-0"
+              className="p-2.5 rounded-full glass-pill text-white/60 hover:text-white transition-all active:scale-125 flex-shrink-0"
             >
               <Heart
                 className={`w-5 h-5 sm:w-6 sm:h-6 ${
@@ -275,14 +282,14 @@ export const FullscreenPlayerModal: React.FC = () => {
               const ratio = (e.clientX - rect.left) / rect.width;
               seek(ratio * duration);
             }}
-            className="h-2 w-full bg-obsidian-card border border-obsidian-border rounded-full cursor-pointer relative overflow-hidden"
+            className="h-2 w-full bg-white/[0.08] hover:h-2.5 rounded-full cursor-pointer relative overflow-hidden transition-all"
           >
             <div
-              className="h-full bg-obsidian-accent rounded-full"
+              className="h-full bg-obsidian-accent rounded-full shadow-[0_0_8px_rgba(250,45,72,0.6)]"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <div className="flex justify-between text-[11px] font-mono text-obsidian-secondary mt-1.5">
+          <div className="flex justify-between text-[11px] font-mono text-white/40 mt-1.5">
             <span style={{ fontVariantNumeric: 'tabular-nums' }}>
               {formatTime(currentTime)}
             </span>
@@ -297,37 +304,37 @@ export const FullscreenPlayerModal: React.FC = () => {
           <Link
             href="/settings"
             onClick={() => setIsFullPlayerOpen(false)}
-            className="p-2 text-obsidian-secondary hover:text-obsidian-primary transition-colors"
+            className="p-2.5 rounded-full glass-pill text-white/60 hover:text-white transition-colors"
             title="DSP Equalizer"
           >
             <Sliders className="w-5 h-5" />
           </Link>
 
-          <div className="flex items-center gap-5 sm:gap-6">
+          <div className="flex items-center gap-6 sm:gap-8">
             <button
               onClick={prevTrack}
-              className="text-obsidian-secondary hover:text-obsidian-primary transition-colors p-2"
+              className="text-white/70 hover:text-white transition-colors p-2"
             >
-              <SkipBack className="w-5 h-5 sm:w-6 sm:h-6" />
+              <SkipBack className="w-6 h-6 sm:w-7 sm:h-7" />
             </button>
 
             <button
               onClick={togglePlay}
-              className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-obsidian-primary text-obsidian-canvas flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-2xl"
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 sm:w-6 sm:h-6 fill-obsidian-canvas" />
+                <Pause className="w-6 h-6 sm:w-7 sm:h-7 fill-black" />
               ) : (
-                <Play className="w-5 h-5 sm:w-6 sm:h-6 fill-obsidian-canvas ml-1" />
+                <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-black ml-1" />
               )}
             </button>
 
             <button
               onClick={nextTrack}
-              title="Next Track (Similar Song)"
-              className="text-obsidian-secondary hover:text-obsidian-primary transition-colors p-2"
+              title="Next Track"
+              className="text-white/70 hover:text-white transition-colors p-2"
             >
-              <SkipForward className="w-5 h-5 sm:w-6 sm:h-6" />
+              <SkipForward className="w-6 h-6 sm:w-7 sm:h-7" />
             </button>
           </div>
 
@@ -335,7 +342,7 @@ export const FullscreenPlayerModal: React.FC = () => {
           <div className="hidden sm:flex items-center gap-2">
             <button
               onClick={toggleMute}
-              className="text-obsidian-secondary hover:text-obsidian-primary"
+              className="text-white/60 hover:text-white"
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="w-4 h-4" />
@@ -350,7 +357,7 @@ export const FullscreenPlayerModal: React.FC = () => {
               step="0.01"
               value={isMuted ? 0 : volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
-              className="w-16 h-1 accent-obsidian-accent bg-obsidian-card rounded cursor-pointer"
+              className="w-18 h-1 accent-obsidian-accent bg-white/20 rounded-full cursor-pointer"
             />
           </div>
 

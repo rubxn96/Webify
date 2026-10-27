@@ -109,13 +109,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
   };
 
   return (
-    <header className="h-16 border-b border-obsidian-border bg-obsidian-canvas/90 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between sticky top-0 z-30 gap-2 sm:gap-4">
+    <header className="h-16 border-b border-white/[0.06] bg-obsidian-canvas/75 backdrop-blur-2xl px-3 sm:px-8 flex items-center justify-between sticky top-0 z-30 gap-2 sm:gap-4 select-none">
       {/* Mobile Hamburger Menu Toggle */}
       <div className="flex items-center gap-2">
         {onOpenMobileSidebar && (
           <button
             onClick={onOpenMobileSidebar}
-            className="lg:hidden p-2 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover transition-colors"
+            className="lg:hidden p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/[0.06] transition-colors"
             title="Open Menu & Playlists"
           >
             <Menu className="w-5 h-5" />
@@ -124,8 +124,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
 
         {/* Mobile Brand Icon */}
         <Link href="/" className="lg:hidden flex items-center gap-1.5 flex-shrink-0">
-          <div className="w-7 h-7 rounded-lg bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center">
-            <span className="font-extrabold text-xs">O</span>
+          <div className="w-7 h-7 rounded-xl bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center font-extrabold text-xs">
+            O
           </div>
         </Link>
       </div>
@@ -136,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
           {isSearching ? (
             <Loader2 className="w-4 h-4 text-obsidian-accent animate-spin absolute left-3.5 top-2.5" />
           ) : (
-            <Search className="w-4 h-4 text-obsidian-secondary absolute left-3.5 top-2.5" />
+            <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-2.5" />
           )}
           <input
             type="text"
@@ -145,16 +145,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
             onFocus={() => {
               if (previewResults.length > 0) setIsDropdownOpen(true);
             }}
-            placeholder="Search YouTube songs, paste video URL or catalog..."
-            className="w-full bg-obsidian-sidebar border border-obsidian-border focus:border-obsidian-accent rounded-full pl-9 pr-3 sm:pr-4 py-1.5 text-xs text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none transition-all"
+            placeholder="Search songs, artists, or paste YouTube link..."
+            className="w-full glass-pill rounded-full pl-9 pr-3 sm:pr-4 py-1.5 text-xs text-white placeholder:text-white/40 outline-none focus:border-white/30 transition-all"
           />
         </form>
 
         {/* Live Search Results Dropdown */}
         {isDropdownOpen && previewResults.length > 0 && (
-          <div className="absolute top-11 inset-x-0 bg-obsidian-card border border-obsidian-border rounded-xl shadow-2xl p-2 z-50 space-y-1 animate-fadeIn">
-            <div className="px-3 py-1 flex items-center justify-between text-[10px] font-mono uppercase text-obsidian-secondary border-b border-obsidian-border/50 pb-1.5">
-              <span>Instant YouTube & Catalog Matches</span>
+          <div className="absolute top-11 inset-x-0 glass-panel rounded-2xl shadow-2xl p-2 z-50 space-y-1 animate-fadeIn border border-white/10">
+            <div className="px-3 py-1 flex items-center justify-between text-[10px] font-mono uppercase text-white/40 border-b border-white/[0.06] pb-1.5">
+              <span>Instant Matches</span>
               <span>{previewResults.length} found</span>
             </div>
 
@@ -163,10 +163,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
                 <div
                   key={track.id}
                   onClick={() => handleSelectTrack(track)}
-                  className="group flex items-center justify-between p-2 rounded-lg hover:bg-obsidian-hover cursor-pointer transition-colors"
+                  className="group flex items-center justify-between p-2 rounded-xl hover:bg-white/[0.08] cursor-pointer transition-colors"
                 >
                   <div className="flex items-center gap-2.5 truncate flex-1 mr-2">
-                    <div className="relative w-8 h-8 rounded bg-obsidian-sidebar overflow-hidden flex-shrink-0">
+                    <div className="relative w-9 h-9 rounded-lg bg-white/[0.04] overflow-hidden flex-shrink-0 shadow-sm">
                       <Image
                         src={track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'}
                         alt={track.title}
@@ -174,31 +174,31 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
                         className="object-cover"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                        <Play className="w-3 h-3 text-obsidian-primary fill-obsidian-primary" />
+                        <Play className="w-3.5 h-3.5 text-white fill-white" />
                       </div>
                     </div>
 
                     <div className="truncate">
-                      <div className="text-xs font-medium text-obsidian-primary group-hover:text-obsidian-accent truncate">
+                      <div className="text-xs font-semibold text-white/95 group-hover:text-obsidian-accent truncate">
                         {track.title}
                       </div>
-                      <div className="text-[11px] text-obsidian-secondary truncate">
+                      <div className="text-[11px] text-white/50 truncate">
                         {track.artist}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-[10px] font-mono text-obsidian-secondary hidden sm:inline">
+                    <span className="text-[10px] font-mono text-white/40 tabular-nums hidden sm:inline">
                       {formatTime(track.duration)}
                     </span>
                     {track.source === 'youtube' ? (
-                      <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-[9px] font-mono text-red-400">
+                      <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-[9px] font-mono text-red-400">
                         <Youtube className="w-2.5 h-2.5 fill-red-400" />
                         YouTube
                       </span>
                     ) : (
-                      <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-obsidian-sidebar border border-obsidian-border text-[9px] font-mono text-obsidian-secondary">
+                      <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/10 text-[9px] font-mono text-white/60">
                         <Disc className="w-2.5 h-2.5 text-obsidian-accent" />
                         Catalog
                       </span>
@@ -213,7 +213,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
                 setIsDropdownOpen(false);
                 router.push(`/search?q=${encodeURIComponent(query.trim())}`);
               }}
-              className="p-2 text-center text-xs text-obsidian-accent hover:underline cursor-pointer border-t border-obsidian-border/50 font-medium"
+              className="p-2 text-center text-xs text-obsidian-accent hover:underline cursor-pointer border-t border-white/[0.06] font-medium"
             >
               See all results for &ldquo;{query}&rdquo; &rarr;
             </div>
@@ -225,29 +225,29 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
       <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
         <Link
           href="/favorites"
-          className="p-2 text-obsidian-secondary hover:text-obsidian-primary transition-colors flex items-center gap-1.5 text-xs font-medium"
+          className="p-2 text-white/60 hover:text-white transition-colors flex items-center gap-1.5 text-xs font-medium"
           title="Favorites / Liked Songs"
         >
-          <Heart className="w-4 h-4 text-obsidian-accent" />
+          <Heart className="w-4 h-4 text-obsidian-accent fill-obsidian-accent" />
           <span className="hidden sm:inline">Favorites</span>
         </Link>
 
         {user ? (
-          <div className="flex items-center gap-2 pl-2 border-l border-obsidian-border">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-obsidian-hover border border-obsidian-border flex items-center justify-center text-xs font-mono font-bold text-obsidian-primary">
+          <div className="flex items-center gap-2 pl-2 border-l border-white/[0.08]">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/[0.08] border border-white/10 flex items-center justify-center text-xs font-mono font-bold text-white">
               {user.username.slice(0, 2).toUpperCase()}
             </div>
             <div className="hidden md:block text-left">
-              <div className="text-xs font-semibold text-obsidian-primary tracking-tightest">
+              <div className="text-xs font-semibold text-white tracking-tight">
                 {user.username}
               </div>
-              <div className="text-[10px] text-obsidian-secondary">Obsidian Hi-Fi</div>
+              <div className="text-[10px] text-white/40">Obsidian Hi-Fi</div>
             </div>
           </div>
         ) : (
           <button
             onClick={() => setIsAuthOpen(true)}
-            className="px-3 sm:px-4 py-1.5 rounded-full bg-obsidian-card hover:bg-obsidian-hover border border-obsidian-border text-obsidian-primary text-xs font-medium transition-all"
+            className="px-4 py-1.5 rounded-full glass-pill text-white text-xs font-medium transition-all"
           >
             Sign In
           </button>

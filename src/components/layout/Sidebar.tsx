@@ -71,28 +71,34 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
     }
   };
 
-  const navLinks = [
-    { label: 'Home', href: '/', icon: Home },
+  const discoverLinks = [
+    { label: 'Listen Now', href: '/', icon: Home },
     { label: 'Search', href: '/search', icon: Search },
+  ];
+
+  const libraryLinks = [
     { label: 'Your Library', href: '/library', icon: Library },
     { label: 'Import Playlist', href: '/import', icon: Download },
+  ];
+
+  const dspLinks = [
     { label: 'DSP Equalizer', href: '/settings', icon: Sliders },
   ];
 
   const sidebarContent = (
-    <div className="flex flex-col h-full justify-between bg-obsidian-sidebar select-none">
+    <div className="flex flex-col h-full justify-between glass-panel select-none border-r border-white/[0.06]">
       <div className="flex flex-col h-full overflow-hidden">
         {/* Brand / Logo & Mobile Close */}
         <div className="p-5 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center shadow-sm">
               <Disc3 className="w-5 h-5 animate-spin-slow" />
             </div>
             <div>
-              <span className="text-base font-extrabold tracking-tightest text-obsidian-primary block">
+              <span className="text-sm font-extrabold tracking-tight text-white block">
                 OBSIDIAN
               </span>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-obsidian-secondary block -mt-1">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 block -mt-1">
                 Hi-Fi Audio
               </span>
             </div>
@@ -102,133 +108,199 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
           {onCloseMobile && (
             <button
               onClick={onCloseMobile}
-              className="lg:hidden p-1.5 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover"
+              className="lg:hidden p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10"
             >
               <X className="w-5 h-5" />
             </button>
           )}
         </div>
 
-        {/* Primary Navigation */}
-        <nav className="px-3 space-y-1">
-          {navLinks.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => onCloseMobile && onCloseMobile()}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium tracking-tightest transition-all ${
-                  isActive
-                    ? 'bg-obsidian-card text-obsidian-primary border border-obsidian-border font-semibold shadow-sm'
-                    : 'text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover/50'
-                }`}
-              >
-                <Icon
-                  className={`w-4 h-4 ${
-                    isActive ? 'text-obsidian-accent' : 'text-obsidian-secondary'
-                  }`}
-                />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Pinned Liked Songs / Favorites Folder */}
-        <div className="px-3 pt-2">
-          <Link
-            href="/favorites"
-            onClick={() => onCloseMobile && onCloseMobile()}
-            className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold tracking-tightest transition-all ${
-              pathname === '/favorites'
-                ? 'bg-gradient-to-r from-rose-950/60 to-obsidian-card text-obsidian-primary border border-rose-500/30 shadow-md'
-                : 'text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover/50'
-            }`}
-          >
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-sm flex-shrink-0">
-              <Heart className="w-3.5 h-3.5 fill-white" />
+        {/* Navigation Categories */}
+        <div className="flex-1 overflow-y-auto px-3 space-y-5 scrollbar-thin">
+          {/* Section: Discover */}
+          <div className="space-y-1">
+            <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+              Discover
             </div>
-            <div className="truncate flex-1">
-              <span>Liked Songs</span>
-            </div>
-            {likedTrackIds.size > 0 && (
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-full bg-rose-500/15 text-rose-400 font-bold border border-rose-500/20">
-                {likedTrackIds.size}
-              </span>
-            )}
-          </Link>
-        </div>
+            {discoverLinks.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
 
-        {/* Divider */}
-        <div className="mx-4 my-2 border-t border-obsidian-border" />
-
-        {/* Playlists Shelf */}
-        <div className="flex-1 overflow-y-auto px-3 space-y-2">
-          <div className="flex items-center justify-between px-2 text-[11px] font-mono uppercase tracking-wider text-obsidian-secondary font-semibold">
-            <span>Playlists</span>
-            <button
-              onClick={() => setIsCreating(true)}
-              className="p-1 rounded hover:bg-obsidian-hover text-obsidian-secondary hover:text-obsidian-primary transition-colors"
-              title="Create Playlist"
-            >
-              <Plus className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          {/* Quick Create Input */}
-          {isCreating && (
-            <form onSubmit={handleCreatePlaylist} className="px-2 py-1">
-              <input
-                type="text"
-                autoFocus
-                value={newPlaylistName}
-                onChange={(e) => setNewPlaylistName(e.target.value)}
-                placeholder="Playlist name..."
-                onBlur={() => !newPlaylistName && setIsCreating(false)}
-                className="w-full bg-obsidian-card border border-obsidian-accent rounded px-2.5 py-1 text-xs text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none"
-              />
-            </form>
-          )}
-
-          {/* User & Curated Playlists */}
-          <div className="space-y-0.5">
-            {playlists.map((playlist) => {
-              const isCurrentPlaylist = pathname === `/playlists/${playlist.id}`;
               return (
                 <Link
-                  key={playlist.id}
-                  href={`/playlists/${playlist.id}`}
+                  key={item.href}
+                  href={item.href}
                   onClick={() => onCloseMobile && onCloseMobile()}
-                  className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs truncate transition-all ${
-                    isCurrentPlaylist
-                      ? 'bg-obsidian-card text-obsidian-accent font-medium'
-                      : 'text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover/40'
+                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium tracking-tight transition-all ${
+                    isActive
+                      ? 'glass-pill bg-white/10 text-white font-semibold shadow-sm'
+                      : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
                   }`}
                 >
-                  <span className="truncate">{playlist.name}</span>
-                  {playlist.isPublic ? (
-                    <Globe className="w-3 h-3 text-obsidian-secondary/40 flex-shrink-0" />
-                  ) : (
-                    <Lock className="w-3 h-3 text-obsidian-secondary/40 flex-shrink-0" />
-                  )}
+                  <Icon
+                    className={`w-4 h-4 ${
+                      isActive ? 'text-obsidian-accent' : 'text-white/60'
+                    }`}
+                  />
+                  <span>{item.label}</span>
                 </Link>
               );
             })}
           </div>
+
+          {/* Section: Library */}
+          <div className="space-y-1">
+            <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+              Library
+            </div>
+
+            {/* Pinned Liked Songs / Favorites Folder */}
+            <Link
+              href="/favorites"
+              onClick={() => onCloseMobile && onCloseMobile()}
+              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold tracking-tight transition-all ${
+                pathname === '/favorites'
+                  ? 'glass-pill bg-white/10 text-white shadow-sm'
+                  : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
+              }`}
+            >
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-sm flex-shrink-0">
+                <Heart className="w-3.5 h-3.5 fill-white" />
+              </div>
+              <div className="truncate flex-1">
+                <span>Liked Songs</span>
+              </div>
+              {likedTrackIds.size > 0 && (
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 font-bold border border-rose-500/20 tabular-nums">
+                  {likedTrackIds.size}
+                </span>
+              )}
+            </Link>
+
+            {libraryLinks.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => onCloseMobile && onCloseMobile()}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium tracking-tight transition-all ${
+                    isActive
+                      ? 'glass-pill bg-white/10 text-white font-semibold shadow-sm'
+                      : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
+                  }`}
+                >
+                  <Icon
+                    className={`w-4 h-4 ${
+                      isActive ? 'text-obsidian-accent' : 'text-white/60'
+                    }`}
+                  />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Section: Studio DSP */}
+          <div className="space-y-1">
+            <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+              Studio DSP
+            </div>
+            {dspLinks.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => onCloseMobile && onCloseMobile()}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium tracking-tight transition-all ${
+                    isActive
+                      ? 'glass-pill bg-white/10 text-white font-semibold shadow-sm'
+                      : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
+                  }`}
+                >
+                  <Icon
+                    className={`w-4 h-4 ${
+                      isActive ? 'text-obsidian-accent' : 'text-white/60'
+                    }`}
+                  />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Section: Playlists */}
+          <div className="space-y-1 pt-1">
+            <div className="flex items-center justify-between px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+              <span>Playlists</span>
+              <button
+                onClick={() => setIsCreating(true)}
+                className="p-1 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                title="Create Playlist"
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Quick Create Input */}
+            {isCreating && (
+              <form onSubmit={handleCreatePlaylist} className="px-3 py-1">
+                <input
+                  type="text"
+                  autoFocus
+                  value={newPlaylistName}
+                  onChange={(e) => setNewPlaylistName(e.target.value)}
+                  placeholder="Playlist name..."
+                  onBlur={() => !newPlaylistName && setIsCreating(false)}
+                  className="w-full glass-card rounded-lg px-2.5 py-1 text-xs text-white placeholder:text-white/40 outline-none focus:border-obsidian-accent"
+                />
+              </form>
+            )}
+
+            {/* Playlists list */}
+            <div className="space-y-0.5">
+              {playlists.map((playlist) => {
+                const isCurrentPlaylist = pathname === `/playlists/${playlist.id}`;
+                return (
+                  <Link
+                    key={playlist.id}
+                    href={`/playlists/${playlist.id}`}
+                    onClick={() => onCloseMobile && onCloseMobile()}
+                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs truncate transition-all ${
+                      isCurrentPlaylist
+                        ? 'bg-white/10 text-obsidian-accent font-semibold'
+                        : 'text-white/60 hover:text-white hover:bg-white/[0.04]'
+                    }`}
+                  >
+                    <span className="truncate">{playlist.name}</span>
+                    {playlist.isPublic ? (
+                      <Globe className="w-3 h-3 text-white/30 flex-shrink-0" />
+                    ) : (
+                      <Lock className="w-3 h-3 text-white/30 flex-shrink-0" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* DSP Baseline Badge */}
-      <div className="p-4 border-t border-obsidian-border bg-obsidian-sidebar/60">
-        <div className="p-2.5 rounded-lg bg-obsidian-card/70 border border-obsidian-border text-[11px] font-mono text-obsidian-secondary">
+      {/* DSP Baseline Glass Badge */}
+      <div className="p-3 border-t border-white/[0.06]">
+        <div className="p-2.5 rounded-xl glass-card text-[11px] font-mono text-white/60">
           <div className="flex items-center justify-between">
-            <span className="text-obsidian-primary font-medium">DSP Engine</span>
-            <span className="text-emerald-400 font-semibold">Active</span>
+            <span className="text-white font-medium">DSP Normalizer</span>
+            <span className="text-emerald-400 font-semibold text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-400/10 border border-emerald-400/20">
+              Active
+            </span>
           </div>
-          <div className="text-[10px] text-obsidian-secondary mt-0.5">
+          <div className="text-[10px] text-white/40 mt-1">
             -14 LUFS &bull; 10-Band EQ
           </div>
         </div>

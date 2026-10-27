@@ -28,16 +28,18 @@ export const AudioSettings: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 select-none">
       {/* Audio Engine Configuration Card */}
-      <div className="bg-obsidian-card border border-obsidian-border rounded-xl p-6 space-y-6">
-        <div className="flex items-center gap-2.5 pb-4 border-b border-obsidian-border">
-          <Disc className="w-5 h-5 text-obsidian-accent" />
+      <div className="glass-panel border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+        <div className="flex items-center gap-3 pb-5 border-b border-white/[0.06]">
+          <div className="p-2 rounded-xl glass-pill text-obsidian-accent">
+            <Disc className="w-5 h-5" />
+          </div>
           <div>
-            <h3 className="text-base font-semibold tracking-tightest text-obsidian-primary">
+            <h3 className="text-base font-bold tracking-tight text-white">
               Audio Engine & Stream Pipeline
             </h3>
-            <p className="text-xs text-obsidian-secondary">
+            <p className="text-xs text-white/50">
               Configure bitrate formats, Web Audio normalization, and transition crossfades.
             </p>
           </div>
@@ -46,11 +48,11 @@ export const AudioSettings: React.FC = () => {
         {/* 1. Bitrate Tier Selector */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-mono uppercase text-obsidian-secondary tracking-wider flex items-center gap-1.5">
+            <label className="text-xs font-mono uppercase text-white/50 tracking-wider flex items-center gap-1.5">
               <Radio className="w-3.5 h-3.5 text-obsidian-accent" />
               Stream Bitrate Tier
             </label>
-            <span className="text-xs font-mono text-obsidian-accent uppercase">
+            <span className="text-xs font-mono text-obsidian-accent uppercase font-semibold">
               {userSettings.bitrate === 'high'
                 ? '160kbps Opus'
                 : userSettings.bitrate === 'normal'
@@ -70,23 +72,23 @@ export const AudioSettings: React.FC = () => {
                 <div
                   key={tier.id}
                   onClick={() => updateSettings({ bitrate: tier.id as 'auto' | 'normal' | 'high' })}
-                  className={`p-3.5 rounded-lg border cursor-pointer transition-all ${
+                  className={`p-4 rounded-2xl cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-obsidian-sidebar border-obsidian-accent shadow-sm'
-                      : 'bg-obsidian-sidebar/40 border-obsidian-border hover:border-obsidian-secondary/50'
+                      ? 'glass-card border-white/20 bg-white/10 shadow-lg'
+                      : 'glass-card hover:bg-white/[0.06]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-obsidian-primary">{tier.label}</span>
+                    <span className="text-xs font-semibold text-white">{tier.label}</span>
                     <div
-                      className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                        isSelected ? 'border-obsidian-accent bg-obsidian-accent' : 'border-obsidian-border'
+                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                        isSelected ? 'border-obsidian-accent bg-obsidian-accent' : 'border-white/20'
                       }`}
                     >
                       {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                     </div>
                   </div>
-                  <p className="text-[11px] text-obsidian-secondary mt-1">{tier.desc}</p>
+                  <p className="text-[11px] text-white/50 mt-1">{tier.desc}</p>
                 </div>
               );
             })}
@@ -98,11 +100,11 @@ export const AudioSettings: React.FC = () => {
           <div className="space-y-1 pr-4">
             <div className="flex items-center gap-2">
               <Gauge className="w-4 h-4 text-obsidian-accent" />
-              <span className="text-xs font-mono uppercase text-obsidian-secondary tracking-wider">
+              <span className="text-xs font-mono uppercase text-white/50 tracking-wider">
                 Audio Normalization (-14 LUFS Baseline)
               </span>
             </div>
-            <p className="text-xs text-obsidian-secondary">
+            <p className="text-xs text-white/50">
               Engages a client-side DynamicsCompressorNode to smooth dynamic loudness jumps between tracks.
             </p>
           </div>
@@ -110,20 +112,20 @@ export const AudioSettings: React.FC = () => {
           <button
             onClick={() => updateSettings({ normalization: !userSettings.normalization })}
             className={`w-12 h-6 rounded-full transition-colors p-1 flex items-center flex-shrink-0 ${
-              userSettings.normalization ? 'bg-obsidian-accent justify-end' : 'bg-obsidian-hover justify-start'
+              userSettings.normalization ? 'bg-obsidian-accent justify-end' : 'bg-white/10 justify-start'
             }`}
           >
-            <div className="w-4 h-4 rounded-full bg-obsidian-primary shadow-sm" />
+            <div className="w-4 h-4 rounded-full bg-white shadow-md" />
           </button>
         </div>
 
         {/* 3. Crossfade Slider (0s to 12s) */}
         <div className="pt-2 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono uppercase text-obsidian-secondary tracking-wider">
+            <span className="text-xs font-mono uppercase text-white/50 tracking-wider">
               Track Crossfade
             </span>
-            <span style={{ fontVariantNumeric: 'tabular-nums' }} className="text-xs font-mono text-obsidian-accent">
+            <span style={{ fontVariantNumeric: 'tabular-nums' }} className="text-xs font-mono text-obsidian-accent font-semibold">
               {userSettings.crossfade}s
             </span>
           </div>
@@ -135,10 +137,10 @@ export const AudioSettings: React.FC = () => {
             step="1"
             value={userSettings.crossfade}
             onChange={(e) => updateSettings({ crossfade: parseInt(e.target.value, 10) })}
-            className="w-full h-1.5 accent-obsidian-accent bg-obsidian-sidebar rounded cursor-pointer"
+            className="w-full h-1.5 accent-obsidian-accent bg-white/15 rounded-full cursor-pointer"
           />
 
-          <div className="flex justify-between text-[10px] font-mono text-obsidian-secondary">
+          <div className="flex justify-between text-[10px] font-mono text-white/40">
             <span>0s (Gapless)</span>
             <span>6s</span>
             <span>12s</span>
@@ -147,27 +149,29 @@ export const AudioSettings: React.FC = () => {
       </div>
 
       {/* Storage & Resolution Cache Monitor */}
-      <div className="bg-obsidian-card border border-obsidian-border rounded-xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="glass-panel border border-white/10 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
         <div className="flex items-center gap-3">
-          <Database className="w-5 h-5 text-obsidian-accent flex-shrink-0" />
+          <div className="p-2 rounded-xl glass-pill text-obsidian-accent">
+            <Database className="w-5 h-5 flex-shrink-0" />
+          </div>
           <div>
-            <h4 className="text-sm font-semibold tracking-tightest text-obsidian-primary">
+            <h4 className="text-sm font-bold tracking-tight text-white">
               Local Stream Cache & Storage
             </h4>
-            <p className="text-xs text-obsidian-secondary mt-0.5">
+            <p className="text-xs text-white/50 mt-0.5">
               Cached track manifests, offline metadata & client EQ parameters.
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-          <span style={{ fontVariantNumeric: 'tabular-nums' }} className="text-xs font-mono text-obsidian-secondary bg-obsidian-sidebar px-2.5 py-1.5 rounded border border-obsidian-border">
+          <span style={{ fontVariantNumeric: 'tabular-nums' }} className="text-xs font-mono text-white/60 glass-pill px-3 py-1.5 rounded-full">
             {cacheSizeKB} KB used
           </span>
 
           <button
             onClick={handleClearCache}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-obsidian-border hover:border-red-500/50 hover:bg-red-500/10 text-xs font-medium text-obsidian-primary transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full glass-pill hover:bg-red-500/10 text-xs font-semibold text-white/80 hover:text-red-400 transition-all"
           >
             {isCleared ? (
               <>
@@ -176,7 +180,7 @@ export const AudioSettings: React.FC = () => {
               </>
             ) : (
               <>
-                <Trash2 className="w-3.5 h-3.5 text-obsidian-secondary" />
+                <Trash2 className="w-3.5 h-3.5 text-white/50" />
                 <span>Clear Cache</span>
               </>
             )}

@@ -68,29 +68,29 @@ function SearchContent() {
   const catalogCount = results.filter((t) => t.source !== 'youtube').length;
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-16">
+    <div className="max-w-7xl mx-auto space-y-8 pb-20 animate-fadeIn select-none">
       {/* Search Header Form */}
       <div className="max-w-3xl mx-auto space-y-4">
         <form onSubmit={handleSubmit} className="relative">
-          <Search className="w-5 h-5 text-obsidian-secondary absolute left-4 top-3.5" />
+          <Search className="w-5 h-5 text-white/40 absolute left-4 top-3.5" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search YouTube songs, paste video link (e.g. youtu.be/...), or catalog..."
-            className="w-full bg-obsidian-card border border-obsidian-border focus:border-obsidian-accent rounded-xl pl-12 pr-28 py-3 text-sm text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none transition-all shadow-lg"
+            placeholder="Search songs, artists, or paste YouTube link..."
+            className="w-full glass-pill rounded-2xl pl-12 pr-28 py-3.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30 transition-all shadow-xl"
           />
           <button
             type="submit"
-            className="absolute right-2 top-2 px-4 py-1.5 rounded-lg bg-obsidian-accent hover:bg-obsidian-accent-hover text-white text-xs font-semibold transition-colors shadow-sm"
+            className="absolute right-2 top-2 px-5 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-white/90 active:scale-95 transition-all shadow-md"
           >
             Search
           </button>
         </form>
 
         {/* Quick Suggestion Chips */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-obsidian-secondary">
-          <span className="font-mono text-[11px] text-obsidian-secondary/70">Popular:</span>
+        <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-white/50">
+          <span className="font-mono text-[11px] text-white/40">Trending:</span>
           {quickPicks.map((pick) => (
             <button
               key={pick}
@@ -99,7 +99,7 @@ function SearchContent() {
                 setQuery(pick);
                 performSearch(pick, activeFilter);
               }}
-              className="px-2.5 py-1 rounded-full bg-obsidian-card border border-obsidian-border hover:border-obsidian-accent/60 hover:text-obsidian-primary text-[11px] transition-colors"
+              className="px-3 py-1 rounded-full glass-pill text-[11px] text-white/70 hover:text-white transition-all"
             >
               {pick}
             </button>
@@ -108,14 +108,14 @@ function SearchContent() {
 
         {/* Source Filter Tabs */}
         {query.trim() && (
-          <div className="flex items-center gap-2 pt-2 border-t border-obsidian-border/40">
+          <div className="flex items-center gap-2 pt-2 border-t border-white/[0.06]">
             <button
               type="button"
               onClick={() => handleFilterChange('all')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
                 activeFilter === 'all'
-                  ? 'bg-obsidian-card border-obsidian-accent text-obsidian-primary'
-                  : 'bg-obsidian-sidebar border-obsidian-border text-obsidian-secondary hover:text-obsidian-primary'
+                  ? 'bg-white/20 text-white font-semibold border border-white/20'
+                  : 'glass-pill text-white/60 hover:text-white'
               }`}
             >
               <Globe className="w-3.5 h-3.5" />
@@ -125,27 +125,27 @@ function SearchContent() {
             <button
               type="button"
               onClick={() => handleFilterChange('youtube')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
                 activeFilter === 'youtube'
-                  ? 'bg-red-500/15 border-red-500 text-red-400'
-                  : 'bg-obsidian-sidebar border-obsidian-border text-obsidian-secondary hover:text-obsidian-primary'
+                  ? 'bg-red-500/20 text-red-400 font-semibold border border-red-500/30'
+                  : 'glass-pill text-white/60 hover:text-white'
               }`}
             >
-              <Youtube className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-              <span>Live YouTube Stream ({youtubeCount})</span>
+              <Youtube className="w-3.5 h-3.5 text-red-400 fill-red-400" />
+              <span>YouTube Stream ({youtubeCount})</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleFilterChange('catalog')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
                 activeFilter === 'catalog'
-                  ? 'bg-obsidian-card border-obsidian-accent text-obsidian-accent'
-                  : 'bg-obsidian-sidebar border-obsidian-border text-obsidian-secondary hover:text-obsidian-primary'
+                  ? 'bg-white/20 text-white font-semibold border border-white/20'
+                  : 'glass-pill text-white/60 hover:text-white'
               }`}
             >
               <Disc className="w-3.5 h-3.5" />
-              <span>Stored Catalog ({catalogCount})</span>
+              <span>Catalog ({catalogCount})</span>
             </button>
           </div>
         )}
@@ -155,17 +155,16 @@ function SearchContent() {
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
-            <Skeleton key={i} className="h-56 rounded-xl" />
+            <Skeleton key={i} className="h-56 rounded-2xl" />
           ))}
         </div>
       ) : results.length > 0 ? (
         <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs text-obsidian-secondary font-mono">
+          <div className="flex items-center justify-between text-xs text-white/50 font-mono">
             <span>
-              Found {results.length} songs for &ldquo;{query}&rdquo; (
-              {youtubeCount} from YouTube, {catalogCount} from Catalog)
+              Found {results.length} songs for &ldquo;{query}&rdquo;
             </span>
-            <span className="text-emerald-400 font-semibold">Web Audio DSP Ready</span>
+            <span className="text-emerald-400 font-semibold">Web Audio DSP Active</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -175,23 +174,23 @@ function SearchContent() {
           </div>
         </div>
       ) : query.trim() ? (
-        <div className="p-16 text-center text-obsidian-secondary space-y-2 bg-obsidian-card/40 border border-obsidian-border rounded-2xl max-w-xl mx-auto">
-          <Music className="w-10 h-10 mx-auto text-obsidian-border" />
-          <p className="text-sm font-medium text-obsidian-primary">No results found for &ldquo;{query}&rdquo;</p>
-          <p className="text-xs text-obsidian-secondary">
+        <div className="p-16 text-center text-white/50 space-y-2 glass-panel border border-white/10 rounded-3xl max-w-xl mx-auto shadow-xl">
+          <Music className="w-10 h-10 mx-auto text-white/20" />
+          <p className="text-sm font-semibold text-white">No results found for &ldquo;{query}&rdquo;</p>
+          <p className="text-xs text-white/50">
             Try a different search term, artist name, or paste a direct YouTube video URL.
           </p>
         </div>
       ) : (
-        <div className="p-16 text-center text-obsidian-secondary space-y-3 bg-obsidian-card/20 border border-obsidian-border rounded-2xl max-w-2xl mx-auto">
+        <div className="p-16 text-center text-white/50 space-y-3 glass-panel border border-white/10 rounded-3xl max-w-2xl mx-auto shadow-xl">
           <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center mx-auto">
             <Youtube className="w-6 h-6 fill-red-500" />
           </div>
-          <h3 className="text-base font-semibold text-obsidian-primary">
-            Search & Stream Anything from YouTube
+          <h3 className="text-lg font-bold text-white">
+            Search & Stream Live Audio from YouTube
           </h3>
-          <p className="text-xs text-obsidian-secondary max-w-md mx-auto">
-            Search any artist, song title, or music video across YouTube. Play directly with native 10-band DSP equalizer and loudness normalization.
+          <p className="text-xs text-white/60 max-w-md mx-auto">
+            Search any artist or song title across YouTube. Play directly with native 10-band DSP equalizer and loudness normalization.
           </p>
         </div>
       )}

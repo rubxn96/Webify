@@ -88,18 +88,18 @@ export const PlaylistImporter: React.FC = () => {
       : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 select-none">
       {/* Importer Form Card */}
-      <div className="bg-obsidian-card border border-obsidian-border rounded-xl p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex items-center gap-3 pb-4 border-b border-obsidian-border">
-          <div className="p-2.5 rounded-xl bg-obsidian-sidebar border border-obsidian-border text-obsidian-accent">
+      <div className="glass-panel border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+        <div className="flex items-center gap-3 pb-5 border-b border-white/[0.06]">
+          <div className="p-2.5 rounded-2xl glass-pill text-obsidian-accent">
             <Download className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold tracking-tightest text-obsidian-primary">
+            <h2 className="text-xl font-bold tracking-tight text-white">
               Import Playlist from Spotify or Apple Music
             </h2>
-            <p className="text-xs text-obsidian-secondary mt-0.5">
+            <p className="text-xs text-white/50 mt-0.5">
               Enter a playlist URL. Our worker fuzzy-matches tracks via ISRC and YouTube audio search.
             </p>
           </div>
@@ -108,7 +108,7 @@ export const PlaylistImporter: React.FC = () => {
         {/* Input & Action */}
         <form onSubmit={handleStartImport} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-xs font-mono uppercase text-obsidian-secondary tracking-wider">
+            <label className="text-xs font-mono uppercase text-white/50 tracking-wider">
               Playlist URL
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -117,22 +117,22 @@ export const PlaylistImporter: React.FC = () => {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://open.spotify.com/playlist/... or https://music.apple.com/..."
-                className="flex-1 bg-obsidian-sidebar border border-obsidian-border focus:border-obsidian-accent rounded-lg px-4 py-2.5 text-sm text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none transition-all"
+                className="flex-1 glass-pill rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30 transition-all shadow-inner"
                 disabled={loading}
               />
               <button
                 type="submit"
                 disabled={loading || !url.trim()}
-                className="px-6 py-2.5 rounded-lg bg-obsidian-accent hover:bg-obsidian-accent-hover disabled:opacity-50 text-white font-medium text-sm flex items-center justify-center gap-2 transition-all shadow-md flex-shrink-0"
+                className="px-6 py-3 rounded-2xl bg-white text-black hover:bg-white/90 disabled:opacity-40 font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-xl flex-shrink-0"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin text-black" />
                     <span>Resolving Catalog...</span>
                   </>
                 ) : (
                   <>
-                    <Download className="w-4 h-4" />
+                    <Download className="w-4 h-4 text-black" />
                     <span>Import Playlist</span>
                   </>
                 )}
@@ -141,19 +141,19 @@ export const PlaylistImporter: React.FC = () => {
           </div>
 
           {/* Preset Demo URL suggestions */}
-          <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-obsidian-secondary">
+          <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-white/50">
             <span>Quick test URLs:</span>
             <button
               type="button"
               onClick={() => setUrl('https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M')}
-              className="px-2.5 py-1 rounded bg-obsidian-sidebar border border-obsidian-border hover:border-obsidian-accent text-obsidian-primary text-[11px] font-mono transition-colors"
+              className="px-3 py-1 rounded-full glass-pill text-white/80 hover:text-white text-[11px] font-mono transition-all"
             >
               Today&apos;s Top Hits (Spotify)
             </button>
             <button
               type="button"
               onClick={() => setUrl('https://music.apple.com/us/playlist/todays-hits/pl.f4d106fed2bd41149aaacabb233eb5eb')}
-              className="px-2.5 py-1 rounded bg-obsidian-sidebar border border-obsidian-border hover:border-obsidian-accent text-obsidian-primary text-[11px] font-mono transition-colors"
+              className="px-3 py-1 rounded-full glass-pill text-white/80 hover:text-white text-[11px] font-mono transition-all"
             >
               Today&apos;s Hits (Apple Music)
             </button>
@@ -161,7 +161,7 @@ export const PlaylistImporter: React.FC = () => {
         </form>
 
         {error && (
-          <div className="p-3.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center gap-2">
+          <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -169,7 +169,7 @@ export const PlaylistImporter: React.FC = () => {
 
         {/* Live Matching Progress */}
         {jobStatus && (
-          <div className="space-y-4 pt-4 border-t border-obsidian-border animate-fadeIn">
+          <div className="space-y-4 pt-4 border-t border-white/[0.06] animate-fadeIn">
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
                 {jobStatus.status === 'completed' ? (
@@ -179,13 +179,13 @@ export const PlaylistImporter: React.FC = () => {
                 ) : (
                   <Loader2 className="w-4 h-4 text-obsidian-accent animate-spin" />
                 )}
-                <span className="font-semibold text-obsidian-primary">
+                <span className="font-semibold text-white">
                   {jobStatus.playlistTitle || 'Import Job'}
                 </span>
               </div>
 
-              <div className="font-mono text-obsidian-secondary">
-                <span className="text-obsidian-primary font-bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              <div className="font-mono text-white/50">
+                <span className="text-white font-bold tabular-nums">
                   {jobStatus.matchedTracks}
                 </span>{' '}
                 / <span style={{ fontVariantNumeric: 'tabular-nums' }}>{jobStatus.totalTracks}</span> matched (
