@@ -46,6 +46,10 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | null>(null);
 
+function cleanNorm(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -89,7 +93,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // 1. Initialize AudioGraph & LocalStorage settings
   useEffect(() => {
-    // Load local storage settings
     const saved = localStorage.getItem('obsidian_settings');
     if (saved) {
       try {
@@ -100,7 +103,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
 
-    // Fetch initial liked tracks
     fetch('/api/tracks/like')
       .then((res) => (res.ok ? res.json() : { likedTrackIds: [] }))
       .then((data) => {
@@ -110,7 +112,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       })
       .catch(() => {});
 
-    // Create AudioGraph
     const graph = new AudioGraph();
     audioGraphRef.current = graph;
 
@@ -143,7 +144,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (audioGraphRef.current && isPlaying && playbackMode === 'direct') {
         audioGraphRef.current.getVisualizerData(visualizerData);
       } else if (isPlaying && playbackMode === 'iframe') {
-        // Subtle simulated activity for iframe fallback
         for (let i = 0; i < visualizerData.length; i++) {
           visualizerData[i] = Math.floor(Math.random() * 80 + 40);
         }
@@ -180,9 +180,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const nextIdx = queueIndex + 1;
       if (nextIdx < queue.length && prebufferedIndexRef.current !== nextIdx) {
         prebufferedIndexRef.current = nextIdx;
-        const nextTrack = queue[nextIdx];
-        // Pre-fetch direct audio manifest
-        fetch(`/api/stream?id=${nextTrack.youtubeId}&bitrate=${userSettings.bitrate}`).catch(() => {});
+        const nextTrackItem = queue[nextIdx];
+        fetch(`/api/stream?id=${nextTrackItem.youtubeId}&bitrate=${userSettings.bitrate}`).catch(() => {});
       }
     }
   }, [currentTime, duration, queueIndex, queue, userSettings.bitrate]);
@@ -203,7 +202,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       }
 
-      // Resume AudioContext on user action
       if (audioGraphRef.current) {
         await audioGraphRef.current.resume();
       }
@@ -215,17 +213,68 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       trackStartTimeRef.current = Date.now();
       lastProgressTrackRef.current = track.id;
 
-      if (newQueue) {
-        setQueue(newQueue);
-        const idx = newQueue.findIndex((t) => t.id === track.id || t.youtubeId === track.youtubeId);
-        setQueueIndex(idx >= 0 ? idx : 0);
-      } else if (!queue.some((t) => t.id === track.id)) {
-        setQueue((prev) => [...prev, track]);
-        setQueueIndex(queue.length);
+      // Ensure track is synced into database
+      fetch('/api/tracks/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          youtubeId: track.youtubeId,
+          title: track.title,
+          artist: track.artist,
+          duration: track.duration,
+          thumbnail: track.thumbnail,
+        }),
+      }).catch(() => {});
+
+      const baseTitle = cleanNorm(track.title);
+
+      // Sanitize queue: strictly filter out alternate versions or lyric clones of the current playing song!
+      let initialQueue: Track[] = [];
+      if (newQueue && newQueue.length > 0) {
+        initialQueue = newQueue.filter((t) => {
+          if (t.youtubeId === track.youtubeId) return true;
+          const tBase = cleanNorm(t.title);
+          return tBase !== baseTitle;
+        });
       } else {
-        const idx = queue.findIndex((t) => t.id === track.id);
-        if (idx >= 0) setQueueIndex(idx);
+        initialQueue = [track];
       }
+
+      setQueue(initialQueue);
+      const initialIdx = initialQueue.findIndex((t) => t.youtubeId === track.youtubeId);
+      setQueueIndex(initialIdx >= 0 ? initialIdx : 0);
+
+      // Automatically fetch similar songs with respect to the currently playing song!
+      fetch(
+        `/api/tracks/similar?youtubeId=${track.youtubeId}&title=${encodeURIComponent(
+          track.title
+        )}&artist=${encodeURIComponent(track.artist)}`
+      )
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.tracks && data.tracks.length > 0) {
+            setQueue((prevQueue) => {
+              const seenIds = new Set(prevQueue.map((q) => q.youtubeId));
+              const seenKeys = new Set(prevQueue.map((q) => `${cleanNorm(q.artist)}:::${cleanNorm(q.title)}`));
+
+              const freshSimilar = data.tracks.filter((st: Track) => {
+                const stKey = `${cleanNorm(st.artist)}:::${cleanNorm(st.title)}`;
+                const stBase = cleanNorm(st.title);
+                return (
+                  stBase !== baseTitle &&
+                  !seenIds.has(st.youtubeId) &&
+                  !seenKeys.has(stKey)
+                );
+              });
+
+              if (freshSimilar.length > 0) {
+                return [...prevQueue, ...freshSimilar];
+              }
+              return prevQueue;
+            });
+          }
+        })
+        .catch(() => {});
 
       // Emit track_start
       emitTelemetryBeacon({
@@ -241,7 +290,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const streamData = await res.json();
 
         if (streamData.audioUrl && streamData.source === 'direct' && audioElementRef.current) {
-          // Direct HTML5 Web Audio playback
           setPlaybackMode('direct');
           audioElementRef.current.src = streamData.audioUrl;
           audioElementRef.current.load();
@@ -254,12 +302,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             .play()
             .then(() => setIsPlaying(true))
             .catch(() => {
-              // Direct audio play blocked (e.g. CORS/403) -> switch to hidden iframe fallback
               setPlaybackMode('iframe');
               setIsPlaying(true);
             });
         } else {
-          // Embedded YouTube fallback
           setPlaybackMode('iframe');
           if (audioElementRef.current) {
             audioElementRef.current.pause();
@@ -271,7 +317,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setIsPlaying(true);
       }
     },
-    [currentTrack, currentTime, duration, queue, userSettings.bitrate, userSettings.crossfade]
+    [currentTrack, currentTime, duration, userSettings.bitrate, userSettings.crossfade]
   );
 
   const togglePlay = useCallback(() => {
@@ -316,19 +362,19 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (queue.length === 0) return;
     const nextIdx = (queueIndex + 1) % queue.length;
     setQueueIndex(nextIdx);
-    playTrack(queue[nextIdx]);
+    const nextSong = queue[nextIdx];
+    playTrack(nextSong, queue);
   }, [queue, queueIndex, playTrack]);
 
   const prevTrack = useCallback(() => {
     if (queue.length === 0) return;
-    // If > 3 seconds into track, restart current track
     if (currentTime > 3) {
       seek(0);
       return;
     }
     const prevIdx = (queueIndex - 1 + queue.length) % queue.length;
     setQueueIndex(prevIdx);
-    playTrack(queue[prevIdx]);
+    playTrack(queue[prevIdx], queue);
   }, [queue, queueIndex, currentTime, seek, playTrack]);
 
   const setVolume = useCallback((vol: number) => {
@@ -355,14 +401,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const toggleLike = useCallback(
     (track: Track) => {
-      // Optimistic UI update (<16ms)
-      const nextLiked = !likedTrackIds.has(track.id);
+      const nextLiked = !likedTrackIds.has(track.id) && !likedTrackIds.has(track.youtubeId);
       setLikedTrackIds((prev) => {
         const copy = new Set(prev);
         if (nextLiked) {
           copy.add(track.id);
+          copy.add(track.youtubeId);
         } else {
           copy.delete(track.id);
+          copy.delete(track.youtubeId);
         }
         return copy;
       });
@@ -370,13 +417,27 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       fetch('/api/tracks/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ trackId: track.id, isLiked: nextLiked }),
+        body: JSON.stringify({
+          trackId: track.id,
+          isLiked: nextLiked,
+          trackData: {
+            youtubeId: track.youtubeId,
+            title: track.title,
+            artist: track.artist,
+            duration: track.duration,
+            thumbnail: track.thumbnail,
+          },
+        }),
       }).catch(() => {
-        // Rollback on network failure
         setLikedTrackIds((prev) => {
           const copy = new Set(prev);
-          if (nextLiked) copy.delete(track.id);
-          else copy.add(track.id);
+          if (nextLiked) {
+            copy.delete(track.id);
+            copy.delete(track.youtubeId);
+          } else {
+            copy.add(track.id);
+            copy.add(track.youtubeId);
+          }
           return copy;
         });
       });
@@ -524,7 +585,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setIsFullPlayerOpen,
       }}
     >
-      {/* Native HTML5 Audio Element for Web Audio Graph */}
       <audio
         ref={audioElementRef}
         onTimeUpdate={handleTimeUpdate}
@@ -534,7 +594,6 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         preload="auto"
       />
 
-      {/* Embedded YouTube Fallback Player Instance */}
       <HiddenYouTubeFallback
         videoId={playbackMode === 'iframe' && currentTrack ? currentTrack.youtubeId : null}
         isPlaying={isPlaying && playbackMode === 'iframe'}

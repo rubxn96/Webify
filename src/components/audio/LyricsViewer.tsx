@@ -72,7 +72,7 @@ export const LyricsViewer: React.FC = () => {
       {/* Lyrics Content Container */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-y-auto px-6 py-12 space-y-7 scroll-smooth scrollbar-thin scrollbar-thumb-obsidian-border"
+        className="flex-1 overflow-y-auto px-6 py-10 pb-36 lg:pb-12 space-y-7 scroll-smooth scrollbar-thin scrollbar-thumb-obsidian-border"
       >
         {parsedLyrics.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-obsidian-secondary py-16">

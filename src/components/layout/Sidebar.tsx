@@ -11,13 +11,18 @@ import {
   Download,
   Plus,
   Disc3,
-  Heart,
   Globe,
   Lock,
+  X,
 } from 'lucide-react';
 import { Playlist } from '@/types';
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile }) => {
   const pathname = usePathname();
   const router = useRouter();
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
@@ -55,6 +60,7 @@ export const Sidebar: React.FC = () => {
         fetchPlaylists();
         if (data.playlist?.id) {
           router.push(`/playlists/${data.playlist.id}`);
+          if (onCloseMobile) onCloseMobile();
         }
       }
     } catch {
@@ -70,22 +76,34 @@ export const Sidebar: React.FC = () => {
     { label: 'DSP Equalizer', href: '/settings', icon: Sliders },
   ];
 
-  return (
-    <aside className="w-60 bg-obsidian-sidebar border-r border-obsidian-border flex flex-col justify-between h-full select-none flex-shrink-0 z-20">
-      <div className="flex flex-col h-full">
-        {/* Brand / Logo */}
-        <div className="p-6 pb-5 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center">
-            <Disc3 className="w-5 h-5 animate-spin-slow" />
+  const sidebarContent = (
+    <div className="flex flex-col h-full justify-between bg-obsidian-sidebar select-none">
+      <div className="flex flex-col h-full overflow-hidden">
+        {/* Brand / Logo & Mobile Close */}
+        <div className="p-5 pb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center">
+              <Disc3 className="w-5 h-5 animate-spin-slow" />
+            </div>
+            <div>
+              <span className="text-base font-extrabold tracking-tightest text-obsidian-primary block">
+                OBSIDIAN
+              </span>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-obsidian-secondary block -mt-1">
+                Hi-Fi Audio
+              </span>
+            </div>
           </div>
-          <div>
-            <span className="text-base font-extrabold tracking-tightest text-obsidian-primary block">
-              OBSIDIAN
-            </span>
-            <span className="text-[10px] font-mono uppercase tracking-widest text-obsidian-secondary block -mt-1">
-              Hi-Fi Audio
-            </span>
-          </div>
+
+          {/* Close button on mobile */}
+          {onCloseMobile && (
+            <button
+              onClick={onCloseMobile}
+              className="lg:hidden p-1.5 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
 
         {/* Primary Navigation */}
@@ -98,6 +116,7 @@ export const Sidebar: React.FC = () => {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => onCloseMobile && onCloseMobile()}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium tracking-tightest transition-all ${
                   isActive
                     ? 'bg-obsidian-card text-obsidian-primary border border-obsidian-border font-semibold shadow-sm'
@@ -116,7 +135,7 @@ export const Sidebar: React.FC = () => {
         </nav>
 
         {/* Divider */}
-        <div className="mx-4 my-4 border-t border-obsidian-border" />
+        <div className="mx-4 my-3 border-t border-obsidian-border" />
 
         {/* Playlists Shelf */}
         <div className="flex-1 overflow-y-auto px-3 space-y-2">
@@ -154,6 +173,7 @@ export const Sidebar: React.FC = () => {
                 <Link
                   key={playlist.id}
                   href={`/playlists/${playlist.id}`}
+                  onClick={() => onCloseMobile && onCloseMobile()}
                   className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs truncate transition-all ${
                     isCurrentPlaylist
                       ? 'bg-obsidian-card text-obsidian-accent font-medium'
@@ -185,7 +205,31 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar (Hidden on mobile/tablet screens) */}
+      <aside className="hidden lg:flex w-60 border-r border-obsidian-border flex-col justify-between h-full flex-shrink-0 z-20">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile Slide-Over Drawer Overlay */}
+      {isMobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div
+            onClick={onCloseMobile}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+          />
+
+          {/* Drawer Container */}
+          <div className="relative w-72 max-w-[80vw] h-full shadow-2xl border-r border-obsidian-border z-10 animate-fadeIn">
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
-

@@ -1,6 +1,29 @@
 import prisma from '@/lib/db/prisma';
 import { Track } from '@/types';
 
+/**
+ * Strips YouTube-specific noise from video titles to get canonical song titles.
+ */
+export function cleanSongTitle(rawTitle: string): string {
+  if (!rawTitle) return '';
+  return rawTitle
+    .replace(/\s*\(Official\s*(?:Music\s*)?(?:Video|Audio|Lyric\s*Video|Lyrics|Visualizer)?\)/gi, '')
+    .replace(/\s*\[Official\s*(?:Music\s*)?(?:Video|Audio|Lyric\s*Video|Lyrics|Visualizer)?\]/gi, '')
+    .replace(/\s*\((?:Music\s*)?Video\)/gi, '')
+    .replace(/\s*\[(?:Music\s*)?Video\]/gi, '')
+    .replace(/\s*\((?:Lyric\s*Video|Lyrics|Audio|Visualizer|Audio\s*Visualizer)\)/gi, '')
+    .replace(/\s*\[(?:Lyric\s*Video|Lyrics|Audio|Visualizer|Audio\s*Visualizer)\]/gi, '')
+    .replace(/\s*\((?:HD|4K|HQ|Remastered|Explicit|Clean)\)/gi, '')
+    .replace(/\s*\[(?:HD|4K|HQ|Remastered|Explicit|Clean)\]/gi, '')
+    .replace(/\s*\|\s*Official\s*.*$/gi, '')
+    .replace(/\s*-\s*Official\s*.*$/gi, '')
+    .trim();
+}
+
+function normalizeKey(str: string): string {
+  return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
 function parseDurationText(durationText?: string): number {
   if (!durationText) return 180;
   const parts = durationText.trim().split(':').map((p) => parseInt(p, 10));
@@ -18,11 +41,9 @@ function parseDurationText(durationText?: string): number {
 
 function extractYouTubeId(input: string): string | null {
   const clean = input.trim();
-  // Direct 11-char ID
   if (/^[a-zA-Z0-9_-]{11}$/.test(clean)) {
     return clean;
   }
-  // URL matching
   const match = clean.match(/(?:youtube\.com\/(?:watch\?.*v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
   return match ? match[1] : null;
 }
@@ -40,11 +61,12 @@ async function fetchDirectYouTubeVideo(videoId: string): Promise<Track | null> {
       let title = data.title || 'YouTube Track';
       let artist = data.author_name || 'YouTube Creator';
 
-      // Parse "Artist - Title" format commonly used in music video titles
       if (title.includes(' - ')) {
         const parts = title.split(' - ');
         artist = parts[0].trim();
-        title = parts.slice(1).join(' - ').replace(/\(Official.*?\)/i, '').replace(/\[Official.*?\]/i, '').trim();
+        title = cleanSongTitle(parts.slice(1).join(' - '));
+      } else {
+        title = cleanSongTitle(title);
       }
 
       // Upsert into local database
@@ -55,7 +77,7 @@ async function fetchDirectYouTubeVideo(videoId: string): Promise<Track | null> {
           youtubeId: videoId,
           title,
           artist,
-          duration: 210, // Default estimated runtime
+          duration: 210,
           thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
           embedding: JSON.stringify([0.7, 0.6, 0.6, 0.2, 0.65, 0.05, 0.05, 0.2]),
         },
@@ -78,12 +100,14 @@ async function fetchDirectYouTubeVideo(videoId: string): Promise<Track | null> {
 }
 
 /**
- * Searches YouTube directly by scraping search results HTML / ytInitialData.
+ * Searches YouTube directly and deduplicates lyrical/audio duplicates of the same song.
  */
-async function searchYouTubeDirect(query: string, limit: number = 20): Promise<Track[]> {
+async function searchYouTubeDirect(query: string, limit: number = 25): Promise<Track[]> {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 4000);
+
+    const isExplicitLyricsSearch = query.toLowerCase().includes('lyrics');
 
     const q = encodeURIComponent(query);
     const res = await fetch(`https://www.youtube.com/results?search_query=${q}`, {
@@ -112,6 +136,8 @@ async function searchYouTubeDirect(query: string, limit: number = 20): Promise<T
     if (!Array.isArray(contents)) return [];
 
     const results: Track[] = [];
+    const seenSongSignatures = new Set<string>();
+    const seenCleanTitles = new Set<string>();
 
     for (const section of contents) {
       const itemSection = section.itemSectionRenderer?.contents;
@@ -119,27 +145,45 @@ async function searchYouTubeDirect(query: string, limit: number = 20): Promise<T
         for (const item of itemSection) {
           const vr = item.videoRenderer;
           if (vr && vr.videoId) {
-            let title = vr.title?.runs?.map((r: { text: string }) => r.text).join('') || vr.title?.simpleText || 'Unknown';
+            let rawTitle = vr.title?.runs?.map((r: { text: string }) => r.text).join('') || vr.title?.simpleText || 'Unknown';
             let artist = vr.ownerText?.runs?.map((r: { text: string }) => r.text).join('') || 'YouTube';
             const durationText = vr.lengthText?.simpleText;
             const duration = parseDurationText(durationText);
+
+            // Filter out 1-hour loops or 10-hour videos
+            if (duration > 1200 && !query.toLowerCase().includes('mix') && !query.toLowerCase().includes('hour')) {
+              continue;
+            }
+
+            let title = rawTitle;
+            // When title is "Artist - Title", extract true artist
+            if (rawTitle.includes(' - ')) {
+              const parts = rawTitle.split(' - ');
+              artist = parts[0].trim();
+              title = parts.slice(1).join(' - ');
+            }
+
+            const cleanedTitle = cleanSongTitle(title);
+            const normTitle = normalizeKey(cleanedTitle);
+            const normArtist = normalizeKey(artist);
+            const songKey = `${normArtist}:::${normTitle}`;
+
+            // Deduplication: If we already have this exact song (or lyrical clone of it), skip!
+            if (seenSongSignatures.has(songKey) || (seenCleanTitles.has(normTitle) && !isExplicitLyricsSearch)) {
+              continue;
+            }
+
+            seenSongSignatures.add(songKey);
+            seenCleanTitles.add(normTitle);
+
             const thumbnail =
               vr.thumbnail?.thumbnails?.slice(-1)[0]?.url ||
               `https://img.youtube.com/vi/${vr.videoId}/hqdefault.jpg`;
 
-            // Clean title & artist if title is formatted as "Artist - Title"
-            if (title.includes(' - ')) {
-              const parts = title.split(' - ');
-              if (!artist || artist.includes('Topic') || artist.includes('VEVO')) {
-                artist = parts[0].trim();
-              }
-              title = parts.slice(1).join(' - ').replace(/\(Official.*?\)/i, '').replace(/\[Official.*?\]/i, '').trim();
-            }
-
             results.push({
               id: `yt-${vr.videoId}`,
               youtubeId: vr.videoId,
-              title,
+              title: cleanedTitle || title,
               artist,
               duration,
               thumbnail,
@@ -192,7 +236,7 @@ async function searchYouTubeMirrors(query: string, limit: number = 20): Promise<
               return {
                 id: `yt-${vId}`,
                 youtubeId: vId,
-                title: item.title,
+                title: cleanSongTitle(item.title),
                 artist: item.uploaderName || item.author || 'YouTube Artist',
                 duration: item.duration || item.lengthSeconds || 180,
                 thumbnail: item.thumbnail || `https://img.youtube.com/vi/${vId}/hqdefault.jpg`,
@@ -220,7 +264,7 @@ export async function searchTracks(
   if (!query || query.trim().length === 0) return [];
   const cleanQ = query.trim();
 
-  // 1. Check if user typed or pasted a YouTube URL or direct Video ID
+  // 1. Direct YouTube URL or Video ID
   const directId = extractYouTubeId(cleanQ);
   if (directId) {
     const directTrack = await fetchDirectYouTubeVideo(directId);
@@ -231,8 +275,10 @@ export async function searchTracks(
 
   const results: Track[] = [];
   const seenYouTubeIds = new Set<string>();
+  const seenSongKeys = new Set<string>();
+  const seenCleanTitles = new Set<string>();
 
-  // 2. Fetch Stored Database Catalog Tracks (unless sourceFilter === 'youtube')
+  // 2. Local Database Catalog
   if (sourceFilter !== 'youtube') {
     const localTracks = await prisma.track.findMany({
       where: {
@@ -247,6 +293,12 @@ export async function searchTracks(
     });
 
     for (const t of localTracks) {
+      const normTitle = normalizeKey(cleanSongTitle(t.title));
+      const songKey = `${normalizeKey(t.artist)}:::${normTitle}`;
+      seenSongKeys.add(songKey);
+      seenCleanTitles.add(normTitle);
+      seenYouTubeIds.add(t.youtubeId);
+
       results.push({
         id: t.id,
         youtubeId: t.youtubeId,
@@ -260,22 +312,26 @@ export async function searchTracks(
         lyrics: t.lyrics || undefined,
         source: 'catalog',
       });
-      seenYouTubeIds.add(t.youtubeId);
     }
   }
 
-  // 3. Fetch Live Results from YouTube (unless sourceFilter === 'catalog')
+  // 3. Live Results from YouTube
   if (sourceFilter !== 'catalog') {
     let ytResults = await searchYouTubeDirect(cleanQ, limit);
 
-    // If direct YouTube scrape was empty, try mirrors
     if (ytResults.length === 0) {
       ytResults = await searchYouTubeMirrors(cleanQ, limit);
     }
 
     for (const yt of ytResults) {
-      if (!seenYouTubeIds.has(yt.youtubeId)) {
+      const normTitle = normalizeKey(cleanSongTitle(yt.title));
+      const songKey = `${normalizeKey(yt.artist)}:::${normTitle}`;
+
+      // Strictly deduplicate so the user gets distinct songs, NOT duplicate lyric versions of the same query!
+      if (!seenYouTubeIds.has(yt.youtubeId) && !seenSongKeys.has(songKey) && !seenCleanTitles.has(normTitle)) {
         seenYouTubeIds.add(yt.youtubeId);
+        seenSongKeys.add(songKey);
+        seenCleanTitles.add(normTitle);
         results.push(yt);
       }
       if (results.length >= limit) break;

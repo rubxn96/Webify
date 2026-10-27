@@ -3,14 +3,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Search, Heart, Youtube, Disc, Loader2, Play } from 'lucide-react';
+import { Search, Heart, Youtube, Disc, Loader2, Play, Menu } from 'lucide-react';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { Track, UserProfile } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
 import Link from 'next/link';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onOpenMobileSidebar?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
   const router = useRouter();
   const { playTrack } = useAudio();
   const [query, setQuery] = useState('');
@@ -100,11 +104,32 @@ export const Header: React.FC = () => {
         }),
       }).catch(() => {});
     }
-    playTrack(track, previewResults);
+    // Play with similar track generation (not raw duplicates)
+    playTrack(track);
   };
 
   return (
-    <header className="h-16 border-b border-obsidian-border bg-obsidian-canvas/80 backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-30">
+    <header className="h-16 border-b border-obsidian-border bg-obsidian-canvas/90 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between sticky top-0 z-30 gap-2 sm:gap-4">
+      {/* Mobile Hamburger Menu Toggle */}
+      <div className="flex items-center gap-2">
+        {onOpenMobileSidebar && (
+          <button
+            onClick={onOpenMobileSidebar}
+            className="lg:hidden p-2 rounded-lg text-obsidian-secondary hover:text-obsidian-primary hover:bg-obsidian-hover transition-colors"
+            title="Open Menu & Playlists"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+
+        {/* Mobile Brand Icon */}
+        <Link href="/" className="lg:hidden flex items-center gap-1.5 flex-shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center">
+            <span className="font-extrabold text-xs">O</span>
+          </div>
+        </Link>
+      </div>
+
       {/* Live Search Input & Dropdown */}
       <div ref={dropdownRef} className="max-w-md w-full relative">
         <form onSubmit={handleSearchSubmit} className="relative">
@@ -121,7 +146,7 @@ export const Header: React.FC = () => {
               if (previewResults.length > 0) setIsDropdownOpen(true);
             }}
             placeholder="Search YouTube songs, paste video URL or catalog..."
-            className="w-full bg-obsidian-sidebar border border-obsidian-border focus:border-obsidian-accent rounded-full pl-10 pr-4 py-1.5 text-xs text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none transition-all"
+            className="w-full bg-obsidian-sidebar border border-obsidian-border focus:border-obsidian-accent rounded-full pl-9 pr-3 sm:pr-4 py-1.5 text-xs text-obsidian-primary placeholder:text-obsidian-secondary/50 outline-none transition-all"
           />
         </form>
 
@@ -164,7 +189,7 @@ export const Header: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-[10px] font-mono text-obsidian-secondary">
+                    <span className="text-[10px] font-mono text-obsidian-secondary hidden sm:inline">
                       {formatTime(track.duration)}
                     </span>
                     {track.source === 'youtube' ? (
@@ -197,21 +222,22 @@ export const Header: React.FC = () => {
       </div>
 
       {/* Right User Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
         <Link
           href="/library"
           className="p-2 text-obsidian-secondary hover:text-obsidian-primary transition-colors flex items-center gap-1.5 text-xs font-medium"
+          title="Favorites"
         >
           <Heart className="w-4 h-4 text-obsidian-accent" />
           <span className="hidden sm:inline">Favorites</span>
         </Link>
 
         {user ? (
-          <div className="flex items-center gap-2.5 pl-2 border-l border-obsidian-border">
-            <div className="w-8 h-8 rounded-full bg-obsidian-hover border border-obsidian-border flex items-center justify-center text-xs font-mono font-bold text-obsidian-primary">
+          <div className="flex items-center gap-2 pl-2 border-l border-obsidian-border">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-obsidian-hover border border-obsidian-border flex items-center justify-center text-xs font-mono font-bold text-obsidian-primary">
               {user.username.slice(0, 2).toUpperCase()}
             </div>
-            <div className="hidden sm:block text-left">
+            <div className="hidden md:block text-left">
               <div className="text-xs font-semibold text-obsidian-primary tracking-tightest">
                 {user.username}
               </div>
@@ -221,7 +247,7 @@ export const Header: React.FC = () => {
         ) : (
           <button
             onClick={() => setIsAuthOpen(true)}
-            className="px-4 py-1.5 rounded-full bg-obsidian-card hover:bg-obsidian-hover border border-obsidian-border text-obsidian-primary text-xs font-medium transition-all"
+            className="px-3 sm:px-4 py-1.5 rounded-full bg-obsidian-card hover:bg-obsidian-hover border border-obsidian-border text-obsidian-primary text-xs font-medium transition-all"
           >
             Sign In
           </button>
