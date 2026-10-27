@@ -7,11 +7,12 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const query = searchParams.get('q') || '';
-    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const limit = parseInt(searchParams.get('limit') || '25', 10);
+    const source = (searchParams.get('source') as 'all' | 'youtube' | 'catalog') || 'all';
 
-    const tracks = await searchTracks(query, limit);
+    const tracks = await searchTracks(query, limit, source);
 
-    return NextResponse.json({ tracks });
+    return NextResponse.json({ tracks, query, count: tracks.length });
   } catch (error) {
     console.error('Search error:', error);
     return NextResponse.json({ tracks: [], error: 'Search failed' }, { status: 500 });

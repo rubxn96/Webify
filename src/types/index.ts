@@ -11,6 +11,7 @@ export interface Track {
   embedding?: number[]; // Audio vector for recommendation
   lyrics?: string; // LRC formatted string or JSON
   isLiked?: boolean;
+  source?: 'youtube' | 'catalog';
 }
 
 export interface Playlist {
@@ -73,3 +74,4 @@ export interface UserProfile {
   username: string;
   settings: UserSettings;
 }
+

@@ -35,3 +35,4 @@ export const MainShell: React.FC<{ children: React.ReactNode }> = ({ children })
     </div>
   );
 };
+

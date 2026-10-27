@@ -106,3 +106,4 @@ Default URL: `http://localhost:3000`
 - Email: `user@obsidian.audio`
 - Password: `password123`
 *(Or click "Fill Demo Account" on the login modal)*
+

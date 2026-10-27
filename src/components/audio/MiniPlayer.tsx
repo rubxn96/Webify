@@ -242,3 +242,4 @@ export const MiniPlayer: React.FC = () => {
     </div>
   );
 };
+

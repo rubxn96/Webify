@@ -3,6 +3,8 @@ import prisma from '@/lib/db/prisma';
 import { getCurrentUser } from '@/lib/auth/jwt';
 import { TelemetryPayload } from '@/types';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const user = await getCurrentUser(req);
@@ -14,6 +16,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid telemetry payload' }, { status: 400 });
     }
 
+    const cleanYtId = trackId.replace('yt-', '');
+
     // Verify track exists or find by youtubeId
     let dbTrack = await prisma.track.findUnique({
       where: { id: trackId },
@@ -21,17 +25,23 @@ export async function POST(req: NextRequest) {
 
     if (!dbTrack) {
       dbTrack = await prisma.track.findFirst({
-        where: { youtubeId: trackId },
+        where: { youtubeId: cleanYtId },
       });
     }
 
     if (!dbTrack) {
-      return NextResponse.json({ error: 'Track not found' }, { status: 404 });
+      dbTrack = await prisma.track.create({
+        data: {
+          youtubeId: cleanYtId,
+          title: 'YouTube Track',
+          artist: 'YouTube Creator',
+          duration: Math.round(durationSeconds) || 180,
+          thumbnail: `https://img.youtube.com/vi/${cleanYtId}/hqdefault.jpg`,
+          embedding: JSON.stringify([0.7, 0.6, 0.6, 0.2, 0.65, 0.05, 0.05, 0.2]),
+        },
+      });
     }
 
-    // Calculate weight based on specification:
-    // - track_skip: negative weight if skipped before 30s
-    // - track_complete: positive weight if completion ratio > 70%
     let weight = 0;
     const ratio = durationSeconds > 0 ? progressSeconds / durationSeconds : 0;
 

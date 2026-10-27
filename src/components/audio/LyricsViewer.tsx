@@ -103,3 +103,4 @@ export const LyricsViewer: React.FC = () => {
     </div>
   );
 };
+

@@ -31,3 +31,4 @@ export function parseLRC(lrcText: string): LyricLine[] {
 
   return result.sort((a, b) => a.time - b.time);
 }
+

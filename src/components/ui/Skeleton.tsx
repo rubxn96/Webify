@@ -33,3 +33,4 @@ export const HomepageSkeleton: React.FC = () => {
     </div>
   );
 };
+

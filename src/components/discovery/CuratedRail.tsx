@@ -46,3 +46,4 @@ export const CuratedRail: React.FC<CuratedRailProps> = ({
     </div>
   );
 };
+

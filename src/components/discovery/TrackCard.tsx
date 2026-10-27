@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Play, Pause, Heart } from 'lucide-react';
+import { Play, Pause, Heart, Youtube, Disc } from 'lucide-react';
 import { Track } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
@@ -16,9 +16,24 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track, playlistContext }) 
   const { currentTrack, isPlaying, playTrack, togglePlay, likedTrackIds, toggleLike } = useAudio();
 
   const isCurrent = currentTrack?.id === track.id || currentTrack?.youtubeId === track.youtubeId;
-  const isLiked = likedTrackIds.has(track.id);
+  const isLiked = likedTrackIds.has(track.id) || likedTrackIds.has(track.youtubeId);
 
   const handleCardClick = () => {
+    // Sync track to DB in background if it's from YouTube
+    if (track.source === 'youtube') {
+      fetch('/api/tracks/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          youtubeId: track.youtubeId,
+          title: track.title,
+          artist: track.artist,
+          duration: track.duration,
+          thumbnail: track.thumbnail,
+        }),
+      }).catch(() => {});
+    }
+
     if (isCurrent) {
       togglePlay();
     } else {
@@ -53,6 +68,21 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track, playlistContext }) 
               <Play className="w-5 h-5 fill-obsidian-canvas ml-0.5" />
             )}
           </div>
+        </div>
+
+        {/* Source Badge (YouTube vs Stored Catalog) */}
+        <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-sm text-[10px] font-mono text-white">
+          {track.source === 'youtube' ? (
+            <>
+              <Youtube className="w-3 h-3 text-red-500 fill-red-500" />
+              <span>YouTube</span>
+            </>
+          ) : (
+            <>
+              <Disc className="w-3 h-3 text-obsidian-accent" />
+              <span>Catalog</span>
+            </>
+          )}
         </div>
 
         {/* Like Button on Artwork Top Right */}

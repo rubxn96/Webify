@@ -21,3 +21,4 @@ export function emitTelemetryBeacon(payload: TelemetryPayload) {
     // Silent fail for non-critical telemetry
   });
 }
+

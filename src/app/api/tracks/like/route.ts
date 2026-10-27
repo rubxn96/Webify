@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { trackId, isLiked } = await req.json();
+    const { trackId, isLiked, trackData } = await req.json();
 
     if (!trackId) {
       return NextResponse.json({ error: 'Track ID required' }, { status: 400 });
@@ -41,7 +41,21 @@ export async function POST(req: NextRequest) {
     // Find or create track if necessary
     let track = await prisma.track.findUnique({ where: { id: trackId } });
     if (!track) {
-      track = await prisma.track.findFirst({ where: { youtubeId: trackId } });
+      const cleanYtId = trackId.replace('yt-', '');
+      track = await prisma.track.findFirst({ where: { youtubeId: cleanYtId } });
+
+      if (!track && trackData) {
+        track = await prisma.track.create({
+          data: {
+            youtubeId: trackData.youtubeId || cleanYtId,
+            title: trackData.title || 'YouTube Track',
+            artist: trackData.artist || 'Unknown Artist',
+            duration: trackData.duration || 180,
+            thumbnail: trackData.thumbnail || `https://img.youtube.com/vi/${cleanYtId}/hqdefault.jpg`,
+            embedding: JSON.stringify([0.7, 0.6, 0.6, 0.2, 0.65, 0.05, 0.05, 0.2]),
+          },
+        });
+      }
     }
 
     if (!track) {

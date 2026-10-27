@@ -51,3 +51,4 @@ export async function getCurrentUser(req: NextRequest) {
 
   return user;
 }
+

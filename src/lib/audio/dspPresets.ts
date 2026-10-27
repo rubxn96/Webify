@@ -40,3 +40,4 @@ export const DEFAULT_USER_SETTINGS = {
   eqPreset: 'Flat' as const,
   eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 };
+

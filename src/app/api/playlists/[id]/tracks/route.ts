@@ -90,3 +90,4 @@ export async function DELETE(
     return NextResponse.json({ error: 'Failed to remove track' }, { status: 500 });
   }
 }
+
