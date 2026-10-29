@@ -8,7 +8,10 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: NextRequest) {
   try {
     const user = await getAuthenticatedUser(req);
-    const playlists = await playlistService.getPlaylists(user?.id);
+    if (!user) {
+      return NextResponse.json({ playlists: [] });
+    }
+    const playlists = await playlistService.getPlaylists(user.id);
     return NextResponse.json({ playlists });
   } catch (error) {
     console.error('Playlists GET error:', error);

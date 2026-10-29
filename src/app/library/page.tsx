@@ -19,8 +19,10 @@ export default function LibraryPage() {
     fetch('/api/playlists')
       .then((res) => (res.ok ? res.json() : { playlists: [] }))
       .then((data) => {
-        if (data.playlists) setPlaylists(data.playlists);
+        if (data?.playlists) setPlaylists(data.playlists);
+        else setPlaylists([]);
       })
+      .catch(() => setPlaylists([]))
       .finally(() => setLoading(false));
   };
 
@@ -38,6 +40,11 @@ export default function LibraryPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newTitle.trim(), isPublic: true }),
       });
+
+      if (res.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
 
       if (res.ok) {
         setNewTitle('');

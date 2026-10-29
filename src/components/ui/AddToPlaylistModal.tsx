@@ -25,8 +25,10 @@ export const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({ isOpen, 
     fetch('/api/playlists')
       .then((res) => (res.ok ? res.json() : { playlists: [] }))
       .then((data) => {
-        if (data.playlists) setPlaylists(data.playlists);
+        if (data?.playlists) setPlaylists(data.playlists);
+        else setPlaylists([]);
       })
+      .catch(() => setPlaylists([]))
       .finally(() => setLoading(false));
   }, [isOpen]);
 

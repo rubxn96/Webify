@@ -4,11 +4,13 @@ import { SEED_TRACKS } from '@/lib/db/seedData';
 
 export class PlaylistService {
   public async getPlaylists(userId?: string): Promise<any[]> {
+    if (!userId) {
+      return [];
+    }
+
     try {
       const playlists = await prisma.playlist.findMany({
-        where: userId
-          ? { OR: [{ userId }, { isPublic: true }] }
-          : { isPublic: true },
+        where: { userId },
         include: {
           tracks: {
             include: { track: true },
@@ -21,74 +23,33 @@ export class PlaylistService {
         orderBy: { updatedAt: 'desc' },
       });
 
-      if (playlists && playlists.length > 0) {
-        return playlists.map((p) => ({
-          id: p.id,
-          name: p.name,
-          description: p.description,
-          coverImage:
-            p.coverImage ||
-            p.tracks[0]?.track.thumbnail ||
-            'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600',
-          isPublic: p.isPublic,
-          userId: p.userId,
-          authorName: p.user?.username || 'Webify Editorial',
-          trackCount: p.tracks.length,
-          tracks: p.tracks.map((pt) => ({
-            id: pt.track.id,
-            youtubeId: pt.track.youtubeId,
-            title: pt.track.title,
-            artist: pt.track.artist,
-            album: pt.track.album,
-            isrc: pt.track.isrc,
-            duration: pt.track.duration,
-            thumbnail: pt.track.thumbnail,
-          })),
-        }));
-      }
-    } catch {
-      console.warn('[PlaylistService] Database offline or connecting; falling back to curated playlists');
+      return playlists.map((p) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        coverImage:
+          p.coverImage ||
+          p.tracks[0]?.track.thumbnail ||
+          'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600',
+        isPublic: p.isPublic,
+        userId: p.userId,
+        authorName: p.user?.username || 'You',
+        trackCount: p.tracks.length,
+        tracks: p.tracks.map((pt) => ({
+          id: pt.track.id,
+          youtubeId: pt.track.youtubeId,
+          title: pt.track.title,
+          artist: pt.track.artist,
+          album: pt.track.album,
+          isrc: pt.track.isrc,
+          duration: pt.track.duration,
+          thumbnail: pt.track.thumbnail,
+        })),
+      }));
+    } catch (err) {
+      console.warn('[PlaylistService] Database error fetching user playlists:', err);
+      return [];
     }
-
-    // Default curated fallback playlists from SEED_TRACKS
-    const hindiTracks = SEED_TRACKS.slice(0, 10).map((st, idx) => ({ id: `seed-${idx}`, ...st }));
-    const southTracks = SEED_TRACKS.slice(14, 28).map((st, idx) => ({ id: `seed-${idx + 14}`, ...st }));
-    const acousticTracks = SEED_TRACKS.filter((st) =>
-      ['Husn', 'Aaraadhike', 'Vaseegara', 'Malare', 'Agar Tum Saath Ho', 'Darshana', 'Pehle Bhi Main'].includes(st.title)
-    ).map((st, idx) => ({ id: `seed-ac-${idx}`, ...st }));
-
-    return [
-      {
-        id: 'webify-curated-1',
-        name: 'Webify Desi Chartbusters',
-        description: 'The biggest Bollywood & indie anthems: Kesariya, Tauba Tauba, Chaleya & more.',
-        coverImage: 'https://i.ytimg.com/vi/LK7-_dgAVQE/hqdefault.jpg',
-        isPublic: true,
-        authorName: 'Webify Editorial',
-        trackCount: hindiTracks.length,
-        tracks: hindiTracks,
-      },
-      {
-        id: 'webify-curated-2',
-        name: 'South Pulse (Tamil & Malayalam)',
-        description: 'High-voltage energy from Anirudh, Sushin Shyam, Dabzee & Sai Abhyankkar.',
-        coverImage: 'https://i.ytimg.com/vi/NXM7BC5EOrg/hqdefault.jpg',
-        isPublic: true,
-        authorName: 'Webify Editorial',
-        trackCount: southTracks.length,
-        tracks: southTracks,
-      },
-      {
-        id: 'webify-curated-3',
-        name: 'Soulful Melodies & Acoustics',
-        description: 'Mellow romantic ballads and unplugged harmonies across Hindi, Tamil & Malayalam.',
-        coverImage: 'https://i.ytimg.com/vi/gJLVTKhTnog/hqdefault.jpg',
-        isPublic: true,
-        authorName: 'Webify Editorial',
-        trackCount: acousticTracks.length,
-        tracks: acousticTracks,
-      },
-    ];
   }
 
   public async getPlaylistById(id: string): Promise<any | null> {

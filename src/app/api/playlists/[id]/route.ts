@@ -24,6 +24,11 @@ export async function GET(
       return NextResponse.json({ error: 'Playlist not found' }, { status: 404 });
     }
 
+    const user = await getCurrentUser(req);
+    if (!playlist.isPublic && playlist.userId !== user?.id) {
+      return NextResponse.json({ error: 'Playlist is private' }, { status: 403 });
+    }
+
     const formatted = {
       id: playlist.id,
       name: playlist.name,

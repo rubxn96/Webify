@@ -55,7 +55,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
       // ignore
     } finally {
       setUser(null);
+      setPlaylists([]);
       router.refresh();
+      fetchPlaylists();
     }
   };
 
@@ -63,9 +65,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
     fetch('/api/playlists')
       .then((res) => (res.ok ? res.json() : { playlists: [] }))
       .then((data) => {
-        if (data.playlists) setPlaylists(data.playlists);
+        if (data?.playlists) setPlaylists(data.playlists);
+        else setPlaylists([]);
       })
-      .catch(() => {});
+      .catch(() => setPlaylists([]));
   };
 
   useEffect(() => {
@@ -83,6 +86,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newPlaylistName.trim(), isPublic: true }),
       });
+
+      if (res.status === 401) {
+        setIsAuthOpen(true);
+        return;
+      }
 
       if (res.ok) {
         const data = await res.json();
@@ -395,7 +403,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-        onSuccess={(u) => setUser(u)}
+        onSuccess={(u) => {
+          setUser(u);
+          fetchPlaylists();
+        }}
       />
     </>
   );
