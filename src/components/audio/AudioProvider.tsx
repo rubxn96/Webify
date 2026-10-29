@@ -122,6 +122,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Dynamic queue replenishment lock ref
   const isReplenishingRef = useRef<boolean>(false);
+  // Strict playlist playback isolation ref
+  const isPlaylistModeRef = useRef<boolean>(false);
 
   // 1. Initialize AudioGraph, audioSession & LocalStorage settings
   useEffect(() => {
@@ -335,42 +337,24 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const baseTitle = cleanNorm(cleanSongTitle(track.title));
 
       // Check if this track is already within the active queue (e.g. from nextTrack or clicking within QueueDrawer)
-      const existingQueueIdx = queue.findIndex((t) => t.youtubeId === track.youtubeId);
+      const existingQueueIdx = queue.findIndex(
+        (t) => (track.youtubeId && t.youtubeId === track.youtubeId) || (track.id && t.id === track.id)
+      );
 
-      if (newQueue && newQueue.length > 0 && isExplicitPlaylist) {
-        // Explicit user playlist: preserve playlist tracks
-        const seenIds = new Set<string>();
-        const seenKeys = new Set<string>();
-        const seenTitles = new Set<string>();
-        const initialQueue: Track[] = [];
+      const isPlaylist = Boolean(isExplicitPlaylist || (newQueue && newQueue.length > 0));
 
-        for (const t of newQueue) {
-          const tClean = cleanNorm(cleanSongTitle(t.title));
-          const tKey = `${cleanNorm(t.artist)}:::${tClean}`;
-
-          if (t.youtubeId === track.youtubeId) {
-            seenIds.add(t.youtubeId);
-            seenKeys.add(tKey);
-            seenTitles.add(tClean);
-            initialQueue.push(t);
-            continue;
-          }
-
-          if (seenIds.has(t.youtubeId) || seenKeys.has(tKey) || seenTitles.has(tClean)) {
-            continue;
-          }
-
-          seenIds.add(t.youtubeId);
-          seenKeys.add(tKey);
-          seenTitles.add(tClean);
-          initialQueue.push(t);
-        }
+      if (isPlaylist && newQueue && newQueue.length > 0) {
+        // Explicit user playlist: preserve playlist tracks strictly with zero outside songs
+        isPlaylistModeRef.current = true;
+        const initialQueue: Track[] = [...newQueue];
 
         setQueue(initialQueue);
-        const initialIdx = initialQueue.findIndex((t) => t.youtubeId === track.youtubeId);
+        const initialIdx = initialQueue.findIndex(
+          (t) => (track.youtubeId && t.youtubeId === track.youtubeId) || (track.id && t.id === track.id)
+        );
         setQueueIndex(initialIdx >= 0 ? initialIdx : 0);
 
-        const nextSongInQueue = initialQueue[initialIdx + 1];
+        const nextSongInQueue = initialQueue[(initialIdx >= 0 ? initialIdx : 0) + 1];
         if (nextSongInQueue) {
           preloadTrack(nextSongInQueue);
         }
@@ -381,11 +365,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (nextSongInQueue) {
           preloadTrack(nextSongInQueue);
         }
-        if (queue.length - existingQueueIdx <= 4) {
+        if (!isPlaylistModeRef.current && queue.length - existingQueueIdx <= 4) {
           replenishQueue(track);
         }
       } else {
-        // Individual song play: Queue starts with this song, immediately followed by related songs
+        // Individual song play (radio mode): Queue starts with this song, immediately followed by related songs
+        isPlaylistModeRef.current = false;
         setQueue([track]);
         setQueueIndex(0);
 
@@ -396,8 +381,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         )
           .then((res) => (res.ok ? res.json() : null))
           .then((data) => {
+            // Guard: If playback was switched to a playlist while fetch was in flight, discard the similar tracks!
+            if (isPlaylistModeRef.current) return;
+
             if (data?.tracks && data.tracks.length > 0) {
               setQueue((prevQueue) => {
+                if (isPlaylistModeRef.current) return prevQueue;
                 const seenIds = new Set([track.youtubeId]);
                 const seenKeys = new Set([`${cleanNorm(track.artist)}:::${baseTitle}`]);
 
@@ -545,6 +534,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Ensures queue is always filled with fresh, non-duplicate similar songs
   const replenishQueue = useCallback(
     async (baseTrack?: Track | null, currentQueueOverride?: Track[]) => {
+      // Strict playlist isolation: Never replenish or inject outside songs if user is playing from a playlist
+      if (isPlaylistModeRef.current) return;
       const base = baseTrack || currentTrack;
       if (!base || isReplenishingRef.current) return;
       isReplenishingRef.current = true;
@@ -560,6 +551,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           const data = await res.json();
           if (data?.tracks && data.tracks.length > 0) {
             setQueue((prevQueue) => {
+              if (isPlaylistModeRef.current) return prevQueue;
               const activeQ = currentQueueOverride || prevQueue;
               const seenIds = new Set(activeQ.map((q) => q.youtubeId));
               const seenKeys = new Set(
@@ -653,7 +645,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const nextSong = queue[randomIdx];
       if (nextSong) {
         playTrack(nextSong);
-        if (queue.length - randomIdx <= 4) {
+        if (!isPlaylistModeRef.current && queue.length - randomIdx <= 4) {
           replenishQueue(nextSong);
         }
       }
@@ -665,7 +657,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const nextSong = queue[nextIdx];
     if (nextSong) {
       playTrack(nextSong);
-      if (queue.length - nextIdx <= 4) {
+      if (!isPlaylistModeRef.current && queue.length - nextIdx <= 4) {
         replenishQueue(nextSong);
       }
     }
@@ -935,8 +927,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setQueueIndex((prev) => Math.max(0, prev - 1));
       }
 
-      // Dynamic backfill: when a user removes a song, immediately fetch and fill with a similar track
-      if (currentTrack) {
+      // Dynamic backfill: only for radio/single play mode, never for playlist mode
+      if (!isPlaylistModeRef.current && currentTrack) {
         replenishQueue(currentTrack, updatedQueue);
       }
     },

@@ -42,7 +42,7 @@ export default function FavoritesPage() {
     if (isPlayingAnyFavorite) {
       togglePlay();
     } else {
-      playTrack(tracks[0], tracks);
+      playTrack(tracks[0], tracks, true);
     }
   };
 
@@ -148,7 +148,7 @@ export default function FavoritesPage() {
                 {/* Number / Play Button */}
                 <div className="col-span-1 text-xs font-mono">
                   <div
-                    onClick={() => (isCurrent ? togglePlay() : playTrack(track, tracks))}
+                    onClick={() => (isCurrent ? togglePlay() : playTrack(track, tracks, true))}
                     className="w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer group-hover:bg-white group-hover:text-black transition-colors"
                   >
                     {isCurrent && isPlaying ? (
@@ -166,7 +166,7 @@ export default function FavoritesPage() {
 
                 {/* Title & Artist */}
                 <div
-                  onClick={() => (isCurrent ? togglePlay() : playTrack(track, tracks))}
+                  onClick={() => (isCurrent ? togglePlay() : playTrack(track, tracks, true))}
                   className="col-span-7 sm:col-span-6 flex items-center gap-3.5 cursor-pointer truncate mr-2"
                 >
                   <div className="relative w-10 h-10 rounded-xl bg-white/[0.04] overflow-hidden flex-shrink-0 shadow-sm border border-white/10">

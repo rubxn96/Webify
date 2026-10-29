@@ -145,7 +145,7 @@ export default function PlaylistDetailPage() {
     if (isPlaylistActive) {
       togglePlay();
     } else {
-      playTrack(tracks[0], tracks);
+      playTrack(tracks[0], tracks, true);
     }
   };
 
@@ -254,7 +254,7 @@ export default function PlaylistDetailPage() {
                 <div className="col-span-1 text-xs font-mono">
                   <span className="group-hover:hidden text-white/40 tabular-nums">{idx + 1}</span>
                   <button
-                    onClick={() => playTrack(track, tracks)}
+                    onClick={() => (isCurrent ? togglePlay() : playTrack(track, tracks, true))}
                     className="hidden group-hover:block text-white hover:text-obsidian-accent"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
@@ -262,7 +262,10 @@ export default function PlaylistDetailPage() {
                 </div>
 
                 {/* Title & Artist & Thumbnail */}
-                <div className="col-span-6 flex items-center gap-3.5 truncate pr-4">
+                <div
+                  onClick={() => (isCurrent ? togglePlay() : playTrack(track, tracks, true))}
+                  className="col-span-6 flex items-center gap-3.5 truncate pr-4 cursor-pointer"
+                >
                   <div className="relative w-10 h-10 rounded-xl bg-white/[0.04] overflow-hidden flex-shrink-0 shadow-sm border border-white/10">
                     <Image
                       src={track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'}
