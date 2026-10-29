@@ -8,6 +8,8 @@ import {
 } from '@/server/recommendation/ranking';
 import prisma from '@/lib/db/prisma';
 import { Track } from '@/types';
+import { SEED_TRACKS } from '@/lib/db/seedData';
+import { ensureDatabaseTables } from '@/lib/db/autoInit';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +25,7 @@ export async function GET(req: NextRequest) {
 
     let aiTasteProfile = {
       summary: 'AI Engine initialized: Calibrated to your listening profile.',
-      dominantGenres: ['Pop', 'Electronic', 'Hi-Fi'],
+      dominantGenres: ['Bollywood', 'Kollywood', 'Mollywood', 'Desi Pop'],
       energyLevel: tasteVector[0] || 0.7,
       danceability: tasteVector[4] || 0.65,
       acousticness: tasteVector[3] || 0.2,
@@ -50,21 +52,30 @@ export async function GET(req: NextRequest) {
     // 3. Select Hero & Quick Access (6 picks)
     let allCatalog: any[] = [];
     try {
-      allCatalog = await prisma.track.findMany({ take: 10 });
+      allCatalog = await prisma.track.findMany({ take: 15 });
     } catch {
       allCatalog = [];
+      ensureDatabaseTables().catch(() => {});
     }
-    const fallbackCatalog: Track[] = allCatalog.map((t) => ({
-      id: t.id,
-      youtubeId: t.youtubeId,
-      title: t.title,
-      artist: t.artist,
-      album: t.album || undefined,
-      duration: t.duration,
-      thumbnail: t.thumbnail,
-      source: 'catalog',
-      aiMatch: 92,
-    }));
+
+    const fallbackCatalog: Track[] = allCatalog.length > 0
+      ? allCatalog.map((t) => ({
+          id: t.id,
+          youtubeId: t.youtubeId,
+          title: t.title,
+          artist: t.artist,
+          album: t.album || undefined,
+          duration: t.duration,
+          thumbnail: t.thumbnail,
+          source: 'catalog',
+          aiMatch: 92,
+        }))
+      : SEED_TRACKS.slice(0, 15).map((st, idx) => ({
+          id: `seed-${idx}`,
+          ...st,
+          source: 'catalog' as const,
+          aiMatch: 92,
+        }));
 
     const hero =
       heavyRotation[0] ||
@@ -85,7 +96,7 @@ export async function GET(req: NextRequest) {
       if (quickAccess.length >= 6) break;
     }
 
-    const artistName = hero?.artist || 'Queen';
+    const artistName = hero?.artist || 'Arijit Singh';
     const artistSpotlight = {
       artist: artistName,
       tracks: [...aiRecommendations, ...fallbackCatalog]

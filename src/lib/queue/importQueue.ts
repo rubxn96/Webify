@@ -37,14 +37,14 @@ export async function extractPlaylistMetadata(url: string): Promise<{
 
   // Demo fallback curated tracks for popular playlists or scraped metadata
   const sampleTracks: RawImportTrack[] = [
-    { title: 'Blinding Lights', artist: 'The Weeknd', album: 'After Hours', isrc: 'USUG11904206', durationSeconds: 200 },
-    { title: 'Bohemian Rhapsody', artist: 'Queen', album: 'A Night at the Opera', isrc: 'GBUM71029604', durationSeconds: 354 },
-    { title: 'Shape of You', artist: 'Ed Sheeran', album: '÷ (Divide)', isrc: 'GBAHS1600463', durationSeconds: 233 },
-    { title: 'Levitating', artist: 'Dua Lipa', album: 'Future Nostalgia', isrc: 'GBAHT1901299', durationSeconds: 203 },
-    { title: 'Sugar', artist: 'Maroon 5', album: 'V', isrc: 'USUM71412093', durationSeconds: 235 },
-    { title: 'Counting Stars', artist: 'OneRepublic', album: 'Native', isrc: 'USUM71302832', durationSeconds: 257 },
-    { title: 'Thunder', artist: 'Imagine Dragons', album: 'Evolve', isrc: 'USUM71703861', durationSeconds: 187 },
-    { title: 'Hello', artist: 'Adele', album: '25', isrc: 'GBBKS1500214', durationSeconds: 295 },
+    { title: 'Kesariya', artist: 'Arijit Singh', album: 'Brahmāstra', isrc: 'INS182200591', durationSeconds: 268 },
+    { title: 'Illuminati', artist: 'Sushin Shyam, Dabzee', album: 'Aavesham', isrc: 'INT222400109', durationSeconds: 204 },
+    { title: 'Hukum - Thalaivar Alappara', artist: 'Anirudh Ravichander', album: 'Jailer', isrc: 'INS172300492', durationSeconds: 207 },
+    { title: 'Tauba Tauba', artist: 'Karan Aujla', album: 'Bad Newz', isrc: 'INS182400981', durationSeconds: 207 },
+    { title: 'Chaleya', artist: 'Arijit Singh, Shilpa Rao', album: 'Jawan', isrc: 'INS182302341', durationSeconds: 200 },
+    { title: 'Naa Ready', artist: 'Thalapathy Vijay, Anirudh Ravichander', album: 'Leo', isrc: 'INS172301211', durationSeconds: 248 },
+    { title: 'Katchi Sera', artist: 'Sai Abhyankkar', album: 'Katchi Sera', isrc: 'INT202400018', durationSeconds: 184 },
+    { title: 'Darshana', artist: 'Hesham Abdul Wahab', album: 'Hridayam', isrc: 'INT222100812', durationSeconds: 275 },
     { title: 'Rare Unreleased Track', artist: 'Unknown Underground Artist', isrc: 'ZZZZ99999999', durationSeconds: 999 }, // Intentional exception test case
   ];
 

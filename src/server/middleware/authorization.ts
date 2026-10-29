@@ -24,8 +24,12 @@ export function verifyRequestToken(req: NextRequest): TokenPayload | null {
 export async function getStrictUser(req: NextRequest) {
   const payload = verifyRequestToken(req);
   if (!payload) return null;
-  return await prisma.user.findUnique({
-    where: { id: payload.userId },
-  });
+  try {
+    return await prisma.user.findUnique({
+      where: { id: payload.userId },
+    });
+  } catch {
+    return null;
+  }
 }
 

@@ -207,7 +207,7 @@ export function generateAIRecommendations(
 
   // 9. Top Artist Spotlight (Unlistened tracks by favorite artist - up to 12 songs)
   const sortedArtists = Object.entries(Object.fromEntries(artistWeights)).sort((a, b) => b[1] - a[1]);
-  const topArtist = sortedArtists.length > 0 ? sortedArtists[0][0] : catalog[0]?.artist || 'Queen';
+  const topArtist = sortedArtists.length > 0 ? sortedArtists[0][0] : catalog[0]?.artist || 'Arijit Singh';
   const artistTracks = candidatePool
     .filter((t) => t.artist.toLowerCase().includes(topArtist.toLowerCase()))
     .slice(0, 12);

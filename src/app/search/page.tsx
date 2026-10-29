@@ -56,12 +56,12 @@ function SearchContent() {
   };
 
   const quickPicks = [
-    'The Weeknd Blinding Lights',
-    'Daft Punk Get Lucky',
-    'Eminem Without Me',
-    'Hans Zimmer Interstellar',
-    'Coldplay Viva La Vida',
-    'Lofi Hip Hop Beats',
+    'Kesariya Arijit Singh',
+    'Illuminati Aavesham',
+    'Tauba Tauba Karan Aujla',
+    'Hukum Anirudh Jailer',
+    'Katchi Sera Sai Abhyankkar',
+    'Darshana Hridayam',
   ];
 
   const youtubeCount = results.filter((t) => t.source === 'youtube').length;
