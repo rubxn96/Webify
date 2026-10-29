@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, Library, Sliders, Download } from 'lucide-react';
+import { Home, Search, Library, Settings, Download } from 'lucide-react';
 
 export const MobileNavBar: React.FC = () => {
   const pathname = usePathname();
@@ -13,7 +13,7 @@ export const MobileNavBar: React.FC = () => {
     { label: 'Search', href: '/search', icon: Search },
     { label: 'Library', href: '/library', icon: Library },
     { label: 'Import', href: '/import', icon: Download },
-    { label: 'EQ', href: '/settings', icon: Sliders },
+    { label: 'Settings', href: '/settings', icon: Settings },
   ];
 
   return (

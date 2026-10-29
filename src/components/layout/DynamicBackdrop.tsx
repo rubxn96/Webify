@@ -51,11 +51,21 @@ export const DynamicBackdrop: React.FC = () => {
     };
   }, [currentTrack?.thumbnail]);
 
+  const [enabled, setEnabled] = useState(true);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('webify_ambient_glow');
+    if (saved === 'false') setEnabled(false);
+  }, []);
+
+  if (!enabled) return null;
+
   return (
     <div
+      id="webify-dynamic-backdrop"
       className="pointer-events-none fixed inset-x-0 top-0 h-[38vh] transition-all duration-1000 ease-out z-0"
       style={{
-        background: `radial-gradient(circle at 50% 0%, rgba(${rgbColor}, 0.18) 0%, rgba(${rgbColor}, 0.05) 45%, #0A0A0C 75%)`,
+        background: `radial-gradient(circle at 50% 0%, rgba(${rgbColor}, 0.16) 0%, rgba(${rgbColor}, 0.04) 45%, var(--color-canvas) 75%)`,
       }}
     />
   );

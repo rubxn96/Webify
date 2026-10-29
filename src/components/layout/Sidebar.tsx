@@ -7,7 +7,7 @@ import {
   Home,
   Search,
   Library,
-  Sliders,
+  Settings,
   Download,
   Plus,
   Disc3,
@@ -15,12 +15,10 @@ import {
   Lock,
   X,
   Heart,
-  LogIn,
-  LogOut,
   Sparkles,
 } from 'lucide-react';
 import { useAudio } from '@/components/audio/AudioProvider';
-import { Playlist, UserProfile } from '@/types';
+import { Playlist } from '@/types';
 import { AuthModal } from '@/components/auth/AuthModal';
 
 interface SidebarProps {
@@ -35,37 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState('');
-  const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-
-  const fetchUser = () => {
-    fetch('/api/auth/me')
-      .then((res) => (res.ok ? res.json() : { user: null }))
-      .then((data) => {
-        if (data?.user) setUser(data.user);
-        else setUser(null);
-      })
-      .catch(() => {});
-  };
-
-  const handleSidebarLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-    } catch {
-      // ignore
-    } finally {
-      setUser(null);
-      setPlaylists([]);
-      try {
-        sessionStorage.removeItem('webify_homepage_cache');
-        sessionStorage.removeItem('webify_recommendations_cache');
-      } catch {
-        // ignore
-      }
-      router.refresh();
-      fetchPlaylists();
-    }
-  };
 
   const fetchPlaylists = () => {
     fetch('/api/playlists')
@@ -79,7 +47,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
 
   useEffect(() => {
     fetchPlaylists();
-    fetchUser();
   }, [pathname]);
 
   const handleCreatePlaylist = async (e: React.FormEvent) => {
@@ -124,8 +91,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
     { label: 'Import Playlist', href: '/import', icon: Download },
   ];
 
-  const dspLinks = [
-    { label: 'DSP Equalizer', href: '/settings', icon: Sliders },
+  const settingsLinks = [
+    { label: 'Settings', href: '/settings', icon: Settings },
   ];
 
   const sidebarContent = (
@@ -246,12 +213,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
             })}
           </div>
 
-          {/* Section: Studio DSP */}
+          {/* Section: Preferences / Settings */}
           <div className="space-y-1">
             <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
-              Studio DSP
+              Preferences
             </div>
-            {dspLinks.map((item) => {
+            {settingsLinks.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
 
@@ -333,53 +300,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
           </div>
         </div>
       </div>
-
-      {/* User Account / Log In / Log Out */}
-      <div className="p-3 pb-0 border-t border-white/[0.06]">
-        {user ? (
-          <div className="p-2.5 rounded-2xl glass-card flex items-center justify-between">
-            <div className="flex items-center gap-2.5 truncate mr-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-[10px] font-mono font-bold text-white flex-shrink-0 shadow-sm">
-                {user.username.slice(0, 2).toUpperCase()}
-              </div>
-              <div className="truncate">
-                <div className="text-xs font-semibold text-white truncate">{user.username}</div>
-                <div className="text-[10px] text-white/40 truncate">{user.email}</div>
-              </div>
-            </div>
-            <button
-              onClick={handleSidebarLogout}
-              className="p-1.5 rounded-xl text-white/40 hover:text-rose-400 hover:bg-rose-500/10 transition-colors flex-shrink-0"
-              title="Log Out"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setIsAuthOpen(true)}
-            className="w-full py-2 px-3 rounded-2xl bg-white text-black text-xs font-semibold flex items-center justify-center gap-2 hover:bg-white/90 active:scale-95 transition-all shadow-md"
-          >
-            <LogIn className="w-3.5 h-3.5" />
-            <span>Log In</span>
-          </button>
-        )}
-      </div>
-
-      {/* DSP Baseline Glass Badge */}
-      <div className="p-3">
-        <div className="p-2.5 rounded-xl glass-card text-[11px] font-mono text-white/60">
-          <div className="flex items-center justify-between">
-            <span className="text-white font-medium">DSP Normalizer</span>
-            <span className="text-emerald-400 font-semibold text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-400/10 border border-emerald-400/20">
-              Active
-            </span>
-          </div>
-          <div className="text-[10px] text-white/40 mt-1">
-            -14 LUFS &bull; 10-Band EQ
-          </div>
-        </div>
-      </div>
     </div>
   );
 
@@ -409,14 +329,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-        onSuccess={(u) => {
+        onSuccess={() => {
           try {
             sessionStorage.removeItem('webify_homepage_cache');
             sessionStorage.removeItem('webify_recommendations_cache');
           } catch {
             // ignore
           }
-          setUser(u);
           fetchPlaylists();
         }}
       />

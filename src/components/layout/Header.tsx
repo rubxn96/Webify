@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Search, Heart, Youtube, Disc, Loader2, Play, Menu, LogIn, LogOut, User, ChevronDown } from 'lucide-react';
+import { Search, Heart, Youtube, Disc, Loader2, Play, Menu, LogIn, LogOut, User, ChevronDown, Settings } from 'lucide-react';
 import { AuthModal } from '@/components/auth/AuthModal';
 import { Track, UserProfile } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
@@ -260,6 +260,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
           <span className="hidden sm:inline">Favorites</span>
         </Link>
 
+        <Link
+          href="/settings"
+          className="p-2 text-white/60 hover:text-white transition-colors flex items-center gap-1.5 text-xs font-medium"
+          title="Settings & Audio Studio"
+        >
+          <Settings className="w-4 h-4 text-white/60 hover:text-white" />
+          <span className="hidden sm:inline">Settings</span>
+        </Link>
+
         {user ? (
           <div ref={profileMenuRef} className="relative">
             <button
@@ -285,6 +294,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
                   <div className="text-xs font-semibold text-white truncate">{user.username}</div>
                   <div className="text-[11px] text-white/40 truncate">{user.email}</div>
                 </div>
+
+                <Link
+                  href="/settings"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white/80 hover:text-white hover:bg-white/10 transition-colors text-left"
+                >
+                  <Settings className="w-3.5 h-3.5 text-obsidian-accent" />
+                  <span>Settings</span>
+                </Link>
 
                 <button
                   onClick={() => {
