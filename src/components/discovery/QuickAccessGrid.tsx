@@ -33,7 +33,7 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
             if (isCurrent) {
               togglePlay();
             } else {
-              playTrack(track, tracks);
+              playTrack(track);
             }
           };
 

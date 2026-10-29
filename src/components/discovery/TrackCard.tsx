@@ -37,7 +37,7 @@ export const TrackCard: React.FC<TrackCardProps> = ({ track, playlistContext }) 
     if (isCurrent) {
       togglePlay();
     } else {
-      playTrack(track, playlistContext);
+      playTrack(track);
     }
   };
 

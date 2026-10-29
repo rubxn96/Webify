@@ -26,7 +26,7 @@ interface AudioContextType {
   visualizerData: Uint8Array;
 
   // Actions
-  playTrack: (track: Track, newQueue?: Track[]) => void;
+  playTrack: (track: Track, newQueue?: Track[], isExplicitPlaylist?: boolean) => void;
   togglePlay: () => void;
   seek: (seconds: number) => void;
   nextTrack: () => void;
@@ -255,7 +255,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Resolve and start track playback
   const playTrack = useCallback(
-    async (track: Track, newQueue?: Track[]) => {
+    async (track: Track, newQueue?: Track[], isExplicitPlaylist: boolean = false) => {
       const currentRequestId = ++playRequestIdRef.current;
 
       configureAudioSession();
@@ -326,12 +326,15 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       const baseTitle = cleanNorm(cleanSongTitle(track.title));
 
-      // Sanitize and strictly deduplicate queue: ensure no song appears more than once!
-      let initialQueue: Track[] = [];
-      if (newQueue && newQueue.length > 0) {
+      // Check if this track is already within the active queue (e.g. from nextTrack or clicking within QueueDrawer)
+      const existingQueueIdx = queue.findIndex((t) => t.youtubeId === track.youtubeId);
+
+      if (newQueue && newQueue.length > 0 && isExplicitPlaylist) {
+        // Explicit user playlist: preserve playlist tracks
         const seenIds = new Set<string>();
         const seenKeys = new Set<string>();
         const seenTitles = new Set<string>();
+        const initialQueue: Track[] = [];
 
         for (const t of newQueue) {
           const tClean = cleanNorm(cleanSongTitle(t.title));
@@ -345,13 +348,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             continue;
           }
 
-          // Strictly filter out duplicate versions or lyric clones of the current playing song, and existing queue duplicates
-          if (
-            tClean === baseTitle ||
-            seenIds.has(t.youtubeId) ||
-            seenKeys.has(tKey) ||
-            seenTitles.has(tClean)
-          ) {
+          if (seenIds.has(t.youtubeId) || seenKeys.has(tKey) || seenTitles.has(tClean)) {
             continue;
           }
 
@@ -365,55 +362,66 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const initialIdx = initialQueue.findIndex((t) => t.youtubeId === track.youtubeId);
         setQueueIndex(initialIdx >= 0 ? initialIdx : 0);
 
-        // Preload next track immediately for seamless background gapless playback
         const nextSongInQueue = initialQueue[initialIdx + 1];
         if (nextSongInQueue) {
           preloadTrack(nextSongInQueue);
         }
-      }
+      } else if (existingQueueIdx >= 0 && !newQueue) {
+        // Track is already part of current queue: smoothly switch to it without wiping queue
+        setQueueIndex(existingQueueIdx);
+        const nextSongInQueue = queue[existingQueueIdx + 1];
+        if (nextSongInQueue) {
+          preloadTrack(nextSongInQueue);
+        }
+        if (queue.length - existingQueueIdx <= 4) {
+          replenishQueue(track);
+        }
+      } else {
+        // Individual song play: Queue starts with this song, immediately followed by related songs
+        setQueue([track]);
+        setQueueIndex(0);
 
-      // Automatically fetch similar songs with respect to the currently playing song!
-      fetch(
-        `/api/tracks/similar?youtubeId=${track.youtubeId}&title=${encodeURIComponent(
-          track.title
-        )}&artist=${encodeURIComponent(track.artist)}&limit=20`
-      )
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data?.tracks && data.tracks.length > 0) {
-            setQueue((prevQueue) => {
-              const seenIds = new Set(prevQueue.map((q) => q.youtubeId));
-              const seenKeys = new Set(
-                prevQueue.map((q) => `${cleanNorm(q.artist)}:::${cleanNorm(cleanSongTitle(q.title))}`)
-              );
-              const seenTitles = new Set(prevQueue.map((q) => cleanNorm(cleanSongTitle(q.title))));
+        fetch(
+          `/api/tracks/similar?youtubeId=${track.youtubeId}&title=${encodeURIComponent(
+            track.title
+          )}&artist=${encodeURIComponent(track.artist)}&limit=25`
+        )
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => {
+            if (data?.tracks && data.tracks.length > 0) {
+              setQueue((prevQueue) => {
+                const seenIds = new Set([track.youtubeId]);
+                const seenKeys = new Set([`${cleanNorm(track.artist)}:::${baseTitle}`]);
 
-              const freshSimilar = data.tracks.filter((st: Track) => {
-                const stKey = `${cleanNorm(st.artist)}:::${cleanNorm(cleanSongTitle(st.title))}`;
-                const stBase = cleanNorm(cleanSongTitle(st.title));
-                return (
-                  stBase !== baseTitle &&
-                  !seenIds.has(st.youtubeId) &&
-                  !seenKeys.has(stKey) &&
-                  !seenTitles.has(stBase)
-                );
-              });
-
-              if (freshSimilar.length > 0) {
-                const combinedQueue = [...prevQueue, ...freshSimilar];
-                if (!preloadedNextTrackRef.current) {
-                  const currIdx = combinedQueue.findIndex((q) => q.youtubeId === track.youtubeId);
-                  if (currIdx >= 0 && combinedQueue[currIdx + 1]) {
-                    preloadTrack(combinedQueue[currIdx + 1]);
+                const freshSimilar = data.tracks.filter((st: Track) => {
+                  const stKey = `${cleanNorm(st.artist)}:::${cleanNorm(cleanSongTitle(st.title))}`;
+                  const stBase = cleanNorm(cleanSongTitle(st.title));
+                  if (
+                    st.youtubeId === track.youtubeId ||
+                    stBase === baseTitle ||
+                    seenIds.has(st.youtubeId) ||
+                    seenKeys.has(stKey)
+                  ) {
+                    return false;
                   }
+                  seenIds.add(st.youtubeId);
+                  seenKeys.add(stKey);
+                  return true;
+                });
+
+                if (freshSimilar.length > 0) {
+                  const combinedQueue = [track, ...freshSimilar];
+                  if (!preloadedNextTrackRef.current && combinedQueue[1]) {
+                    preloadTrack(combinedQueue[1]);
+                  }
+                  return combinedQueue;
                 }
-                return combinedQueue;
-              }
-              return prevQueue;
-            });
-          }
-        })
-        .catch(() => {});
+                return prevQueue;
+              });
+            }
+          })
+          .catch(() => {});
+      }
 
       // Emit track_start
       emitTelemetryBeacon({

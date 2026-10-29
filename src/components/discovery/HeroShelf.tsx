@@ -24,7 +24,7 @@ export const HeroShelf: React.FC<HeroShelfProps> = ({ heroTrack, allTracks }) =>
     if (isCurrent) {
       togglePlay();
     } else {
-      playTrack(heroTrack, allTracks);
+      playTrack(heroTrack);
     }
   };
 
