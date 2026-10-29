@@ -17,10 +17,9 @@ prisma/dev.db-journal
 *.db-journal
 
 # Environment variables
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env
+.env.*
+!.env.example
 
 # Debug logs
 npm-debug.log*
