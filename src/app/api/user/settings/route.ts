@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/db/prisma';
-import { getCurrentUser } from '@/lib/auth/jwt';
-import { DEFAULT_USER_SETTINGS } from '@/lib/audio/dspPresets';
+import { getAuthenticatedUser } from '@/server/middleware/authorization';
+import { UserSettingsSchema } from '@/server/middleware/validation';
+import { authService, DEFAULT_USER_SETTINGS } from '@/server/modules/auth/auth.service';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await getCurrentUser(req);
+    const user = await getAuthenticatedUser(req);
     if (!user) {
       return NextResponse.json({ settings: DEFAULT_USER_SETTINGS });
     }
 
-    const settings = user.settings ? JSON.parse(user.settings) : DEFAULT_USER_SETTINGS;
+    const settings = (user.preferences as any) || DEFAULT_USER_SETTINGS;
     return NextResponse.json({ settings });
   } catch (error) {
     console.error('Settings GET error:', error);
@@ -22,25 +22,24 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getCurrentUser(req);
+    const user = await getAuthenticatedUser(req);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { settings } = await req.json();
+    const body = await req.json();
+    const settingsInput = body.settings || body;
+    const parsed = UserSettingsSchema.partial().safeParse(settingsInput);
 
-    if (!settings) {
-      return NextResponse.json({ error: 'Settings payload required' }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid settings payload', details: parsed.error.format() },
+        { status: 400 }
+      );
     }
 
-    const updated = await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        settings: JSON.stringify(settings),
-      },
-    });
-
-    return NextResponse.json({ success: true, settings: JSON.parse(updated.settings || '{}') });
+    const updated = await authService.updatePreferences(user.id, parsed.data);
+    return NextResponse.json({ success: true, settings: updated.settings });
   } catch (error) {
     console.error('Settings sync error:', error);
     return NextResponse.json({ error: 'Failed to sync settings' }, { status: 500 });

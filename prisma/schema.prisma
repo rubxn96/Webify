@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -12,7 +12,8 @@ model User {
   email        String      @unique
   username     String
   passwordHash String
-  settings     String?     @default("{\"bitrate\":\"high\",\"normalization\":true,\"crossfade\":2,\"eqEnabled\":true,\"eqPreset\":\"Flat\",\"eqBands\":[0,0,0,0,0,0]}")
+  preferences  Json        @default("{\"bitrate\":\"high\",\"normalization\":true,\"crossfade\":2,\"eqEnabled\":true,\"eqPreset\":\"Flat\",\"eqBands\":[0,0,0,0,0,0,0,0,0,0]}")
+  tasteVector  Float[]     @default([])
   playlists    Playlist[]
   likes        UserLike[]
   history      Telemetry[]
@@ -29,7 +30,7 @@ model Track {
   isrc        String?
   duration    Int             // in seconds
   thumbnail   String
-  embedding   String?         // JSON float vector for discovery similarity
+  embedding   Float[]         @default([]) // 8D native float vector for discovery similarity
   audioUrl    String?
   lyrics      String?         // LRC formatted or JSON sync lines
   likes       UserLike[]
@@ -37,6 +38,8 @@ model Track {
   history     Telemetry[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+
+  @@index([isrc])
 }
 
 model Playlist {
@@ -86,6 +89,8 @@ model Telemetry {
   durationSeconds Float    @default(0)
   weight          Float    @default(0)
   createdAt       DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model ImportJob {
@@ -101,4 +106,3 @@ model ImportJob {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
-

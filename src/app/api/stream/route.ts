@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { resolveYouTubeAudio } from '@/lib/youtube/resolver';
+import { youtubeProvider } from '@/server/providers/youtube.adapter';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +13,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'YouTube video ID is required' }, { status: 400 });
     }
 
-    const streamResult = await resolveYouTubeAudio(videoId, bitrate);
+    const streamResult = await youtubeProvider.resolveStream(videoId, {
+      tier: bitrate === 'auto' ? 'high' : bitrate,
+    });
 
     return NextResponse.json(streamResult, {
       headers: {

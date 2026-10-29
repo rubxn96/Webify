@@ -84,6 +84,12 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Prebuffering flag for gapless playback (at 85%)
   const prebufferedIndexRef = useRef<number | null>(null);
 
+  // Background playback & auto-resume state ref
+  const isPlayingRef = useRef<boolean>(false);
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
   // Telemetry refs
   const progressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastProgressTrackRef = useRef<string | null>(null);
@@ -489,6 +495,96 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     playTrack(queue[prevIdx], queue);
   }, [queue, queueIndex, currentTime, seek, playTrack]);
 
+  // Native OS Lock-Screen Integration (MediaSession API)
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !('mediaSession' in navigator)) return;
+
+    if (currentTrack) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.title,
+        artist: currentTrack.artist,
+        album: currentTrack.album || 'Obsidian Hi-Fi',
+        artwork: [
+          { src: currentTrack.thumbnail, sizes: '96x96', type: 'image/jpeg' },
+          { src: currentTrack.thumbnail, sizes: '128x128', type: 'image/jpeg' },
+          { src: currentTrack.thumbnail, sizes: '256x256', type: 'image/jpeg' },
+          { src: currentTrack.thumbnail, sizes: '512x512', type: 'image/jpeg' },
+        ],
+      });
+    }
+
+    navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+
+    const handlePlay = () => {
+      if (playbackMode === 'direct' && audioElementRef.current) {
+        audioElementRef.current.play().catch(() => {});
+      }
+      setIsPlaying(true);
+    };
+
+    const handlePause = () => {
+      if (playbackMode === 'direct' && audioElementRef.current) {
+        audioElementRef.current.pause();
+      }
+      setIsPlaying(false);
+    };
+
+    const handleNext = () => nextTrack();
+    const handlePrev = () => prevTrack();
+    const handleSeekTo = (details: MediaSessionActionDetails) => {
+      if (details.seekTime !== undefined) {
+        seek(details.seekTime);
+      }
+    };
+    const handleSeekBackward = (details: MediaSessionActionDetails) => {
+      const offset = details.seekOffset || 10;
+      seek(Math.max(0, currentTime - offset));
+    };
+    const handleSeekForward = (details: MediaSessionActionDetails) => {
+      const offset = details.seekOffset || 10;
+      seek(Math.min(duration, currentTime + offset));
+    };
+
+    try {
+      navigator.mediaSession.setActionHandler('play', handlePlay);
+      navigator.mediaSession.setActionHandler('pause', handlePause);
+      navigator.mediaSession.setActionHandler('previoustrack', handlePrev);
+      navigator.mediaSession.setActionHandler('nexttrack', handleNext);
+      navigator.mediaSession.setActionHandler('seekto', handleSeekTo);
+      navigator.mediaSession.setActionHandler('seekbackward', handleSeekBackward);
+      navigator.mediaSession.setActionHandler('seekforward', handleSeekForward);
+    } catch (err) {
+      console.warn('MediaSession handler registration:', err);
+    }
+  }, [currentTrack, isPlaying, playbackMode, nextTrack, prevTrack, seek, currentTime, duration]);
+
+  // AudioContext background wake-lock & interruption auto-resume
+  useEffect(() => {
+    const handleWake = () => {
+      if (isPlayingRef.current && audioGraphRef.current) {
+        audioGraphRef.current.resume().catch(() => {});
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleWake);
+    window.addEventListener('focus', handleWake);
+
+    const checkInterval = setInterval(() => {
+      if (isPlayingRef.current && audioGraphRef.current) {
+        const ctx = audioGraphRef.current.getContext();
+        if (ctx && (ctx.state === 'suspended' || (ctx.state as string) === 'interrupted')) {
+          ctx.resume().catch(() => {});
+        }
+      }
+    }, 2000);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleWake);
+      window.removeEventListener('focus', handleWake);
+      clearInterval(checkInterval);
+    };
+  }, []);
+
   const setVolume = useCallback((vol: number) => {
     const clamped = Math.max(0, Math.min(1, vol));
     setVolumeState(clamped);
@@ -677,9 +773,36 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // HTML5 audio event handlers
   const handleTimeUpdate = () => {
     if (audioElementRef.current && playbackMode === 'direct') {
-      setCurrentTime(audioElementRef.current.currentTime);
+      const cur = audioElementRef.current.currentTime;
+      const dur = audioElementRef.current.duration || duration;
+      setCurrentTime(cur);
       if (audioElementRef.current.duration) {
         setDuration(audioElementRef.current.duration);
+      }
+
+      // Sync position to native OS lock-screen MediaSession
+      if (typeof navigator !== 'undefined' && 'mediaSession' in navigator && dur > 0) {
+        try {
+          navigator.mediaSession.setPositionState({
+            duration: Math.max(0, dur),
+            playbackRate: 1,
+            position: Math.max(0, Math.min(cur, dur)),
+          });
+        } catch {
+          // ignore
+        }
+      }
+
+      // 85% pre-buffer threshold: pre-warm stream cache for next track
+      if (dur > 0 && cur / dur >= 0.85) {
+        const nextIdx = queueIndex + 1;
+        if (nextIdx < queue.length && prebufferedIndexRef.current !== nextIdx) {
+          prebufferedIndexRef.current = nextIdx;
+          const nextTrack = queue[nextIdx];
+          if (nextTrack) {
+            fetch(`/api/stream?id=${nextTrack.youtubeId}&bitrate=${userSettings.bitrate}`).catch(() => {});
+          }
+        }
       }
     }
   };
@@ -740,6 +863,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     >
       <audio
         ref={audioElementRef}
+        playsInline
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleTrackEnded}
         onError={handleAudioError}

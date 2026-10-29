@@ -79,7 +79,7 @@ async function fetchDirectYouTubeVideo(videoId: string): Promise<Track | null> {
           artist,
           duration: 210,
           thumbnail: data.thumbnail_url || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
-          embedding: JSON.stringify([0.7, 0.6, 0.6, 0.2, 0.65, 0.05, 0.05, 0.2]),
+          embedding: [0.7, 0.6, 0.6, 0.2, 0.65, 0.05, 0.05, 0.2],
         },
       });
 
@@ -308,7 +308,7 @@ export async function searchTracks(
         isrc: t.isrc || undefined,
         duration: t.duration,
         thumbnail: t.thumbnail,
-        embedding: t.embedding ? JSON.parse(t.embedding) : undefined,
+        embedding: Array.isArray(t.embedding) ? t.embedding : undefined,
         lyrics: t.lyrics || undefined,
         source: 'catalog',
       });

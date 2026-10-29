@@ -1,6 +1,7 @@
 import prisma from '@/lib/db/prisma';
 import { ImportException } from '@/types';
 import { searchTracks } from '@/lib/youtube/search';
+import { youtubeProvider } from '@/server/providers/youtube.adapter';
 
 interface RawImportTrack {
   title: string;
@@ -109,27 +110,18 @@ export async function processImportJob(jobId: string, userId: string, rawTracks:
         }
       }
 
-      // Priority 3: YouTube Search with duration guard (+- 3 seconds)
+      // Priority 3: YouTube Provider Adapter Matcher with duration guard (+- 3 seconds)
       if (!matchedTrackId) {
-        const searchQuery = `${item.artist} - ${item.title} Official Audio`;
-        const searchResults = await searchTracks(searchQuery, 5);
+        const matchResult = await youtubeProvider.matchExternalTrack({
+          title: item.title,
+          artist: item.artist,
+          album: item.album,
+          isrc: item.isrc,
+          durationSeconds: item.durationSeconds,
+        });
 
-        let candidate = null;
-        if (item.durationSeconds) {
-          // Duration guard: search results within +- 3 seconds
-          candidate = searchResults.find(
-            (r) => Math.abs(r.duration - item.durationSeconds!) <= 3
-          );
-        }
-
-        // If no +-3s match, allow fallback if title and artist match closely
-        if (!candidate && searchResults.length > 0) {
-          const normTitle = normalizeString(item.title);
-          candidate = searchResults.find((r) => normalizeString(r.title).includes(normTitle)) || null;
-        }
-
-        if (candidate) {
-          // Upsert track in local catalog
+        if (matchResult.matched && matchResult.track) {
+          const candidate = matchResult.track;
           const upserted = await prisma.track.upsert({
             where: { youtubeId: candidate.youtubeId },
             update: {},
@@ -141,12 +133,12 @@ export async function processImportJob(jobId: string, userId: string, rawTracks:
               isrc: item.isrc,
               duration: candidate.duration || item.durationSeconds || 180,
               thumbnail: candidate.thumbnail || `https://img.youtube.com/vi/${candidate.youtubeId}/hqdefault.jpg`,
+              embedding: [0.7, 0.6, 0.6, 0.2, 0.65, 0.05, 0.05, 0.2],
             },
           });
 
           matchedTrackId = upserted.id;
 
-          // Populate cache
           const cacheKey = `${normalizeString(item.artist)}:${normalizeString(item.title)}`;
           artistTitleCache.set(cacheKey, { youtubeId: candidate.youtubeId, duration: upserted.duration });
         }

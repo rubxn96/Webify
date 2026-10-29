@@ -1,28 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db/prisma';
-import { getCurrentUser } from '@/lib/auth/jwt';
+import { getAuthenticatedUser } from '@/server/middleware/authorization';
+import { playlistService } from '@/server/modules/playlists/playlist.service';
 
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = await getCurrentUser(req);
+    const user = await getAuthenticatedUser(req);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id: playlistId } = params;
     const body = await req.json();
-    const trackId = body.trackId;
-
-    if (!trackId && !body.youtubeId) {
-      return NextResponse.json({ error: 'Track ID or youtubeId is required' }, { status: 400 });
-    }
 
     const playlist = await prisma.playlist.findUnique({
       where: { id: playlistId },
-      include: { tracks: true },
     });
 
     if (!playlist) {
@@ -33,49 +28,15 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Resolve or upsert track
-    let targetTrack = await prisma.track.findFirst({
-      where: {
-        OR: [
-          { id: trackId || '' },
-          { youtubeId: trackId || body.youtubeId || '' },
-        ],
-      },
-    });
-
-    if (!targetTrack && (body.youtubeId || trackId)) {
-      const yId = body.youtubeId || trackId;
-      targetTrack = await prisma.track.create({
-        data: {
-          youtubeId: yId,
-          title: body.title || 'YouTube Song',
-          artist: body.artist || 'Unknown Artist',
-          duration: body.duration || 180,
-          thumbnail: body.thumbnail || `https://img.youtube.com/vi/${yId}/hqdefault.jpg`,
-          embedding: JSON.stringify([0.7, 0.6, 0.6, 0.2, 0.65, 0.05, 0.05, 0.2]),
-        },
-      });
-    }
-
-    if (!targetTrack) {
-      return NextResponse.json({ error: 'Track not found' }, { status: 404 });
-    }
-
-    const currentCount = playlist.tracks.length;
-
-    await prisma.playlistTrack.upsert({
-      where: {
-        playlistId_trackId: {
-          playlistId,
-          trackId: targetTrack.id,
-        },
-      },
-      update: {},
-      create: {
-        playlistId,
-        trackId: targetTrack.id,
-        position: currentCount,
-      },
+    await playlistService.addTrackToPlaylist(playlistId, {
+      id: body.trackId,
+      youtubeId: body.youtubeId || body.trackId,
+      title: body.title || 'Track',
+      artist: body.artist || 'Unknown Artist',
+      duration: body.duration || 180,
+      thumbnail: body.thumbnail || '',
+      album: body.album,
+      lyrics: body.lyrics,
     });
 
     return NextResponse.json({ success: true });
@@ -90,7 +51,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const user = await getCurrentUser(req);
+    const user = await getAuthenticatedUser(req);
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -106,17 +67,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    await prisma.playlistTrack.deleteMany({
-      where: {
-        playlistId,
-        trackId,
-      },
-    });
-
+    await playlistService.removeTrackFromPlaylist(playlistId, trackId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Remove track error:', error);
     return NextResponse.json({ error: 'Failed to remove track' }, { status: 500 });
   }
 }
-

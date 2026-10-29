@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: false, // Prevents double AudioContext initialization in dev
   generateBuildId: async () => 'production',
   images: {

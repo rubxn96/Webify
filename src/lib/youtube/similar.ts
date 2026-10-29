@@ -1,25 +1,12 @@
 import prisma from '@/lib/db/prisma';
 import { Track } from '@/types';
-import { cleanSongTitle, normalizeKey, searchYouTubeDirect } from './search';
+import { cleanSongTitle, normalizeKey } from './search';
 import { cosineSimilarity } from '../recommender/vectorEngine';
-
-function parseDurationText(durationText?: string): number {
-  if (!durationText) return 180;
-  const parts = durationText.trim().split(':').map((p) => parseInt(p, 10));
-  if (parts.some((p) => isNaN(p))) return 180;
-
-  if (parts.length === 3) {
-    return parts[0] * 3600 + parts[1] * 60 + parts[2];
-  } else if (parts.length === 2) {
-    return parts[0] * 60 + parts[1];
-  } else if (parts.length === 1) {
-    return parts[0];
-  }
-  return 180;
-}
+import { youtubeProvider, cleanNorm } from '@/server/providers/youtube.adapter';
 
 /**
  * Generates similar tracks with respect to the currently playing song.
+ * Uses RDAMVM YouTube Mix scraping and local 8D vector cosine similarity.
  * Filters out duplicate versions, lyric versions, or re-uploads of the current song!
  */
 export async function getSimilarTracks(
@@ -31,8 +18,9 @@ export async function getSimilarTracks(
   },
   limit: number = 20
 ): Promise<Track[]> {
-  const currentKey = `${normalizeKey(currentTrack.artist)}:::${normalizeKey(cleanSongTitle(currentTrack.title))}`;
-  const currentCleanTitle = normalizeKey(cleanSongTitle(currentTrack.title));
+  const currentClean = cleanSongTitle(currentTrack.title);
+  const currentNormTitle = cleanNorm(currentClean);
+  const currentKey = `${cleanNorm(currentTrack.artist)}:::${currentNormTitle}`;
 
   const similarList: Track[] = [];
   const seenSongKeys = new Set<string>([currentKey]);
@@ -51,11 +39,16 @@ export async function getSimilarTracks(
 
     const scoredCatalog = catalogTracks
       .map((t) => {
-        const emb = t.embedding ? JSON.parse(t.embedding) : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
+        const emb = Array.isArray(t.embedding) && t.embedding.length > 0
+          ? t.embedding
+          : (typeof t.embedding === 'string' ? JSON.parse(t.embedding) : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]);
+
         let score = cosineSimilarity(targetEmbedding, emb);
         // Artist affinity bonus
-        if (t.artist.toLowerCase().includes(currentTrack.artist.toLowerCase()) ||
-            currentTrack.artist.toLowerCase().includes(t.artist.toLowerCase())) {
+        if (
+          t.artist.toLowerCase().includes(currentTrack.artist.toLowerCase()) ||
+          currentTrack.artist.toLowerCase().includes(t.artist.toLowerCase())
+        ) {
           score += 0.3;
         }
         return { track: t, score };
@@ -64,11 +57,12 @@ export async function getSimilarTracks(
 
     for (const item of scoredCatalog) {
       const t = item.track;
-      const tClean = normalizeKey(cleanSongTitle(t.title));
-      const songKey = `${normalizeKey(t.artist)}:::${tClean}`;
+      const tClean = cleanSongTitle(t.title);
+      const tNorm = cleanNorm(tClean);
+      const songKey = `${cleanNorm(t.artist)}:::${tNorm}`;
 
       // Strictly skip if it matches current song title
-      if (tClean === currentCleanTitle || seenSongKeys.has(songKey)) continue;
+      if (tNorm === currentNormTitle || seenSongKeys.has(songKey)) continue;
 
       seenSongKeys.add(songKey);
       seenYouTubeIds.add(t.youtubeId);
@@ -88,26 +82,22 @@ export async function getSimilarTracks(
       if (similarList.length >= 4) break;
     }
   } catch {
-    // Continue
+    // Continue to mix scraper
   }
 
-  // 2. Fetch related songs from YouTube (Search for similar hits by same or related artist)
+  // 2. Fetch related songs using YouTubeProviderAdapter's RDAMVM Mix scraper
   try {
-    const cleanArtist = currentTrack.artist
-      .replace(/Topic|VEVO|Official|Records|Music/gi, '')
-      .trim();
+    const mixResults = await youtubeProvider.scrapeRelatedMix(currentTrack.youtubeId, limit);
 
-    const ytResults = await searchYouTubeDirect(`${cleanArtist} greatest hits radio mix`, limit);
-
-    for (const yt of ytResults) {
+    for (const yt of mixResults) {
       const cleanedTitle = cleanSongTitle(yt.title);
-      const songCleanTitle = normalizeKey(cleanedTitle);
-      const songKey = `${normalizeKey(yt.artist)}:::${songCleanTitle}`;
+      const songNormTitle = cleanNorm(cleanedTitle);
+      const songKey = `${cleanNorm(yt.artist)}:::${songNormTitle}`;
 
       // CRITICAL: Strictly skip if this song is the SAME as current playing song
       // or if it's already in the list
       if (
-        songCleanTitle === currentCleanTitle ||
+        songNormTitle === currentNormTitle ||
         seenSongKeys.has(songKey) ||
         seenYouTubeIds.has(yt.youtubeId)
       ) {
@@ -130,4 +120,3 @@ export async function getSimilarTracks(
 
   return similarList;
 }
-

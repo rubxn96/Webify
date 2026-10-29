@@ -5,9 +5,9 @@ import { SEED_TRACKS } from './seedData';
 const prisma = new PrismaClient();
 
 export async function seedDatabase() {
-  console.log('Seeding database...');
+  console.log('Seeding PostgreSQL database...');
 
-  // 1. Upsert Default User
+  // 1. Upsert Default User with Json preferences and 8D tasteVector
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash('password123', salt);
 
@@ -18,18 +18,19 @@ export async function seedDatabase() {
       email: 'user@obsidian.audio',
       username: 'Audiophile',
       passwordHash,
-      settings: JSON.stringify({
+      preferences: {
         bitrate: 'high',
         normalization: true,
         crossfade: 2,
         eqEnabled: true,
         eqPreset: 'Flat',
         eqBands: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      }),
+      },
+      tasteVector: [0.65, 0.5, 0.6, 0.3, 0.55, 0.1, 0.05, 0.25],
     },
   });
 
-  // 2. Upsert Seed Tracks
+  // 2. Upsert Seed Tracks with native Float[] 8D embedding
   const createdTracks = [];
   for (const st of SEED_TRACKS) {
     const track = await prisma.track.upsert({
@@ -41,7 +42,7 @@ export async function seedDatabase() {
         isrc: st.isrc,
         duration: st.duration,
         thumbnail: st.thumbnail,
-        embedding: JSON.stringify(st.embedding),
+        embedding: st.embedding,
         lyrics: st.lyrics,
       },
       create: {
@@ -52,7 +53,7 @@ export async function seedDatabase() {
         isrc: st.isrc,
         duration: st.duration,
         thumbnail: st.thumbnail,
-        embedding: JSON.stringify(st.embedding),
+        embedding: st.embedding,
         lyrics: st.lyrics,
       },
     });
@@ -163,4 +164,3 @@ if (require.main === module) {
     })
     .finally(() => prisma.$disconnect());
 }
-

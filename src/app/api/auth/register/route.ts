@@ -1,61 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
-import prisma from '@/lib/db/prisma';
-import { signToken } from '@/lib/auth/jwt';
-import { DEFAULT_USER_SETTINGS } from '@/lib/audio/dspPresets';
+import { RegisterSchema } from '@/server/middleware/validation';
+import { authService } from '@/server/modules/auth/auth.service';
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, username, password } = await req.json();
+    const body = await req.json();
+    const parsed = RegisterSchema.safeParse(body);
 
-    if (!email || !password || !username) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid registration input', details: parsed.error.format() },
+        { status: 400 }
+      );
     }
 
-    const existing = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    const { user, token } = await authService.register(parsed.data);
 
-    if (existing) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 409 });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    const user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase(),
-        username,
-        passwordHash,
-        settings: JSON.stringify(DEFAULT_USER_SETTINGS),
-      },
-    });
-
-    const token = signToken({ userId: user.id, email: user.email });
-
-    const response = NextResponse.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        settings: DEFAULT_USER_SETTINGS,
-      },
-      token,
-    });
-
+    const response = NextResponse.json({ user, token });
     response.cookies.set('obsidian_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60,
       path: '/',
-      maxAge: 60 * 60 * 24 * 7,
     });
 
     return response;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Registration error:', error);
-    return NextResponse.json({ error: 'Failed to create account' }, { status: 500 });
+    const status = error.message?.includes('already exists') ? 409 : 500;
+    return NextResponse.json({ error: error.message || 'Internal registration error' }, { status });
   }
 }
-

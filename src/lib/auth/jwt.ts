@@ -22,33 +22,38 @@ export function verifyToken(token: string): TokenPayload | null {
 }
 
 export async function getCurrentUser(req: NextRequest) {
-  // Check Authorization header or cookie
-  const authHeader = req.headers.get('authorization');
-  let token = authHeader?.replace('Bearer ', '');
+  try {
+    // Check Authorization header or cookie
+    const authHeader = req.headers.get('authorization');
+    let token = authHeader?.replace('Bearer ', '');
 
-  if (!token) {
-    const cookie = req.cookies.get('obsidian_token');
-    token = cookie?.value;
-  }
+    if (!token) {
+      const cookie = req.cookies.get('obsidian_token');
+      token = cookie?.value;
+    }
 
-  if (!token) {
-    // Fallback: return default user for seamless experience
-    return await prisma.user.findFirst({
-      where: { email: 'user@obsidian.audio' },
+    if (!token) {
+      // Fallback: return default user for seamless experience
+      return await prisma.user.findFirst({
+        where: { email: 'user@obsidian.audio' },
+      });
+    }
+
+    const payload = verifyToken(token);
+    if (!payload) {
+      return await prisma.user.findFirst({
+        where: { email: 'user@obsidian.audio' },
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
     });
+
+    return user;
+  } catch (err) {
+    // Return null if database is offline / connecting
+    return null;
   }
-
-  const payload = verifyToken(token);
-  if (!payload) {
-    return await prisma.user.findFirst({
-      where: { email: 'user@obsidian.audio' },
-    });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: payload.userId },
-  });
-
-  return user;
 }
 

@@ -63,6 +63,24 @@ export const HiddenYouTubeFallback: React.FC<HiddenYouTubeFallbackProps> = ({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isReadyRef = useRef<boolean>(false);
 
+  // Page Visibility Guard: Intercept visibilitychange events so background tab throttling
+  // does not pause embedded playback when screen locks or tab minimizes
+  useEffect(() => {
+    const handleVisibility = (e: Event) => {
+      if (isPlaying) {
+        e.stopImmediatePropagation();
+      }
+    };
+
+    window.addEventListener('visibilitychange', handleVisibility, true);
+    window.addEventListener('webkitvisibilitychange', handleVisibility, true);
+
+    return () => {
+      window.removeEventListener('visibilitychange', handleVisibility, true);
+      window.removeEventListener('webkitvisibilitychange', handleVisibility, true);
+    };
+  }, [isPlaying]);
+
   // Load YouTube Iframe API script once
   useEffect(() => {
     if (!window.YT) {

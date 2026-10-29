@@ -74,9 +74,13 @@ export class AudioGraph {
   }
 
   public async resume(): Promise<void> {
-    if (this.ctx && this.ctx.state === 'suspended') {
+    if (this.ctx && (this.ctx.state === 'suspended' || (this.ctx.state as string) === 'interrupted')) {
       await this.ctx.resume();
     }
+  }
+
+  public getContext(): AudioContext | null {
+    return this.ctx;
   }
 
   public setVolume(volume: number, rampMs: number = 50): void {

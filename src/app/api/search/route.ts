@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { searchTracks } from '@/lib/youtube/search';
+import { catalogService } from '@/server/modules/catalog/catalog.service';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '25', 10);
     const source = (searchParams.get('source') as 'all' | 'youtube' | 'catalog') || 'all';
 
-    const tracks = await searchTracks(query, limit, source);
+    const tracks = await catalogService.search(query, limit, source);
 
     return NextResponse.json({ tracks, query, count: tracks.length });
   } catch (error) {
