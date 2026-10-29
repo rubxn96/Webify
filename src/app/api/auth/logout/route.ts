@@ -9,15 +9,17 @@ export async function POST() {
       message: 'Logged out successfully',
     });
 
-    // Clear the obsidian_token cookie
-    response.cookies.set('obsidian_token', '', {
+    // Clear the webify_token and obsidian_token cookies
+    const clearOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'lax' as const,
       path: '/',
       maxAge: 0,
       expires: new Date(0),
-    });
+    };
+    response.cookies.set('webify_token', '', clearOptions);
+    response.cookies.set('obsidian_token', '', clearOptions);
 
     return response;
   } catch (error) {

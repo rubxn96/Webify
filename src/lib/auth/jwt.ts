@@ -28,21 +28,21 @@ export async function getCurrentUser(req: NextRequest) {
     let token = authHeader?.replace('Bearer ', '');
 
     if (!token) {
-      const cookie = req.cookies.get('obsidian_token');
+      const cookie = req.cookies.get('webify_token') || req.cookies.get('obsidian_token');
       token = cookie?.value;
     }
 
     if (!token) {
       // Fallback: return default user for seamless experience
       return await prisma.user.findFirst({
-        where: { email: 'user@obsidian.audio' },
+        where: { email: { in: ['user@webify.audio', 'user@obsidian.audio'] } },
       });
     }
 
     const payload = verifyToken(token);
     if (!payload) {
       return await prisma.user.findFirst({
-        where: { email: 'user@obsidian.audio' },
+        where: { email: { in: ['user@webify.audio', 'user@obsidian.audio'] } },
       });
     }
 

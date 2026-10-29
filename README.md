@@ -1,4 +1,4 @@
-# Obsidian — High-Fidelity Ad-Free Music Streaming Platform
+# Webify — High-Fidelity Ad-Free Music Streaming Platform
 ### 4-Tier Modular Monolith · Mobile Background Playback & Lock-Screen Media Session Engine
 
 <div align="center">
@@ -27,7 +27,7 @@
    - [Tier 3: Persistence & Recommendation Engine](#tier-3-persistence--recommendation-engine)
    - [Tier 4: Encapsulated YouTube Provider Adapter](#tier-4-encapsulated-youtube-provider-adapter)
 5. [Byte-Range Audio Proxy & CORS Architecture](#5-byte-range-audio-proxy--cors-architecture)
-6. [How Obsidian Differs from Spotify](#6-how-obsidian-differs-from-spotify)
+6. [How Webify Differs from Spotify](#6-how-webify-differs-from-spotify)
 7. [API Route Reference](#7-api-route-reference)
 8. [Database Schema & Data Models](#8-database-schema--data-models)
 9. [Step-by-Step Instructions on How to Run](#9-step-by-step-instructions-on-how-to-run)
@@ -58,7 +58,7 @@
 
 Traditional music streaming web players are constrained by rigid browser limitations, server bandwidth costs, intrusive advertisements, or rudimentary audio volume controls. When mobile screens turn off or tabs are minimized, mobile operating systems suspend background JavaScript and destroy off-screen iframes.
 
-**Obsidian** was engineered to solve these challenges through a modern **4-Tier Modular Monolith**:
+**Webify** was engineered to solve these challenges through a modern **4-Tier Modular Monolith**:
 
 1. **Continuous Mobile Background Audio Playback:** Uninterrupted playback on iOS Safari & Android Chrome when screens lock, turn off, or tabs are minimized, powered by a persistent single `<audio playsInline crossOrigin="anonymous">` element, `AudioContext` auto-resume wake-lock, and OS Lock-Screen / Control Center integration (`navigator.mediaSession`).
 2. **Byte-Range CORS Audio Proxy (`/api/stream/proxy`):** Forwarding byte ranges (`206 Partial Content`) with `Accept-Ranges: bytes` and CORS headers directly to client `<audio>` nodes, granting first-party audio streaming for Web Audio API DSP processing without canvas/audio tainting.
@@ -66,7 +66,7 @@ Traditional music streaming web players are constrained by rigid browser limitat
 4. **Native Web Audio API DSP:** Hardware-accelerated processing graph inside the browser's audio thread: a 10-Band Graphic Equalizer, a **-14 LUFS broadcast-standard** dynamic normalizer, programmable crossfader, and 64-bin FFT spectrum visualizer.
 5. **Self-Healing Dynamic Queue & RDAMVM Radio:** YouTube Mix (`RDAMVM`/`RD`) scraping, canonical title normalization (`cleanNorm`), and dynamic backfilling whenever songs are skipped, played, or removed.
 6. **Real-Time 8D Vector AI Recommendations:** Standalone recommendation engine storing native `Float[]` vectors and calculating decayed user persona centroids across PostgreSQL `Telemetry` events.
-7. **Apple Music Liquid Glass Aesthetic:** Editorial obsidian palette (`#0A0A0C`) with frosted glass panels (`backdrop-blur-28px`, `saturate(190%)`), crimson coral accent (`#FA2D48`), and dynamic canvas artwork color extraction.
+7. **Apple Music Liquid Glass Aesthetic:** Editorial Webify palette (`#0A0A0C`) with frosted glass panels (`backdrop-blur-28px`, `saturate(190%)`), crimson coral accent (`#FA2D48`), and dynamic canvas artwork color extraction.
 
 ---
 
@@ -74,7 +74,7 @@ Traditional music streaming web players are constrained by rigid browser limitat
 
 ```mermaid
 flowchart TD
-    subgraph Tier1 ["Tier 1: Obsidian Client (Next.js 14 / TypeScript)"]
+    subgraph Tier1 ["Tier 1: Webify Client (Next.js 14 / TypeScript)"]
         UI["Liquid Glass UI (Apple Music Aesthetic)"]
         AudioProv["AudioProvider (Persistent Single <audio playsInline>)"]
         MediaSess["MediaSession OS Lock-Screen Controller"]
@@ -126,7 +126,7 @@ flowchart TD
 
 ## 3. Mobile Background Playback & Lock-Screen Engine
 
-Mobile browsers kill off-screen `<iframe>` elements and suspend audio threads when the user locks their smartphone or minimizes the browser tab. Obsidian achieves native-grade background playback through five integrated mechanisms:
+Mobile browsers kill off-screen `<iframe>` elements and suspend audio threads when the user locks their smartphone or minimizes the browser tab. Webify achieves native-grade background playback through five integrated mechanisms:
 
 ### A. Persistent Single `<audio>` Node Lifecycle
 Rather than unmounting and recreating `<audio>` elements between track transitions, [AudioProvider.tsx](file:///d:/projects/music-project/src/components/audio/AudioProvider.tsx) maintains a single, permanent `<audio playsInline crossOrigin="anonymous" preload="auto">` element across the entire lifecycle of the application. Recreating DOM audio nodes while a smartphone is locked revokes the background audio session; maintaining a single persistent instance ensures continuous OS playback authorization.
@@ -142,7 +142,7 @@ Full two-way synchronization with the operating system media center:
 - **Position State Synchronization:** Calls `navigator.mediaSession.setPositionState` continuously during playback so lock-screen scrubbing bars accurately reflect track position.
 
 ### C. AudioContext Auto-Resume Wake-Lock
-On iOS Safari and Android Chrome, phone calls, system notifications, or lock events trigger `audioContext.state === 'interrupted'` or `'suspended'`. Obsidian registers visibility, focus, and state observers:
+On iOS Safari and Android Chrome, phone calls, system notifications, or lock events trigger `audioContext.state === 'interrupted'` or `'suspended'`. Webify registers visibility, focus, and state observers:
 ```ts
 const handleWake = () => {
   if (isPlayingRef.current && audioGraphRef.current) {
@@ -158,7 +158,7 @@ When interruptions clear, the audio graph automatically resumes without requirin
 When track progress reaches **85% of total duration**, the player triggers a background pre-warm of the upcoming track's `/api/stream/proxy` URL. When the current track triggers `onEnded`, the next audio source is already resolved and cached in memory, allowing `audioEl.src = nextProxyUrl; audioEl.play();` to execute synchronously within the media ended lifecycle event, avoiding browser autoplay restrictions.
 
 ### E. Page Visibility Guard for Fallback Mode
-When playing via the embedded fallback player, Obsidian intercepts `visibilitychange` and `webkitvisibilitychange` events using capturing listeners (`true`), halting event propagation so background tab throttling does not trigger `pauseVideo()`.
+When playing via the embedded fallback player, Webify intercepts `visibilitychange` and `webkitvisibilitychange` events using capturing listeners (`true`), halting event propagation so background tab throttling does not trigger `pauseVideo()`.
 
 ---
 
@@ -174,7 +174,7 @@ Located in `src/lib/audio/AudioGraph.ts` and `src/components/audio/AudioProvider
 ### Tier 2: Application API & Middleware
 Located in `src/server/modules/` and `src/server/middleware/`:
 - **Validation Middleware:** Centralized Zod schemas (`RegisterSchema`, `LoginSchema`, `UserSettingsSchema`, `CreatePlaylistSchema`, `TelemetrySchema`, `SyncTrackSchema`).
-- **Authorization:** Verification of `obsidian_token` via HTTP-only cookie and `Authorization: Bearer <token>` header.
+- **Authorization:** Verification of `Webify_token` via HTTP-only cookie and `Authorization: Bearer <token>` header.
 - **Domain Services:**
   - `auth.service.ts`: User authentication, password hashing with bcrypt, JSON preference updates.
   - `catalog.service.ts`: Search aggregation, track synchronization, favorites management.
@@ -207,13 +207,13 @@ Located in `src/server/providers/`:
 
 Direct Google Video CDN URLs expire quickly, enforce strict origin checks, and fail on mobile browsers that require byte-range requests for audio seeking.
 
-Obsidian routes native audio playback through its high-performance byte-range streaming proxy:
+Webify routes native audio playback through its high-performance byte-range streaming proxy:
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor MobileBrowser as iOS Safari / Android Chrome
-    participant Proxy as /api/stream/proxy (Obsidian)
+    participant Proxy as /api/stream/proxy (Webify)
     participant Adapter as YouTubeProviderAdapter
     participant GoogleCDN as Google Video Edge CDN
 
@@ -232,9 +232,9 @@ sequenceDiagram
 
 ---
 
-## 6. How Obsidian Differs from Spotify
+## 6. How Webify Differs from Spotify
 
-| Dimension | Spotify | Obsidian Hi-Fi |
+| Dimension | Spotify | Webify Hi-Fi |
 | :--- | :--- | :--- |
 | **Audio Sourcing** | Proprietary Ogg/AAC stream manifests | YouTube global edge manifests via `@distube/ytdl-core` |
 | **Hosting & Bandwidth Cost** | Heavy server CDN audio egress | $0 egress via direct manifest proxying |
@@ -271,7 +271,7 @@ sequenceDiagram
 
 ## 8. Database Schema & Data Models
 
-Obsidian uses **PostgreSQL** via **Prisma ORM** with native `Float[]` array embeddings and `Json` preferences:
+Webify uses **PostgreSQL** via **Prisma ORM** with native `Float[]` array embeddings and `Json` preferences:
 
 ```prisma
 model User {
@@ -329,7 +329,7 @@ model Telemetry {
 
 ## 9. Step-by-Step Instructions on How to Run
 
-Follow these instructions to set up and run Obsidian locally on your computer.
+Follow these instructions to set up and run Webify locally on your computer.
 
 ### Prerequisites
 
@@ -369,10 +369,10 @@ Ensure your `.env` file contains:
 
 ```env
 # PostgreSQL Database Connection String
-DATABASE_URL="postgresql://postgres:password123@localhost:5432/obsidian?schema=public"
+DATABASE_URL="postgresql://postgres:password123@localhost:5432/Webify?schema=public"
 
 # JWT Secret for Session & Cookie Authentication
-JWT_SECRET="obsidian-super-secret-jwt-key-2026-production"
+JWT_SECRET="Webify-super-secret-jwt-key-2026-production"
 
 # Application Port
 PORT=3000
@@ -397,14 +397,14 @@ This starts a lightweight PostgreSQL 16 container pre-configured with:
 - **Host:** `localhost:5432`
 - **Username:** `postgres`
 - **Password:** `password123`
-- **Database:** `obsidian`
+- **Database:** `Webify`
 
 *(To stop the container later, run `docker compose down`)*.
 
 #### Option B: Existing Local or Cloud PostgreSQL
 
 If you already have a local PostgreSQL service running or are using a cloud database (such as **Neon**, **Supabase**, or **Railway**):
-1. Create a database named `obsidian` (or any name you prefer).
+1. Create a database named `Webify` (or any name you prefer).
 2. Update the `DATABASE_URL` in your `.env` file with your connection string:
    ```env
    DATABASE_URL="postgresql://<user>:<password>@<host>:<port>/<database>?sslmode=require"
@@ -447,7 +447,7 @@ Database seeded successfully with 10 tracks and 2 playlists.
 
 ### Step 6: Start the Application
 
-You can run Obsidian in either **Development Mode** or **Production Mode**:
+You can run Webify in either **Development Mode** or **Production Mode**:
 
 #### Running in Development Mode
 Best for development with instant hot-reloading:
@@ -476,10 +476,10 @@ The production server starts on `http://localhost:3000` with pre-rendered pages 
 
 ### Step 7: Testing Mobile Background Audio & Lock-Screen Controls
 
-Obsidian is engineered to run seamlessly on smartphones with continuous playback when the screen is turned off or locked.
+Webify is engineered to run seamlessly on smartphones with continuous playback when the screen is turned off or locked.
 
 #### Local Wi-Fi Network Access
-To open Obsidian on your smartphone:
+To open Webify on your smartphone:
 1. Ensure your smartphone and your PC are connected to the **same Wi-Fi network**.
 2. Find your PC's local IP address:
    - **Windows:** Run `ipconfig` in PowerShell (look for `IPv4 Address`, e.g. `192.168.1.45`).
@@ -511,7 +511,7 @@ To open Obsidian on your smartphone:
 #### PWA Standalone Installation
 - **iOS Safari:** Tap the **Share** button (`⎋`) → Select **"Add to Home Screen"**.
 - **Android Chrome:** Tap the three dots (`⋮`) → Select **"Install App"** or **"Add to Home Screen"**.
-- Obsidian launches full-screen as a standalone native app with no browser address bars!
+- Webify launches full-screen as a standalone native app with no browser address bars!
 
 ---
 
@@ -519,7 +519,7 @@ To open Obsidian on your smartphone:
 
 For complete step-by-step guides, refer to [DEPLOYMENT.md](DEPLOYMENT.md).
 
-Obsidian is fully containerized and production-ready for global deployment:
+Webify is fully containerized and production-ready for global deployment:
 
 ### Recommended Hosting Options:
 - **[Railway](https://railway.app) (Best for Audio Streaming):**
@@ -538,7 +538,7 @@ Obsidian is fully containerized and production-ready for global deployment:
 
 ## 11. CI/CD Automation & Semantic Versioning
 
-Obsidian includes pre-configured **GitHub Actions workflows** located in `.github/workflows/`:
+Webify includes pre-configured **GitHub Actions workflows** located in `.github/workflows/`:
 
 1. **Continuous Integration ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):**
    - Automatically runs on every Pull Request and Push to `master`/`main`.
@@ -559,7 +559,7 @@ A default audiophile account is pre-seeded in the database:
 
 | Field | Value |
 | :--- | :--- |
-| **Email** | `user@obsidian.audio` |
+| **Email** | `user@Webify.audio` |
 | **Password** | `password123` |
 | **Role** | Audiophile (Pre-calibrated 8D taste profile) |
 

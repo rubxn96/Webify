@@ -17,13 +17,15 @@ export async function POST(req: NextRequest) {
     const { user, token } = await authService.register(parsed.data);
 
     const response = NextResponse.json({ user, token });
-    response.cookies.set('obsidian_token', token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'lax' as const,
       maxAge: 7 * 24 * 60 * 60,
       path: '/',
-    });
+    };
+    response.cookies.set('webify_token', token, cookieOptions);
+    response.cookies.set('obsidian_token', token, cookieOptions);
 
     return response;
   } catch (error: any) {

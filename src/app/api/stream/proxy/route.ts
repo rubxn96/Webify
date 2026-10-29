@@ -28,17 +28,23 @@ async function handleProxyRequest(req: NextRequest, isHead: boolean) {
     const { searchParams } = new URL(req.url);
     const videoId = searchParams.get('id');
     const tier = (searchParams.get('tier') as 'high' | 'normal' | 'low') || 'high';
+    const userAgent = req.headers.get('user-agent') || '';
+    const isApple =
+      /iPad|iPhone|iPod/i.test(userAgent) ||
+      (/Safari/i.test(userAgent) && !/Chrome|Chromium|Edg/i.test(userAgent));
+    const formatParam = searchParams.get('format') as 'mp4' | 'webm' | 'any' | null;
+    const format = formatParam || (isApple ? 'mp4' : 'any');
 
     if (!videoId) {
       return NextResponse.json({ error: 'Video ID is required' }, { status: 400 });
     }
 
     // 1. Get direct stream URL (from cache or resolve)
-    let rawStreamUrl = youtubeProvider.getCachedRawStreamUrl(videoId);
-    let mimeType = 'audio/mp4';
+    let rawStreamUrl = youtubeProvider.getCachedRawStreamUrl(videoId, format);
+    let mimeType = format === 'mp4' ? 'audio/mp4' : 'audio/webm';
 
     if (!rawStreamUrl) {
-      const resolved = await youtubeProvider.resolveStream(videoId, { tier });
+      const resolved = await youtubeProvider.resolveStream(videoId, { tier, preferredFormat: format });
       if (resolved.source === 'direct' && resolved.rawStreamUrl) {
         rawStreamUrl = resolved.rawStreamUrl;
         mimeType = resolved.mimeType;
@@ -55,8 +61,9 @@ async function handleProxyRequest(req: NextRequest, isHead: boolean) {
     // 2. Prepare upstream headers (forwarding Range)
     const upstreamHeaders: Record<string, string> = {
       'User-Agent':
-        req.headers.get('user-agent') ||
+        userAgent ||
         'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1',
+      'Accept-Encoding': 'identity',
     };
 
     const incomingRange = req.headers.get('range');
@@ -72,7 +79,7 @@ async function handleProxyRequest(req: NextRequest, isHead: boolean) {
 
     // If 403 or URL expired, re-resolve once
     if (upstreamRes.status === 403 || upstreamRes.status === 410) {
-      const fresh = await youtubeProvider.resolveStream(videoId, { tier });
+      const fresh = await youtubeProvider.resolveStream(videoId, { tier, preferredFormat: format });
       if (fresh.rawStreamUrl) {
         rawStreamUrl = fresh.rawStreamUrl;
         mimeType = fresh.mimeType;
@@ -92,7 +99,11 @@ async function handleProxyRequest(req: NextRequest, isHead: boolean) {
     responseHeaders.set('Cache-Control', 'public, max-age=3600');
 
     const upstreamContentType = upstreamRes.headers.get('content-type');
-    responseHeaders.set('Content-Type', upstreamContentType || mimeType || 'audio/mp4');
+    const finalContentType =
+      format === 'mp4'
+        ? 'audio/mp4'
+        : upstreamContentType || mimeType || 'audio/mp4';
+    responseHeaders.set('Content-Type', finalContentType);
 
     const upstreamContentLength = upstreamRes.headers.get('content-length');
     if (upstreamContentLength) {
@@ -120,4 +131,3 @@ async function handleProxyRequest(req: NextRequest, isHead: boolean) {
     return NextResponse.json({ error: 'Audio streaming proxy failure' }, { status: 502 });
   }
 }
-

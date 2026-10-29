@@ -11,7 +11,7 @@ export function extractAuthToken(req: NextRequest): string | null {
   if (authHeader && authHeader.startsWith('Bearer ')) {
     return authHeader.substring(7);
   }
-  const cookie = req.cookies.get('obsidian_token');
+  const cookie = req.cookies.get('webify_token') || req.cookies.get('obsidian_token');
   return cookie?.value || null;
 }
 

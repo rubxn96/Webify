@@ -51,6 +51,14 @@ function cleanNorm(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
+function getIsAppleDevice(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (/Safari/.test(navigator.userAgent) && !/Chrome|Chromium|Edg/.test(navigator.userAgent))
+  );
+}
+
 export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -81,14 +89,28 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const audioGraphRef = useRef<AudioGraph | null>(null);
 
-  // Prebuffering flag for gapless playback (at 85%)
+  // Prebuffering flag and next track preload cache for gapless background continuity
   const prebufferedIndexRef = useRef<number | null>(null);
+  const preloadedNextTrackRef = useRef<{ youtubeId: string; audioUrl: string } | null>(null);
+  const isPreloadingRef = useRef<boolean>(false);
+  const playRequestIdRef = useRef<number>(0);
 
   // Background playback & auto-resume state ref
   const isPlayingRef = useRef<boolean>(false);
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
+
+  // Configure iOS Safari audio session type
+  const configureAudioSession = useCallback(() => {
+    if (typeof navigator !== 'undefined' && 'audioSession' in navigator) {
+      try {
+        (navigator as any).audioSession.type = 'playback';
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
 
   // Telemetry refs
   const progressTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -101,8 +123,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Dynamic queue replenishment lock ref
   const isReplenishingRef = useRef<boolean>(false);
 
-  // 1. Initialize AudioGraph & LocalStorage settings
+  // 1. Initialize AudioGraph, audioSession & LocalStorage settings
   useEffect(() => {
+    configureAudioSession();
+
     const saved = localStorage.getItem('obsidian_settings');
     if (saved) {
       try {
@@ -133,11 +157,26 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
 
+    // Unlocking gesture listener: iOS Safari requires user interaction to unlock audio pipeline
+    const unlockAudio = () => {
+      configureAudioSession();
+      if (audioGraphRef.current) {
+        audioGraphRef.current.resume().catch(() => {});
+      }
+    };
+
+    window.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+    window.addEventListener('touchend', unlockAudio, { once: true, passive: true });
+    window.addEventListener('click', unlockAudio, { once: true, passive: true });
+
     return () => {
+      window.removeEventListener('touchstart', unlockAudio);
+      window.removeEventListener('touchend', unlockAudio);
+      window.removeEventListener('click', unlockAudio);
       if (progressTimerRef.current) clearInterval(progressTimerRef.current);
       if (settingsSyncTimerRef.current) clearTimeout(settingsSyncTimerRef.current);
     };
-  }, []);
+  }, [configureAudioSession]);
 
   // Sync settings with AudioGraph in real-time
   useEffect(() => {
@@ -184,21 +223,46 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [isPlaying, currentTrack, currentTime, duration]);
 
-  // Gapless Prebuffering Check (at 85% completion)
-  useEffect(() => {
-    if (duration > 0 && currentTime / duration >= 0.85) {
-      const nextIdx = queueIndex + 1;
-      if (nextIdx < queue.length && prebufferedIndexRef.current !== nextIdx) {
-        prebufferedIndexRef.current = nextIdx;
-        const nextTrackItem = queue[nextIdx];
-        fetch(`/api/stream?id=${nextTrackItem.youtubeId}&bitrate=${userSettings.bitrate}`).catch(() => {});
+  // Preload and resolve stream URL for next track in advance
+  const preloadTrack = useCallback(
+    async (trackToPreload?: Track | null) => {
+      if (!trackToPreload || !trackToPreload.youtubeId || isPreloadingRef.current) return;
+      if (preloadedNextTrackRef.current?.youtubeId === trackToPreload.youtubeId) return;
+
+      isPreloadingRef.current = true;
+      try {
+        const isApple = getIsAppleDevice();
+        const res = await fetch(
+          `/api/stream?id=${trackToPreload.youtubeId}&bitrate=${userSettings.bitrate}&format=${isApple ? 'mp4' : 'any'}`
+        );
+        if (res.ok) {
+          const streamData = await res.json();
+          if (streamData?.audioUrl && streamData.source === 'direct') {
+            preloadedNextTrackRef.current = {
+              youtubeId: trackToPreload.youtubeId,
+              audioUrl: streamData.audioUrl,
+            };
+          }
+        }
+      } catch (err) {
+        console.warn('Track preload error:', err);
+      } finally {
+        isPreloadingRef.current = false;
       }
-    }
-  }, [currentTime, duration, queueIndex, queue, userSettings.bitrate]);
+    },
+    [userSettings.bitrate]
+  );
 
   // Resolve and start track playback
   const playTrack = useCallback(
     async (track: Track, newQueue?: Track[]) => {
+      const currentRequestId = ++playRequestIdRef.current;
+
+      configureAudioSession();
+      if (audioGraphRef.current) {
+        audioGraphRef.current.resume().catch(() => {});
+      }
+
       // Record skip telemetry if previous track skipped before completion
       if (currentTrack && currentTrack.id !== track.id && duration > 0) {
         const ratio = currentTime / duration;
@@ -212,18 +276,40 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       }
 
-      if (audioGraphRef.current) {
-        await audioGraphRef.current.resume();
-      }
+      // Fast-path: Check if stream URL is already pre-resolved in client cache
+      const hasPreloaded =
+        preloadedNextTrackRef.current?.youtubeId === track.youtubeId &&
+        Boolean(preloadedNextTrackRef.current?.audioUrl);
+      const preloadedUrl = hasPreloaded ? preloadedNextTrackRef.current!.audioUrl : null;
+      preloadedNextTrackRef.current = null;
 
       setCurrentTrack(track);
       setIsPlaying(true);
-      setPlaybackMode('iframe');
       setCurrentTime(0);
       setDuration(track.duration || 0);
       prebufferedIndexRef.current = null;
       trackStartTimeRef.current = Date.now();
       lastProgressTrackRef.current = track.id;
+
+      // If preloaded, start synchronously right inside the event lifecycle
+      if (preloadedUrl && audioElementRef.current) {
+        setPlaybackMode('direct');
+        audioElementRef.current.src = preloadedUrl;
+        audioElementRef.current.load();
+
+        if (userSettings.crossfade > 0 && audioGraphRef.current) {
+          audioGraphRef.current.fadeIn(Math.min(userSettings.crossfade, 3));
+        }
+
+        audioElementRef.current
+          .play()
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.warn('Fast-path direct play failed:', err);
+            setPlaybackMode('iframe');
+            setIsPlaying(true);
+          });
+      }
 
       // Ensure track is synced into database
       fetch('/api/tracks/sync', {
@@ -274,13 +360,17 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           seenTitles.add(tClean);
           initialQueue.push(t);
         }
-      } else {
-        initialQueue = [track];
-      }
 
-      setQueue(initialQueue);
-      const initialIdx = initialQueue.findIndex((t) => t.youtubeId === track.youtubeId);
-      setQueueIndex(initialIdx >= 0 ? initialIdx : 0);
+        setQueue(initialQueue);
+        const initialIdx = initialQueue.findIndex((t) => t.youtubeId === track.youtubeId);
+        setQueueIndex(initialIdx >= 0 ? initialIdx : 0);
+
+        // Preload next track immediately for seamless background gapless playback
+        const nextSongInQueue = initialQueue[initialIdx + 1];
+        if (nextSongInQueue) {
+          preloadTrack(nextSongInQueue);
+        }
+      }
 
       // Automatically fetch similar songs with respect to the currently playing song!
       fetch(
@@ -310,7 +400,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               });
 
               if (freshSimilar.length > 0) {
-                return [...prevQueue, ...freshSimilar];
+                const combinedQueue = [...prevQueue, ...freshSimilar];
+                if (!preloadedNextTrackRef.current) {
+                  const currIdx = combinedQueue.findIndex((q) => q.youtubeId === track.youtubeId);
+                  if (currIdx >= 0 && combinedQueue[currIdx + 1]) {
+                    preloadTrack(combinedQueue[currIdx + 1]);
+                  }
+                }
+                return combinedQueue;
               }
               return prevQueue;
             });
@@ -326,40 +423,59 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         durationSeconds: track.duration,
       });
 
-      // Resolve audio stream
-      try {
-        const res = await fetch(`/api/stream?id=${track.youtubeId}&bitrate=${userSettings.bitrate}`);
-        const streamData = await res.json();
+      // If not preloaded, resolve stream asynchronously
+      if (!preloadedUrl) {
+        try {
+          const isApple = getIsAppleDevice();
+          const res = await fetch(
+            `/api/stream?id=${track.youtubeId}&bitrate=${userSettings.bitrate}&format=${isApple ? 'mp4' : 'any'}`
+          );
+          const streamData = await res.json();
 
-        if (streamData.audioUrl && streamData.source === 'direct' && audioElementRef.current) {
-          setPlaybackMode('direct');
-          audioElementRef.current.src = streamData.audioUrl;
-          audioElementRef.current.load();
-
-          if (userSettings.crossfade > 0 && audioGraphRef.current) {
-            audioGraphRef.current.fadeIn(Math.min(userSettings.crossfade, 3));
+          // Prevent race conditions: discard if a newer track request took over
+          if (currentRequestId !== playRequestIdRef.current) {
+            return;
           }
 
-          audioElementRef.current
-            .play()
-            .then(() => setIsPlaying(true))
-            .catch(() => {
-              setPlaybackMode('iframe');
-              setIsPlaying(true);
-            });
-        } else {
+          if (streamData.audioUrl && streamData.source === 'direct' && audioElementRef.current) {
+            setPlaybackMode('direct');
+            audioElementRef.current.src = streamData.audioUrl;
+            audioElementRef.current.load();
+
+            if (userSettings.crossfade > 0 && audioGraphRef.current) {
+              audioGraphRef.current.fadeIn(Math.min(userSettings.crossfade, 3));
+            }
+
+            audioElementRef.current
+              .play()
+              .then(() => setIsPlaying(true))
+              .catch((err) => {
+                console.warn('Direct stream play error, falling back to iframe:', err);
+                setPlaybackMode('iframe');
+                setIsPlaying(true);
+              });
+          } else {
+            setPlaybackMode('iframe');
+            if (audioElementRef.current) {
+              audioElementRef.current.pause();
+            }
+            setIsPlaying(true);
+          }
+        } catch {
           setPlaybackMode('iframe');
-          if (audioElementRef.current) {
-            audioElementRef.current.pause();
-          }
           setIsPlaying(true);
         }
-      } catch {
-        setPlaybackMode('iframe');
-        setIsPlaying(true);
       }
     },
-    [currentTrack, currentTime, duration, userSettings.bitrate, userSettings.crossfade]
+    [
+      currentTrack,
+      currentTime,
+      duration,
+      userSettings.bitrate,
+      userSettings.crossfade,
+      configureAudioSession,
+      preloadTrack,
+    ]
   );
 
   const togglePlay = useCallback(() => {
@@ -370,21 +486,23 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return;
     }
 
-    if (isPlaying) {
-      if (playbackMode === 'direct' && audioElementRef.current) {
+    if (playbackMode === 'direct' && audioElementRef.current) {
+      if (audioElementRef.current.paused) {
+        if (audioGraphRef.current) {
+          audioGraphRef.current.resume().catch(() => {});
+        }
+        audioElementRef.current
+          .play()
+          .then(() => setIsPlaying(true))
+          .catch(() => {});
+      } else {
         audioElementRef.current.pause();
+        setIsPlaying(false);
       }
-      setIsPlaying(false);
     } else {
-      if (audioGraphRef.current) {
-        audioGraphRef.current.resume();
-      }
-      if (playbackMode === 'direct' && audioElementRef.current) {
-        audioElementRef.current.play().catch(() => {});
-      }
-      setIsPlaying(true);
+      setIsPlaying((prev) => !prev);
     }
-  }, [currentTrack, isPlaying, playbackMode, queue, playTrack]);
+  }, [currentTrack, playbackMode, queue, playTrack]);
 
   const seek = useCallback(
     (seconds: number) => {
@@ -465,24 +583,16 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const nextTrack = useCallback(() => {
     if (queue.length === 0) return;
-    const nextIdx = queueIndex + 1;
-
-    if (nextIdx < queue.length) {
-      setQueueIndex(nextIdx);
-      const nextSong = queue[nextIdx];
-      playTrack(nextSong, queue);
-
-      // Auto-replenish if approaching end of queue (fewer than 4 songs ahead)
+    const nextIdx = (queueIndex + 1) % queue.length;
+    setQueueIndex(nextIdx);
+    const nextSong = queue[nextIdx];
+    if (nextSong) {
+      playTrack(nextSong);
       if (queue.length - nextIdx <= 4) {
         replenishQueue(nextSong);
       }
-    } else {
-      // Reached the end: dynamically extend queue with fresh similar tracks
-      if (currentTrack) {
-        replenishQueue(currentTrack);
-      }
     }
-  }, [queue, queueIndex, playTrack, currentTrack, replenishQueue]);
+  }, [queue, queueIndex, playTrack, replenishQueue]);
 
   const prevTrack = useCallback(() => {
     if (queue.length === 0) return;
@@ -492,7 +602,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
     const prevIdx = (queueIndex - 1 + queue.length) % queue.length;
     setQueueIndex(prevIdx);
-    playTrack(queue[prevIdx], queue);
+    const prevSong = queue[prevIdx];
+    if (prevSong) {
+      playTrack(prevSong);
+    }
   }, [queue, queueIndex, currentTime, seek, playTrack]);
 
   // Native OS Lock-Screen Integration (MediaSession API)
@@ -503,7 +616,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       navigator.mediaSession.metadata = new MediaMetadata({
         title: currentTrack.title,
         artist: currentTrack.artist,
-        album: currentTrack.album || 'Obsidian Hi-Fi',
+        album: currentTrack.album || 'Webify Hi-Fi',
         artwork: [
           { src: currentTrack.thumbnail, sizes: '96x96', type: 'image/jpeg' },
           { src: currentTrack.thumbnail, sizes: '128x128', type: 'image/jpeg' },
@@ -516,10 +629,17 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
 
     const handlePlay = () => {
+      configureAudioSession();
+      if (audioGraphRef.current) {
+        audioGraphRef.current.resume().catch(() => {});
+      }
       if (playbackMode === 'direct' && audioElementRef.current) {
         audioElementRef.current.play().catch(() => {});
       }
       setIsPlaying(true);
+      if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'playing';
+      }
     };
 
     const handlePause = () => {
@@ -527,10 +647,21 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         audioElementRef.current.pause();
       }
       setIsPlaying(false);
+      if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = 'paused';
+      }
     };
 
-    const handleNext = () => nextTrack();
-    const handlePrev = () => prevTrack();
+    const handleNext = () => {
+      configureAudioSession();
+      nextTrack();
+    };
+
+    const handlePrev = () => {
+      configureAudioSession();
+      prevTrack();
+    };
+
     const handleSeekTo = (details: MediaSessionActionDetails) => {
       if (details.seekTime !== undefined) {
         seek(details.seekTime);
@@ -556,17 +687,37 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (err) {
       console.warn('MediaSession handler registration:', err);
     }
-  }, [currentTrack, isPlaying, playbackMode, nextTrack, prevTrack, seek, currentTime, duration]);
+  }, [
+    currentTrack,
+    isPlaying,
+    playbackMode,
+    nextTrack,
+    prevTrack,
+    seek,
+    currentTime,
+    duration,
+    configureAudioSession,
+  ]);
 
   // AudioContext background wake-lock & interruption auto-resume
   useEffect(() => {
     const handleWake = () => {
+      configureAudioSession();
       if (isPlayingRef.current && audioGraphRef.current) {
         audioGraphRef.current.resume().catch(() => {});
+      }
+      if (
+        isPlayingRef.current &&
+        audioElementRef.current &&
+        audioElementRef.current.paused &&
+        playbackMode === 'direct'
+      ) {
+        audioElementRef.current.play().catch(() => {});
       }
     };
 
     document.addEventListener('visibilitychange', handleWake);
+    window.addEventListener('pageshow', handleWake);
     window.addEventListener('focus', handleWake);
 
     const checkInterval = setInterval(() => {
@@ -580,10 +731,11 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     return () => {
       document.removeEventListener('visibilitychange', handleWake);
+      window.removeEventListener('pageshow', handleWake);
       window.removeEventListener('focus', handleWake);
       clearInterval(checkInterval);
     };
-  }, []);
+  }, [configureAudioSession]);
 
   const setVolume = useCallback((vol: number) => {
     const clamped = Math.max(0, Math.min(1, vol));
@@ -781,7 +933,13 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
 
       // Sync position to native OS lock-screen MediaSession
-      if (typeof navigator !== 'undefined' && 'mediaSession' in navigator && dur > 0) {
+      if (
+        typeof navigator !== 'undefined' &&
+        'mediaSession' in navigator &&
+        dur > 0 &&
+        !isNaN(dur) &&
+        isFinite(dur)
+      ) {
         try {
           navigator.mediaSession.setPositionState({
             duration: Math.max(0, dur),
@@ -793,14 +951,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       }
 
-      // 85% pre-buffer threshold: pre-warm stream cache for next track
-      if (dur > 0 && cur / dur >= 0.85) {
+      // 70% pre-buffer threshold: pre-warm & resolve stream cache for next track
+      if (dur > 0 && cur / dur >= 0.7) {
         const nextIdx = queueIndex + 1;
         if (nextIdx < queue.length && prebufferedIndexRef.current !== nextIdx) {
           prebufferedIndexRef.current = nextIdx;
           const nextTrack = queue[nextIdx];
           if (nextTrack) {
-            fetch(`/api/stream?id=${nextTrack.youtubeId}&bitrate=${userSettings.bitrate}`).catch(() => {});
+            preloadTrack(nextTrack);
           }
         }
       }
@@ -864,6 +1022,14 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       <audio
         ref={audioElementRef}
         playsInline
+        webkit-playsinline="true"
+        onPlay={() => setIsPlaying(true)}
+        onPlaying={() => setIsPlaying(true)}
+        onPause={() => {
+          if (!audioElementRef.current?.ended) {
+            setIsPlaying(false);
+          }
+        }}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleTrackEnded}
         onError={handleAudioError}

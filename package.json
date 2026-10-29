@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-music",
+  "name": "webify-music",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -21,6 +21,7 @@
     "next": "14.2.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sharp": "^0.35.5",
     "tailwind-merge": "^2.5.4",
     "zod": "^4.6.7"
   },

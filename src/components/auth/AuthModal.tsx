@@ -50,45 +50,45 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
   };
 
   const fillDemo = () => {
-    setEmail('user@obsidian.audio');
+    setEmail('user@webify.audio');
     setPassword('password123');
     setIsRegister(false);
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn select-none">
-      <div className="glass-panel border border-white/10 rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-6 shadow-2xl relative">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md overflow-y-auto flex items-center justify-center p-4 py-8 animate-fadeIn select-none">
+      <div className="glass-panel border border-white/10 rounded-3xl w-full max-w-md p-5 sm:p-7 space-y-5 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-full glass-pill text-white/60 hover:text-white transition-all"
+          className="absolute top-4 right-4 p-1.5 rounded-full glass-pill text-white/60 hover:text-white transition-all z-10"
         >
           <X className="w-4 h-4" />
         </button>
 
-        <div className="text-center space-y-1.5">
-          <div className="w-11 h-11 rounded-2xl glass-pill text-obsidian-accent mx-auto flex items-center justify-center mb-3 shadow-md">
-            <Lock className="w-5 h-5" />
+        <div className="text-center space-y-1">
+          <div className="w-10 h-10 rounded-2xl glass-pill text-obsidian-accent mx-auto flex items-center justify-center mb-2 shadow-md">
+            <Lock className="w-4 h-4" />
           </div>
-          <h3 className="text-2xl font-bold tracking-tight text-white">
-            {isRegister ? 'Create an Account' : 'Log In to Obsidian'}
+          <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            {isRegister ? 'Create an Account' : 'Log In to Webify'}
           </h3>
           <p className="text-xs text-white/50">
             {isRegister
-              ? 'Join our high-fidelity streaming community.'
+              ? 'Join Webify Hi-Fi streaming community.'
               : 'Log in to sync your favorites, playlists, and DSP EQ settings.'}
           </p>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
+          <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           {isRegister && (
-            <div className="space-y-1.5">
-              <label className="text-xs font-mono text-white/50 uppercase tracking-wider">
+            <div className="space-y-1">
+              <label className="text-xs font-mono text-white/60 uppercase tracking-wider block">
                 Username
               </label>
               <div className="relative">
@@ -96,6 +96,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 <input
                   type="text"
                   required
+                  autoFocus
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Audiophile"
@@ -105,8 +106,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-mono text-white/50 uppercase tracking-wider">
+          <div className="space-y-1">
+            <label className="text-xs font-mono text-white/60 uppercase tracking-wider block">
               Email Address
             </label>
             <div className="relative">
@@ -116,14 +117,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="user@obsidian.audio"
+                placeholder="user@webify.audio"
                 className="w-full glass-pill rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30"
               />
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-mono text-white/50 uppercase tracking-wider">
+          <div className="space-y-1">
+            <label className="text-xs font-mono text-white/60 uppercase tracking-wider block">
               Password
             </label>
             <div className="relative">
@@ -180,4 +181,3 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     </div>
   );
 };
-

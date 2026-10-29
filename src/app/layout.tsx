@@ -4,13 +4,13 @@ import { AudioProvider } from '@/components/audio/AudioProvider';
 import { MainShell } from '@/components/layout/MainShell';
 
 export const metadata: Metadata = {
-  title: 'Obsidian — High-Fidelity Ad-Free Music Streaming',
+  title: 'Webify — High-Fidelity Ad-Free Music Streaming',
   description: 'Precision Web Audio DSP engine, 10-band equalizer, audio normalization, and YouTube streaming.',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'Obsidian',
+    title: 'Webify',
   },
 };
 
@@ -33,7 +33,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Obsidian" />
+        <meta name="apple-mobile-web-app-title" content="Webify" />
       </head>
       <body className="bg-obsidian-canvas text-obsidian-primary antialiased">
         <AudioProvider>

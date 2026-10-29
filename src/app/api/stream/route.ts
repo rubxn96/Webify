@@ -8,6 +8,12 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const videoId = searchParams.get('id');
     const bitrate = (searchParams.get('bitrate') as 'auto' | 'normal' | 'high') || 'high';
+    const userAgent = req.headers.get('user-agent') || '';
+    const isApple =
+      /iPad|iPhone|iPod/i.test(userAgent) ||
+      (/Safari/i.test(userAgent) && !/Chrome|Chromium|Edg/i.test(userAgent));
+    const formatParam = searchParams.get('format') as 'mp4' | 'webm' | 'any' | null;
+    const preferredFormat = formatParam || (isApple ? 'mp4' : 'any');
 
     if (!videoId) {
       return NextResponse.json({ error: 'YouTube video ID is required' }, { status: 400 });
@@ -15,6 +21,7 @@ export async function GET(req: NextRequest) {
 
     const streamResult = await youtubeProvider.resolveStream(videoId, {
       tier: bitrate === 'auto' ? 'high' : bitrate,
+      preferredFormat,
     });
 
     return NextResponse.json(streamResult, {

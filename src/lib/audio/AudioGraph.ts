@@ -21,7 +21,14 @@ export class AudioGraph {
     if (this.ctx) return;
 
     const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
     this.ctx = new AudioContextClass();
+
+    this.ctx.onstatechange = () => {
+      if (this.ctx && (this.ctx.state === 'suspended' || (this.ctx.state as string) === 'interrupted')) {
+        this.ctx.resume().catch(() => {});
+      }
+    };
 
     // 1. Source Node
     this.sourceNode = this.ctx.createMediaElementSource(mediaElement);

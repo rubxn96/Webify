@@ -123,7 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
             </div>
             <div>
               <span className="text-sm font-extrabold tracking-tight text-white block">
-                OBSIDIAN
+                WEBIFY
               </span>
               <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 block -mt-1">
                 Hi-Fi Audio

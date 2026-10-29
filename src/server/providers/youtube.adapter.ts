@@ -96,10 +96,10 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
       };
     }
 
-    // Try @distube/ytdl-core direct extraction with 2500ms timeout
+    // Try @distube/ytdl-core direct extraction with 4500ms timeout
     try {
       const probePromise = this.resolveViaYtdl(youtubeId, preferredFormat, tier);
-      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500));
+      const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 4500));
 
       const directResult = await Promise.race([probePromise, timeoutPromise]);
       if (directResult) {
@@ -154,7 +154,15 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
   /**
    * Retrieve cached direct stream URL for proxy forwarding
    */
-  public getCachedRawStreamUrl(youtubeId: string): string | null {
+  public getCachedRawStreamUrl(youtubeId: string, preferredFormat?: string): string | null {
+    if (preferredFormat && preferredFormat !== 'any') {
+      const specificPrefix = `${youtubeId}:${preferredFormat}:`;
+      for (const [key, entry] of STREAM_CACHE.entries()) {
+        if (key.startsWith(specificPrefix) && entry.rawStreamUrl && entry.expiresAt > Date.now()) {
+          return entry.rawStreamUrl;
+        }
+      }
+    }
     for (const [key, entry] of STREAM_CACHE.entries()) {
       if (key.startsWith(youtubeId) && entry.rawStreamUrl && entry.expiresAt > Date.now()) {
         return entry.rawStreamUrl;
@@ -206,13 +214,14 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
 
     if (!chosen || !chosen.url) return null;
 
-    const mimeType = chosen.mimeType?.split(';')[0] || (chosen.container === 'webm' ? 'audio/webm' : 'audio/mp4');
+    const chosenFormat = chosen.container === 'webm' || chosen.mimeType?.includes('audio/webm') ? 'webm' : 'mp4';
+    const mimeType = chosenFormat === 'mp4' ? 'audio/mp4' : (chosen.mimeType?.split(';')[0] || 'audio/webm');
     const rawBitrate = chosen.audioBitrate || chosen.bitrate || 160;
     const bitrate = rawBitrate > 1000 ? Math.round(rawBitrate / 1000) : rawBitrate;
     const duration = info.videoDetails?.lengthSeconds ? Number(info.videoDetails.lengthSeconds) : undefined;
 
     return {
-      audioUrl: `/api/stream/proxy?id=${youtubeId}&tier=${tier}`,
+      audioUrl: `/api/stream/proxy?id=${youtubeId}&tier=${tier}&format=${chosenFormat}`,
       rawStreamUrl: chosen.url,
       mimeType,
       bitrate,
@@ -241,10 +250,11 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
           );
           const chosen = streams[0];
           if (chosen && chosen.url) {
+            const pipedFormat = chosen.mimeType?.includes('mp4') ? 'mp4' : 'webm';
             return {
-              audioUrl: `/api/stream/proxy?id=${youtubeId}&tier=high`,
+              audioUrl: `/api/stream/proxy?id=${youtubeId}&tier=high&format=${pipedFormat}`,
               rawStreamUrl: chosen.url,
-              mimeType: chosen.mimeType || 'audio/webm',
+              mimeType: chosen.mimeType || (pipedFormat === 'mp4' ? 'audio/mp4' : 'audio/webm'),
               bitrate: Math.round((chosen.bitrate || 160000) / 1000),
               source: 'direct',
               duration: data.duration,

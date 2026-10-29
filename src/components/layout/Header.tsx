@@ -150,10 +150,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
         )}
 
         {/* Mobile Brand Icon */}
-        <Link href="/" className="lg:hidden flex items-center gap-1.5 flex-shrink-0">
-          <div className="w-7 h-7 rounded-xl bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center font-extrabold text-xs">
-            O
+        <Link href="/" className="lg:hidden flex items-center gap-2 flex-shrink-0">
+          <div className="w-7 h-7 rounded-xl bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center font-extrabold text-xs shadow-sm">
+            W
           </div>
+          <span className="font-bold text-sm tracking-tight text-white">Webify</span>
         </Link>
       </div>
 

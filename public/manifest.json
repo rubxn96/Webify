@@ -1,6 +1,6 @@
 {
-  "name": "Obsidian Hi-Fi Audio",
-  "short_name": "Obsidian",
+  "name": "Webify Hi-Fi Audio",
+  "short_name": "Webify",
   "description": "High-Fidelity Web Audio Streaming Platform with DSP Engine",
   "start_url": "/",
   "display": "standalone",
@@ -20,4 +20,3 @@
     }
   ]
 }
-

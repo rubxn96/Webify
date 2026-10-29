@@ -12,10 +12,10 @@ export async function seedDatabase() {
   const passwordHash = await bcrypt.hash('password123', salt);
 
   const defaultUser = await prisma.user.upsert({
-    where: { email: 'user@obsidian.audio' },
+    where: { email: 'user@webify.audio' },
     update: {},
     create: {
-      email: 'user@obsidian.audio',
+      email: 'user@webify.audio',
       username: 'Audiophile',
       passwordHash,
       preferences: {
