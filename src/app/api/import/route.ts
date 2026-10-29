@@ -19,6 +19,13 @@ export async function POST(req: NextRequest) {
     // Extract metadata
     const metadata = await extractPlaylistMetadata(url);
 
+    if (!metadata.tracks || metadata.tracks.length === 0) {
+      return NextResponse.json(
+        { error: 'No tracks found in the provided playlist. Please make sure the playlist is public and contains songs.' },
+        { status: 400 }
+      );
+    }
+
     // Create background import job
     const job = await prisma.importJob.create({
       data: {
@@ -34,7 +41,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Start asynchronous worker processing (in background)
-    processImportJob(job.id, user.id, metadata.tracks, metadata.title);
+    processImportJob(job.id, user.id, metadata.tracks, metadata.title, metadata.coverImage);
 
     return NextResponse.json({
       jobId: job.id,

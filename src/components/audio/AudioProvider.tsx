@@ -19,6 +19,7 @@ interface AudioContextType {
   userSettings: UserSettings;
   queue: Track[];
   queueIndex: number;
+  isShuffle: boolean;
   likedTrackIds: Set<string>;
   isLyricsOpen: boolean;
   isQueueOpen: boolean;
@@ -31,6 +32,8 @@ interface AudioContextType {
   seek: (seconds: number) => void;
   nextTrack: () => void;
   prevTrack: () => void;
+  toggleShuffle: () => void;
+  shuffleQueue: () => void;
   setVolume: (vol: number) => void;
   toggleMute: () => void;
   toggleLike: (track: Track) => void;
@@ -65,6 +68,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [playbackMode, setPlaybackMode] = useState<'direct' | 'iframe'>('direct');
   const [queue, setQueue] = useState<Track[]>([]);
   const [queueIndex, setQueueIndex] = useState<number>(-1);
+  const [isShuffle, setIsShuffle] = useState<boolean>(false);
   const [likedTrackIds, setLikedTrackIds] = useState<Set<string>>(new Set());
 
   // UI mod panels
@@ -591,8 +595,59 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     [currentTrack]
   );
 
+  const shuffleQueue = useCallback(() => {
+    setQueue((prevQueue) => {
+      if (prevQueue.length <= 1) return prevQueue;
+
+      const currentIdx =
+        queueIndex >= 0 && queueIndex < prevQueue.length ? queueIndex : 0;
+      const current = prevQueue[currentIdx];
+      const rest = prevQueue.filter((_, idx) => idx !== currentIdx);
+
+      // Fisher-Yates shuffle algorithm
+      for (let i = rest.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [rest[i], rest[j]] = [rest[j], rest[i]];
+      }
+
+      const newQueue = [current, ...rest];
+      setQueueIndex(0);
+
+      if (newQueue[1]) {
+        preloadTrack(newQueue[1]);
+      }
+
+      return newQueue;
+    });
+  }, [queueIndex, preloadTrack]);
+
+  const toggleShuffle = useCallback(() => {
+    setIsShuffle((prev) => {
+      const next = !prev;
+      if (next) {
+        shuffleQueue();
+      }
+      return next;
+    });
+  }, [shuffleQueue]);
+
   const nextTrack = useCallback(() => {
     if (queue.length === 0) return;
+
+    if (isShuffle && queue.length > 1) {
+      const available = queue.map((_, i) => i).filter((i) => i !== queueIndex);
+      const randomIdx = available[Math.floor(Math.random() * available.length)];
+      setQueueIndex(randomIdx);
+      const nextSong = queue[randomIdx];
+      if (nextSong) {
+        playTrack(nextSong);
+        if (queue.length - randomIdx <= 4) {
+          replenishQueue(nextSong);
+        }
+      }
+      return;
+    }
+
     const nextIdx = (queueIndex + 1) % queue.length;
     setQueueIndex(nextIdx);
     const nextSong = queue[nextIdx];
@@ -602,7 +657,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         replenishQueue(nextSong);
       }
     }
-  }, [queue, queueIndex, playTrack, replenishQueue]);
+  }, [queue, queueIndex, isShuffle, playTrack, replenishQueue]);
 
   const prevTrack = useCallback(() => {
     if (queue.length === 0) return;
@@ -1005,6 +1060,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         userSettings,
         queue,
         queueIndex,
+        isShuffle,
         likedTrackIds,
         isLyricsOpen,
         isQueueOpen,
@@ -1015,6 +1071,8 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         seek,
         nextTrack,
         prevTrack,
+        toggleShuffle,
+        shuffleQueue,
         setVolume,
         toggleMute,
         toggleLike,

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { X, ListMusic, Trash2, Play, ArrowUp, ArrowDown } from 'lucide-react';
+import { X, ListMusic, Trash2, Play, ArrowUp, ArrowDown, Shuffle } from 'lucide-react';
 import { useAudio } from './AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
 import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
@@ -17,6 +17,9 @@ export const QueueDrawer: React.FC = () => {
     playTrack,
     removeFromQueue,
     reorderQueue,
+    shuffleQueue,
+    isShuffle,
+    toggleShuffle,
   } = useAudio();
 
   if (!isQueueOpen) return null;
@@ -55,12 +58,23 @@ export const QueueDrawer: React.FC = () => {
             Dynamic
           </span>
         </div>
-        <button
-          onClick={() => setIsQueueOpen(false)}
-          className="p-1.5 rounded-full glass-pill text-white/60 hover:text-white transition-all"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={shuffleQueue}
+            disabled={queue.length <= 1}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full glass-pill text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-30 active:scale-95 transition-all"
+            title="Shuffle Upcoming Queue"
+          >
+            <Shuffle className="w-3.5 h-3.5 text-obsidian-accent" />
+            <span>Shuffle</span>
+          </button>
+          <button
+            onClick={() => setIsQueueOpen(false)}
+            className="p-1.5 rounded-full glass-pill text-white/60 hover:text-white transition-all"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Now Playing Banner */}

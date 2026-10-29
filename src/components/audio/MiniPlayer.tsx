@@ -15,6 +15,7 @@ import {
   ListMusic,
   Maximize2,
   Sparkles,
+  Shuffle,
 } from 'lucide-react';
 import { useAudio } from './AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
@@ -32,6 +33,8 @@ export const MiniPlayer: React.FC = () => {
     seek,
     nextTrack,
     prevTrack,
+    isShuffle,
+    toggleShuffle,
     setVolume,
     toggleMute,
     toggleLike,
@@ -128,6 +131,18 @@ export const MiniPlayer: React.FC = () => {
         {/* Center: Playback Controls & Timecodes */}
         <div className="flex flex-col items-center flex-shrink-0">
           <div className="flex items-center gap-3 sm:gap-5">
+            <button
+              onClick={toggleShuffle}
+              title={isShuffle ? 'Shuffle Mode On' : 'Shuffle Mode Off'}
+              className={`p-1.5 rounded-full transition-colors hidden sm:block ${
+                isShuffle
+                  ? 'text-obsidian-accent bg-obsidian-accent/15'
+                  : 'text-white/40 hover:text-white'
+              }`}
+            >
+              <Shuffle className="w-3.5 h-3.5" />
+            </button>
+
             <button
               onClick={prevTrack}
               title="Previous"

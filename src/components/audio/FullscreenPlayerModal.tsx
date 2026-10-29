@@ -16,6 +16,7 @@ import {
   ChevronDown,
   ListMusic,
   Trash2,
+  Shuffle,
 } from 'lucide-react';
 import { useAudio } from './AudioProvider';
 import { formatTime, parseLRC } from '@/lib/audio/timeFormat';
@@ -45,6 +46,9 @@ export const FullscreenPlayerModal: React.FC = () => {
     queueIndex,
     removeFromQueue,
     playTrack,
+    isShuffle,
+    toggleShuffle,
+    shuffleQueue,
   } = useAudio();
 
   const [activeTab, setActiveTab] = useState<'visualizer' | 'lyrics' | 'queue'>('visualizer');
@@ -183,8 +187,19 @@ export const FullscreenPlayerModal: React.FC = () => {
           /* Dynamic Queue Mode */
           <div className="w-full max-w-2xl h-[340px] sm:h-[440px] overflow-y-auto space-y-2 text-left px-3 sm:px-5 py-4 scroll-smooth scrollbar-thin glass-card rounded-2xl border border-white/10">
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.08] text-xs text-white/60 font-mono">
-              <span>Playing Next</span>
-              <span className="text-emerald-400 font-semibold">{queue.length} Tracks</span>
+              <div className="flex items-center gap-2">
+                <span>Playing Next</span>
+                <span className="text-emerald-400 font-semibold">{queue.length} Tracks</span>
+              </div>
+              <button
+                onClick={shuffleQueue}
+                disabled={queue.length <= 1}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-white/80 hover:text-white hover:bg-white/15 disabled:opacity-30 active:scale-95 transition-all"
+                title="Shuffle Queue"
+              >
+                <Shuffle className="w-3.5 h-3.5 text-obsidian-accent" />
+                <span>Shuffle</span>
+              </button>
             </div>
 
             {queue.map((t, idx) => {
@@ -301,14 +316,27 @@ export const FullscreenPlayerModal: React.FC = () => {
 
         {/* Controls Button Row */}
         <div className="flex items-center justify-between pt-1">
-          <Link
-            href="/settings"
-            onClick={() => setIsFullPlayerOpen(false)}
-            className="p-2.5 rounded-full glass-pill text-white/60 hover:text-white transition-colors"
-            title="DSP Equalizer"
-          >
-            <Sliders className="w-5 h-5" />
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/settings"
+              onClick={() => setIsFullPlayerOpen(false)}
+              className="p-2.5 rounded-full glass-pill text-white/60 hover:text-white transition-colors"
+              title="DSP Equalizer"
+            >
+              <Sliders className="w-5 h-5" />
+            </Link>
+            <button
+              onClick={toggleShuffle}
+              className={`p-2.5 rounded-full glass-pill transition-colors ${
+                isShuffle
+                  ? 'text-obsidian-accent bg-obsidian-accent/15 border border-obsidian-accent/30'
+                  : 'text-white/60 hover:text-white'
+              }`}
+              title={isShuffle ? 'Shuffle Mode On' : 'Shuffle Mode Off'}
+            >
+              <Shuffle className="w-5 h-5" />
+            </button>
+          </div>
 
           <div className="flex items-center gap-6 sm:gap-8">
             <button

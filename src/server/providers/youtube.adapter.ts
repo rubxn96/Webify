@@ -525,13 +525,13 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
       const titleMatches = normCandTitle.includes(normTargetTitle) || normTargetTitle.includes(normCandTitle);
       const artistMatches = normCandArtist.includes(normTargetArtist) || normTargetArtist.includes(normCandArtist);
 
-      // Duration guard (±3 seconds) if target duration is known
+      // Duration guard (±15 seconds) if target duration is known to account for video intros/outros
       const durationMatches =
         query.durationSeconds && query.durationSeconds > 0
-          ? Math.abs(cand.duration - query.durationSeconds) <= 3
+          ? Math.abs(cand.duration - query.durationSeconds) <= 15
           : true;
 
-      if (titleMatches && (artistMatches || durationMatches)) {
+      if (titleMatches || (artistMatches && durationMatches)) {
         return {
           matched: true,
           track: cand,
@@ -540,17 +540,14 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
       }
     }
 
-    // 3. Fallback to top result if reasonable title overlap exists
+    // 3. Fallback to top result from YouTube query
     if (candidates.length > 0) {
       const top = candidates[0];
-      const normTopTitle = cleanNorm(top.title);
-      if (normTopTitle.includes(normTargetTitle) || normTargetTitle.includes(normTopTitle)) {
-        return {
-          matched: true,
-          track: top,
-          confidence: 0.75,
-        };
-      }
+      return {
+        matched: true,
+        track: top,
+        confidence: 0.75,
+      };
     }
 
     return { matched: false, confidence: 0 };
