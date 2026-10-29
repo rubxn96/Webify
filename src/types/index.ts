@@ -56,6 +56,11 @@ export interface TelemetryPayload {
   event: 'track_start' | 'track_progress' | 'track_skip' | 'track_complete';
   progressSeconds: number;
   durationSeconds: number;
+  sessionId?: string;
+  youtubeId?: string;
+  title?: string;
+  artist?: string;
+  thumbnail?: string;
 }
 
 export interface ImportException {

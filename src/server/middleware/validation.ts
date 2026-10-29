@@ -44,6 +44,11 @@ export const TelemetrySchema = z.object({
   event: z.enum(['track_start', 'track_progress', 'track_skip', 'track_complete']),
   progressSeconds: z.number().default(0),
   durationSeconds: z.number().default(0),
+  sessionId: z.string().optional(),
+  youtubeId: z.string().optional(),
+  title: z.string().optional(),
+  artist: z.string().optional(),
+  thumbnail: z.string().optional(),
 });
 
 export const SyncTrackSchema = z.object({

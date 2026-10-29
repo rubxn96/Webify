@@ -17,6 +17,7 @@ import {
   Heart,
   LogIn,
   LogOut,
+  Sparkles,
 } from 'lucide-react';
 import { useAudio } from '@/components/audio/AudioProvider';
 import { Playlist, UserProfile } from '@/types';
@@ -100,6 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
 
   const discoverLinks = [
     { label: 'Listen Now', href: '/', icon: Home },
+    { label: 'Recommendations', href: '/recommendations', icon: Sparkles },
     { label: 'Search', href: '/search', icon: Search },
   ];
 

@@ -18,9 +18,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const sessionId =
+      parsed.data.sessionId ||
+      req.cookies.get('webify_session_id')?.value ||
+      req.headers.get('x-session-id') ||
+      undefined;
+
     const telemetry = await historyService.recordInteraction({
       userId: user?.id,
+      sessionId,
       trackId: parsed.data.trackId,
+      youtubeId: parsed.data.youtubeId,
+      title: parsed.data.title,
+      artist: parsed.data.artist,
+      thumbnail: parsed.data.thumbnail,
       event: parsed.data.event,
       progressSeconds: parsed.data.progressSeconds,
       durationSeconds: parsed.data.durationSeconds,

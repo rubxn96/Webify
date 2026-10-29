@@ -214,6 +214,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           event: 'track_progress',
           progressSeconds: currentTime,
           durationSeconds: duration || currentTrack.duration,
+          youtubeId: currentTrack.youtubeId,
+          title: currentTrack.title,
+          artist: currentTrack.artist,
+          thumbnail: currentTrack.thumbnail,
         });
       }, 10000);
     }
@@ -272,6 +276,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             event: 'track_skip',
             progressSeconds: currentTime,
             durationSeconds: duration,
+            youtubeId: currentTrack.youtubeId,
+            title: currentTrack.title,
+            artist: currentTrack.artist,
+            thumbnail: currentTrack.thumbnail,
           });
         }
       }
@@ -432,6 +440,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         event: 'track_start',
         progressSeconds: 0,
         durationSeconds: track.duration,
+        youtubeId: track.youtubeId,
+        title: track.title,
+        artist: track.artist,
+        thumbnail: track.thumbnail,
       });
 
       // If not preloaded, resolve stream asynchronously
@@ -1037,6 +1049,10 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         event: 'track_complete',
         progressSeconds: duration,
         durationSeconds: duration,
+        youtubeId: currentTrack.youtubeId,
+        title: currentTrack.title,
+        artist: currentTrack.artist,
+        thumbnail: currentTrack.thumbnail,
       });
     }
     nextTrack();

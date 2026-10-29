@@ -15,6 +15,10 @@ export async function ensureDatabaseTables(): Promise<{ created: boolean; seeded
     const tableExists = checkTable && checkTable[0] && (checkTable[0].exists === true || checkTable[0].exists === 't');
 
     if (tableExists) {
+      // Ensure Telemetry table has sessionId column
+      await prisma.$executeRawUnsafe(`ALTER TABLE "Telemetry" ADD COLUMN IF NOT EXISTS "sessionId" TEXT;`).catch(() => {});
+      await prisma.$executeRawUnsafe(`CREATE INDEX IF NOT EXISTS "Telemetry_sessionId_createdAt_idx" ON "Telemetry"("sessionId", "createdAt");`).catch(() => {});
+
       // Check if tracks are populated
       const trackCount = await prisma.track.count().catch(() => 0);
       if (trackCount === 0) {
@@ -89,6 +93,7 @@ export async function ensureDatabaseTables(): Promise<{ created: boolean; seeded
       CREATE TABLE IF NOT EXISTS "Telemetry" (
         "id" TEXT NOT NULL,
         "userId" TEXT,
+        "sessionId" TEXT,
         "trackId" TEXT NOT NULL,
         "event" TEXT NOT NULL,
         "progressSeconds" DOUBLE PRECISION NOT NULL DEFAULT 0,
@@ -119,6 +124,7 @@ export async function ensureDatabaseTables(): Promise<{ created: boolean; seeded
       CREATE UNIQUE INDEX IF NOT EXISTS "PlaylistTrack_playlistId_trackId_key" ON "PlaylistTrack"("playlistId", "trackId");
       CREATE UNIQUE INDEX IF NOT EXISTS "UserLike_userId_trackId_key" ON "UserLike"("userId", "trackId");
       CREATE INDEX IF NOT EXISTS "Telemetry_userId_createdAt_idx" ON "Telemetry"("userId", "createdAt");
+      CREATE INDEX IF NOT EXISTS "Telemetry_sessionId_createdAt_idx" ON "Telemetry"("sessionId", "createdAt");
 
       DO $$ BEGIN
         IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'Playlist_userId_fkey') THEN
