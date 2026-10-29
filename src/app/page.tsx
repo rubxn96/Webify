@@ -1,19 +1,18 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HeroShelf } from '@/components/discovery/HeroShelf';
 import { QuickAccessGrid } from '@/components/discovery/QuickAccessGrid';
 import { CuratedRail } from '@/components/discovery/CuratedRail';
 import { HomepageSkeleton } from '@/components/ui/Skeleton';
 import { Track } from '@/types';
 import { Sparkles, Flame, Music2, Zap, Radio, Heart, History } from 'lucide-react';
-import { useAudio } from '@/components/audio/AudioProvider';
 
 interface DynamicRecommendationsData {
   hero: Track | null;
   quickAccess: Track[];
   vibeRecommendations?: Track[];
-  recentVibeSeed?: { title: string; artist: string } | null;
+  recentVibeSeed?: { title: string; artist: string; summary?: string } | null;
   recentlyPlayed?: Track[];
   trendingIndia: Track[];
   latestHindi: Track[];
@@ -23,35 +22,50 @@ interface DynamicRecommendationsData {
   userFavorites?: Track[];
 }
 
+const CACHE_KEY = 'webify_homepage_cache';
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+
 export default function HomePage() {
   const [data, setData] = useState<DynamicRecommendationsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const { currentTrack } = useAudio();
 
-  const fetchRecommendations = useCallback(() => {
+  useEffect(() => {
+    // 1. Check local session cache first to eliminate unnecessary network fetches
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.timestamp && Date.now() - parsed.timestamp < CACHE_TTL_MS && parsed?.data) {
+          setData(parsed.data);
+          setLoading(false);
+          return;
+        }
+      }
+    } catch {
+      // ignore parse error
+    }
+
+    // 2. Fetch fresh recommendations on page load / browser refresh
     fetch('/api/recommendations')
       .then((res) => (res.ok ? res.json() : null))
       .then((resData) => {
-        if (resData) setData(resData);
+        if (resData) {
+          setData(resData);
+          try {
+            sessionStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({ timestamp: Date.now(), data: resData })
+            );
+          } catch {
+            // ignore storage quota error
+          }
+        }
       })
       .catch((err) => {
         console.error('Failed to load discovery rails:', err);
       })
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    fetchRecommendations();
-  }, [fetchRecommendations]);
-
-  // Dynamically refresh homepage vibe recommendations and recently played whenever a new song plays
-  useEffect(() => {
-    if (!currentTrack?.id) return;
-    const timer = setTimeout(() => {
-      fetchRecommendations();
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [currentTrack?.id, fetchRecommendations]);
 
   if (loading || !data) {
     return <HomepageSkeleton />;
@@ -70,7 +84,7 @@ export default function HomePage() {
       {/* 1. Hero Shelf: Featured Spotlight (Latest Chartbuster) */}
       <HeroShelf heroTrack={data.hero} allTracks={allTracks} />
 
-      {/* 2. Recommended for Your Vibe (Dynamically generated from user's recent listening history) */}
+      {/* 2. Recommended for Your Vibe (Averaged across past listened tracks) */}
       {data.vibeRecommendations && data.vibeRecommendations.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -81,7 +95,7 @@ export default function HomePage() {
               </h2>
               {data.recentVibeSeed && (
                 <p className="text-xs text-white/50">
-                  Inspired by &ldquo;{data.recentVibeSeed.title}&rdquo; &bull; Handpicked vibe queue
+                  {data.recentVibeSeed.summary || `${data.recentVibeSeed.title} • ${data.recentVibeSeed.artist}`}
                 </p>
               )}
             </div>
@@ -93,7 +107,7 @@ export default function HomePage() {
       {/* 3. Quick Access: Top Stations / Daily Picks */}
       <QuickAccessGrid tracks={data.quickAccess || []} />
 
-      {/* 4. Recently Played (Past 20 songs stored in database for this session) */}
+      {/* 4. Recently Played (Past listened songs up to last 30 songs) */}
       {data.recentlyPlayed && data.recentlyPlayed.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
@@ -103,7 +117,7 @@ export default function HomePage() {
                 Recently Played
               </h2>
               <p className="text-xs text-white/50">
-                Your past listened songs stored from this session
+                Your past listened songs stored from this session (up to 30 tracks)
               </p>
             </div>
           </div>

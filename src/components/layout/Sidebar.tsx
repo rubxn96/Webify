@@ -56,6 +56,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
     } finally {
       setUser(null);
       setPlaylists([]);
+      try {
+        sessionStorage.removeItem('webify_homepage_cache');
+        sessionStorage.removeItem('webify_recommendations_cache');
+      } catch {
+        // ignore
+      }
       router.refresh();
       fetchPlaylists();
     }
@@ -404,6 +410,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={(u) => {
+          try {
+            sessionStorage.removeItem('webify_homepage_cache');
+            sessionStorage.removeItem('webify_recommendations_cache');
+          } catch {
+            // ignore
+          }
           setUser(u);
           fetchPlaylists();
         }}

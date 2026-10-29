@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CuratedRail } from '@/components/discovery/CuratedRail';
 import { HomepageSkeleton } from '@/components/ui/Skeleton';
 import { Track } from '@/types';
@@ -9,42 +9,58 @@ import { useAudio } from '@/components/audio/AudioProvider';
 
 interface RecommendationsData {
   vibeRecommendations?: Track[];
-  recentVibeSeed?: { title: string; artist: string } | null;
+  recentVibeSeed?: { title: string; artist: string; summary?: string } | null;
   recentlyPlayed?: Track[];
   trendingIndia?: Track[];
   latestHindi?: Track[];
   trendingSouth?: Track[];
 }
 
+const CACHE_KEY = 'webify_recommendations_cache';
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+
 export default function RecommendationsPage() {
   const [data, setData] = useState<RecommendationsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const { currentTrack, playTrack } = useAudio();
+  const { playTrack } = useAudio();
 
-  const fetchRecommendations = useCallback(() => {
+  useEffect(() => {
+    // 1. Check local session cache first
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.timestamp && Date.now() - parsed.timestamp < CACHE_TTL_MS && parsed?.data) {
+          setData(parsed.data);
+          setLoading(false);
+          return;
+        }
+      }
+    } catch {
+      // ignore
+    }
+
+    // 2. Fetch fresh recommendations on page load
     fetch('/api/recommendations')
       .then((res) => (res.ok ? res.json() : null))
       .then((resData) => {
-        if (resData) setData(resData);
+        if (resData) {
+          setData(resData);
+          try {
+            sessionStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({ timestamp: Date.now(), data: resData })
+            );
+          } catch {
+            // ignore
+          }
+        }
       })
       .catch((err) => {
         console.error('Failed to load recommendations:', err);
       })
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    fetchRecommendations();
-  }, [fetchRecommendations]);
-
-  // Dynamically refresh whenever a new song plays
-  useEffect(() => {
-    if (!currentTrack?.id) return;
-    const timer = setTimeout(() => {
-      fetchRecommendations();
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [currentTrack?.id, fetchRecommendations]);
 
   if (loading || !data) {
     return <HomepageSkeleton />;
@@ -72,10 +88,10 @@ export default function RecommendationsPage() {
             <p className="text-sm text-white/60 max-w-2xl">
               {data.recentVibeSeed ? (
                 <>
-                  Tuned to your recent listen &ldquo;<span className="text-purple-300 font-medium">{data.recentVibeSeed.title}</span>&rdquo; by {data.recentVibeSeed.artist}. Continuously updated each session from your database history.
+                  Tuned to your average session vibe &ldquo;<span className="text-purple-300 font-medium">{data.recentVibeSeed.title}</span>&rdquo;. Averaged across your past listening history (up to last 30 songs).
                 </>
               ) : (
-                'Play any song to calibrate your session vibe in real time. We match similar melodic, acoustic, and rhythm vibes.'
+                'Play tracks from the trending charts below to build your session listening history. We will curate a personalized vibe queue for you.'
               )}
             </p>
           </div>
@@ -103,7 +119,7 @@ export default function RecommendationsPage() {
               </h2>
               {data.recentVibeSeed && (
                 <p className="text-xs text-white/50">
-                  Similar to &ldquo;{data.recentVibeSeed.title}&rdquo; &bull; Filtered for genuine chartbusters
+                  {data.recentVibeSeed.summary || `${data.recentVibeSeed.title} • ${data.recentVibeSeed.artist}`}
                 </p>
               )}
             </div>
@@ -118,14 +134,14 @@ export default function RecommendationsPage() {
         </div>
       )}
 
-      {/* 2. Recently Played (Past 20 songs stored in database) */}
+      {/* 2. Recently Played (Past listened songs up to last 30 songs) */}
       {data.recentlyPlayed && data.recentlyPlayed.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-cyan-400" />
             <div>
               <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
-                Recently Played (Past 20 Songs)
+                Recently Played (Last 30 Songs)
               </h2>
               <p className="text-xs text-white/50">
                 Preserved across your session in PostgreSQL database

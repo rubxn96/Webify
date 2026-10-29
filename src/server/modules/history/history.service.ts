@@ -105,7 +105,7 @@ export class HistoryService {
     sessionId?: string;
     limit?: number;
   }): Promise<Track[]> {
-    const { userId, sessionId, limit = 20 } = options;
+    const { userId, sessionId, limit = 30 } = options;
     if (!userId && !sessionId) return [];
 
     try {
