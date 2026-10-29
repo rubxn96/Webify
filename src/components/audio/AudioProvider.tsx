@@ -6,7 +6,7 @@ import { AudioGraph } from '@/lib/audio/AudioGraph';
 import { DEFAULT_USER_SETTINGS, EQ_PRESETS, EQPresetName } from '@/lib/audio/dspPresets';
 import { HiddenYouTubeFallback } from './HiddenYouTubeFallback';
 import { emitTelemetryBeacon } from '@/lib/telemetry/beacon';
-import { cleanSongTitle } from '@/lib/youtube/search';
+import { cleanSongTitle, cleanNorm } from '@/lib/youtube/songFilter';
 
 interface AudioContextType {
   currentTrack: Track | null;
@@ -46,10 +46,6 @@ interface AudioContextType {
 }
 
 const AudioContext = createContext<AudioContextType | null>(null);
-
-function cleanNorm(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
 
 function getIsAppleDevice(): boolean {
   if (typeof navigator === 'undefined') return false;
@@ -394,6 +390,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 const seenKeys = new Set([`${cleanNorm(track.artist)}:::${baseTitle}`]);
 
                 const freshSimilar = data.tracks.filter((st: Track) => {
+                  // Guard against compilations, jukeboxes, or teasers
+                  if (st.duration && (st.duration > 480 || st.duration < 75)) return false;
+
                   const stKey = `${cleanNorm(st.artist)}:::${cleanNorm(cleanSongTitle(st.title))}`;
                   const stBase = cleanNorm(cleanSongTitle(st.title));
                   if (
@@ -555,6 +554,9 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
               const fresh: Track[] = [];
               for (const candidate of data.tracks) {
+                if (candidate.duration && (candidate.duration > 480 || candidate.duration < 75)) {
+                  continue;
+                }
                 const cKey = `${cleanNorm(candidate.artist)}:::${cleanNorm(cleanSongTitle(candidate.title))}`;
                 const cTitle = cleanNorm(cleanSongTitle(candidate.title));
 

@@ -1,6 +1,6 @@
 import { youtubeProvider } from '@/server/providers/youtube.adapter';
 import { Track } from '@/types';
-import { cleanSongTitle, cleanNorm } from '@/server/providers/youtube.adapter';
+import { cleanSongTitle, cleanNorm } from '@/lib/youtube/songFilter';
 
 interface CachedTrending {
   timestamp: number;

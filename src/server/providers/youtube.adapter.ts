@@ -28,26 +28,20 @@ const PIPED_MIRRORS = [
   'https://piped-api.lunar.icu',
 ];
 
-export function cleanNorm(s: string): string {
-  if (!s) return '';
-  return s.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
-export function cleanSongTitle(rawTitle: string): string {
-  if (!rawTitle) return '';
-  return rawTitle
-    .replace(/\s*\(Official\s*(?:Music\s*)?(?:Video|Audio|Lyric\s*Video|Lyrics|Visualizer)?\)/gi, '')
-    .replace(/\s*\[Official\s*(?:Music\s*)?(?:Video|Audio|Lyric\s*Video|Lyrics|Visualizer)?\]/gi, '')
-    .replace(/\s*\((?:Music\s*)?Video\)/gi, '')
-    .replace(/\s*\[(?:Music\s*)?Video\]/gi, '')
-    .replace(/\s*\((?:Lyric\s*Video|Lyrics|Audio|Visualizer|Audio\s*Visualizer)\)/gi, '')
-    .replace(/\s*\[(?:Lyric\s*Video|Lyrics|Audio|Visualizer|Audio\s*Visualizer)\]/gi, '')
-    .replace(/\s*\((?:HD|4K|HQ|Remastered|Explicit|Clean)\)/gi, '')
-    .replace(/\s*\[(?:HD|4K|HQ|Remastered|Explicit|Clean)\]/gi, '')
-    .replace(/\s*\|\s*Official\s*.*$/gi, '')
-    .replace(/\s*-\s*Official\s*.*$/gi, '')
-    .trim();
-}
+export {
+  cleanNorm,
+  cleanSongTitle,
+  KNOWN_RECORD_LABELS,
+  isRecordLabel,
+  isCompilationOrShow,
+  isPristineSongTrack,
+} from '@/lib/youtube/songFilter';
+import {
+  cleanNorm,
+  cleanSongTitle,
+  isRecordLabel,
+  isPristineSongTrack,
+} from '@/lib/youtube/songFilter';
 
 function parseDurationText(durationText?: string): number {
   if (!durationText) return 180;
@@ -334,6 +328,11 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
             const durationText = renderer.lengthText?.simpleText;
             const duration = parseDurationText(durationText);
 
+            // Strictly drop any compilations, radio shows, jukeboxes, or tracks outside single song bounds (80s - 450s)
+            if (!isPristineSongTrack({ title, artist, duration })) {
+              continue;
+            }
+
             const thumbnail =
               renderer.thumbnail?.thumbnails?.slice(-1)[0]?.url ||
               `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
@@ -362,13 +361,15 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
         const seedTrack = await prisma.track.findUnique({ where: { youtubeId: seedTrackId } });
         if (seedTrack) {
           const cleanArtist = seedTrack.artist.replace(/Topic|VEVO|Official|Records|Music/gi, '').trim();
-          const fallbackTracks = await this.search(`${cleanArtist} radio mix`, limit);
-          for (const fb of fallbackTracks) {
-            if (!seenIds.has(fb.youtubeId)) {
-              seenIds.add(fb.youtubeId);
-              mixTracks.push(fb);
+          if (!isRecordLabel(cleanArtist) && cleanArtist.length > 2) {
+            const fallbackTracks = await this.search(`${cleanArtist} songs`, limit);
+            for (const fb of fallbackTracks) {
+              if (!seenIds.has(fb.youtubeId) && isPristineSongTrack(fb)) {
+                seenIds.add(fb.youtubeId);
+                mixTracks.push(fb);
+              }
+              if (mixTracks.length >= limit) break;
             }
-            if (mixTracks.length >= limit) break;
           }
         }
       } catch {
@@ -429,7 +430,8 @@ export class YouTubeProviderAdapter implements IMusicProviderAdapter {
             let artist = vr.ownerText?.runs?.map((r: { text: string }) => r.text).join('') || 'YouTube';
             const duration = parseDurationText(vr.lengthText?.simpleText);
 
-            if (duration > 1200 && !cleanQ.toLowerCase().includes('mix') && !cleanQ.toLowerCase().includes('hour')) {
+            const allowLongFormat = /\b(?:full\s+album|discography|podcast|entire\s+album)\b/i.test(cleanQ);
+            if (!allowLongFormat && !isPristineSongTrack({ title: rawTitle, artist, duration })) {
               continue;
             }
 

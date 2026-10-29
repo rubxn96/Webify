@@ -1,24 +1,7 @@
 import prisma from '@/lib/db/prisma';
 import { Track } from '@/types';
-
-/**
- * Strips YouTube-specific noise from video titles to get canonical song titles.
- */
-export function cleanSongTitle(rawTitle: string): string {
-  if (!rawTitle) return '';
-  return rawTitle
-    .replace(/\s*\(Official\s*(?:Music\s*)?(?:Video|Audio|Lyric\s*Video|Lyrics|Visualizer)?\)/gi, '')
-    .replace(/\s*\[Official\s*(?:Music\s*)?(?:Video|Audio|Lyric\s*Video|Lyrics|Visualizer)?\]/gi, '')
-    .replace(/\s*\((?:Music\s*)?Video\)/gi, '')
-    .replace(/\s*\[(?:Music\s*)?Video\]/gi, '')
-    .replace(/\s*\((?:Lyric\s*Video|Lyrics|Audio|Visualizer|Audio\s*Visualizer)\)/gi, '')
-    .replace(/\s*\[(?:Lyric\s*Video|Lyrics|Audio|Visualizer|Audio\s*Visualizer)\]/gi, '')
-    .replace(/\s*\((?:HD|4K|HQ|Remastered|Explicit|Clean)\)/gi, '')
-    .replace(/\s*\[(?:HD|4K|HQ|Remastered|Explicit|Clean)\]/gi, '')
-    .replace(/\s*\|\s*Official\s*.*$/gi, '')
-    .replace(/\s*-\s*Official\s*.*$/gi, '')
-    .trim();
-}
+import { isPristineSongTrack, cleanSongTitle } from '@/lib/youtube/songFilter';
+export { cleanSongTitle } from '@/lib/youtube/songFilter';
 
 export function normalizeKey(str: string): string {
   return str.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -150,8 +133,8 @@ export async function searchYouTubeDirect(query: string, limit: number = 25): Pr
             const durationText = vr.lengthText?.simpleText;
             const duration = parseDurationText(durationText);
 
-            // Filter out 1-hour loops or 10-hour videos
-            if (duration > 1200 && !query.toLowerCase().includes('mix') && !query.toLowerCase().includes('hour')) {
+            const allowLongFormat = /\b(?:full\s+album|discography|podcast|entire\s+album)\b/i.test(query);
+            if (!allowLongFormat && !isPristineSongTrack({ title: rawTitle, artist, duration })) {
               continue;
             }
 
