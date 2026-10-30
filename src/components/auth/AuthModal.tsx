@@ -80,7 +80,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="glass-panel border border-white/10 rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-5 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto bg-[#0d0d12]/95"
+        className="glass-panel border border-white/10 rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-5 shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto"
       >
         <button
           onClick={onClose}

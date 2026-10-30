@@ -260,15 +260,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
           <span className="hidden sm:inline">Favorites</span>
         </Link>
 
-        <Link
-          href="/settings"
-          className="p-2 text-white/60 hover:text-white transition-colors flex items-center gap-1.5 text-xs font-medium"
-          title="Settings & Audio Studio"
-        >
-          <Settings className="w-4 h-4 text-white/60 hover:text-white" />
-          <span className="hidden sm:inline">Settings</span>
-        </Link>
-
         {user ? (
           <div ref={profileMenuRef} className="relative">
             <button
@@ -326,13 +317,55 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
             )}
           </div>
         ) : (
-          <button
-            onClick={() => setIsAuthOpen(true)}
-            className="px-4 py-1.5 rounded-full bg-white text-black text-xs font-semibold hover:bg-white/90 active:scale-95 transition-all shadow-md flex items-center gap-1.5"
-          >
-            <LogIn className="w-3.5 h-3.5" />
-            <span>Log In</span>
-          </button>
+          <div ref={profileMenuRef} className="relative flex items-center gap-2">
+            <button
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="flex items-center gap-1.5 p-1 sm:p-1.5 rounded-full glass-pill hover:bg-white/10 transition-all border border-white/10 text-white/70"
+              title="Account & Settings"
+            >
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 flex items-center justify-center text-xs text-white/80 flex-shrink-0">
+                <User className="w-4 h-4" />
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-white/40" />
+            </button>
+
+            <button
+              onClick={() => setIsAuthOpen(true)}
+              className="px-4 py-1.5 rounded-full bg-white text-black text-xs font-semibold hover:bg-white/90 active:scale-95 transition-all shadow-md flex items-center gap-1.5"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Log In</span>
+            </button>
+
+            {isProfileOpen && (
+              <div className="absolute right-0 top-12 w-56 glass-panel rounded-2xl shadow-2xl p-2 z-50 border border-white/10 space-y-1 animate-fadeIn backdrop-blur-3xl">
+                <div className="px-3 py-2 border-b border-white/[0.06]">
+                  <div className="text-xs font-semibold text-white">Guest Session</div>
+                  <div className="text-[11px] text-white/40">Log in to sync your playlists</div>
+                </div>
+
+                <Link
+                  href="/settings"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white/80 hover:text-white hover:bg-white/10 transition-colors text-left"
+                >
+                  <Settings className="w-3.5 h-3.5 text-obsidian-accent" />
+                  <span>Settings</span>
+                </Link>
+
+                <button
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    setIsAuthOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-white/70 hover:text-white hover:bg-white/10 transition-colors text-left"
+                >
+                  <LogIn className="w-3.5 h-3.5 text-white/60" />
+                  <span>Log In / Sign Up</span>
+                </button>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

@@ -293,6 +293,25 @@ html[data-theme='light'] .hover\:text-white:hover {
   color: #0F172A !important;
 }
 
+html[data-theme='light'] input,
+html[data-theme='light'] textarea,
+html[data-theme='light'] select {
+  color: #0F172A !important;
+}
+
+html[data-theme='light'] input::placeholder,
+html[data-theme='light'] textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+html[data-theme='light'] .bg-white\/\[0\.03\] {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+html[data-theme='light'] .text-white\/20 {
+  color: #CBD5E1 !important;
+}
+
 html[data-theme='light'] ::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.18);
 }
@@ -300,6 +319,7 @@ html[data-theme='light'] ::-webkit-scrollbar-thumb {
 html[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.32);
 }
+
 
 
 

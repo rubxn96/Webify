@@ -7,7 +7,6 @@ import {
   Home,
   Search,
   Library,
-  Settings,
   Download,
   Plus,
   Disc3,
@@ -89,10 +88,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
   const libraryLinks = [
     { label: 'Your Library', href: '/library', icon: Library },
     { label: 'Import Playlist', href: '/import', icon: Download },
-  ];
-
-  const settingsLinks = [
-    { label: 'Settings', href: '/settings', icon: Settings },
   ];
 
   const sidebarContent = (
@@ -188,37 +183,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
             </Link>
 
             {libraryLinks.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href;
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => onCloseMobile && onCloseMobile()}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium tracking-tight transition-all ${
-                    isActive
-                      ? 'glass-pill bg-white/10 text-white font-semibold shadow-sm'
-                      : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
-                  }`}
-                >
-                  <Icon
-                    className={`w-4 h-4 ${
-                      isActive ? 'text-obsidian-accent' : 'text-white/60'
-                    }`}
-                  />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Section: Preferences / Settings */}
-          <div className="space-y-1">
-            <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
-              Preferences
-            </div>
-            {settingsLinks.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
 

@@ -12,7 +12,6 @@ import {
   Volume2,
   VolumeX,
   Sparkles,
-  Sliders,
   ChevronDown,
   ListMusic,
   Trash2,
@@ -20,7 +19,6 @@ import {
 } from 'lucide-react';
 import { useAudio } from './AudioProvider';
 import { formatTime, parseLRC } from '@/lib/audio/timeFormat';
-import Link from 'next/link';
 import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
 
 export const FullscreenPlayerModal: React.FC = () => {
@@ -317,14 +315,6 @@ export const FullscreenPlayerModal: React.FC = () => {
         {/* Controls Button Row */}
         <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-2">
-            <Link
-              href="/settings"
-              onClick={() => setIsFullPlayerOpen(false)}
-              className="p-2.5 rounded-full glass-pill text-white/60 hover:text-white transition-colors"
-              title="DSP Equalizer"
-            >
-              <Sliders className="w-5 h-5" />
-            </Link>
             <button
               onClick={toggleShuffle}
               className={`p-2.5 rounded-full glass-pill transition-colors ${

@@ -7,6 +7,7 @@ import { Library, Plus, Heart, Globe, Lock, Music2 } from 'lucide-react';
 import { Playlist } from '@/types';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useAudio } from '@/components/audio/AudioProvider';
+import { AuthModal } from '@/components/auth/AuthModal';
 
 export default function LibraryPage() {
   const { likedTrackIds } = useAudio();
@@ -14,6 +15,7 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [newTitle, setNewTitle] = useState('');
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   const loadPlaylists = () => {
     fetch('/api/playlists')
@@ -42,7 +44,7 @@ export default function LibraryPage() {
       });
 
       if (res.status === 401) {
-        window.location.href = '/login';
+        setIsAuthOpen(true);
         return;
       }
 
@@ -176,6 +178,14 @@ export default function LibraryPage() {
           ))}
         </div>
       )}
+
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onSuccess={() => {
+          loadPlaylists();
+        }}
+      />
     </div>
   );
 }

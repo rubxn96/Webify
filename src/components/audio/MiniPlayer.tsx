@@ -2,7 +2,6 @@
 
 import React, { useState, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import {
   Play,
   Pause,
@@ -11,7 +10,6 @@ import {
   Heart,
   Volume2,
   VolumeX,
-  Sliders,
   ListMusic,
   Maximize2,
   Sparkles,
@@ -197,15 +195,6 @@ export const MiniPlayer: React.FC = () => {
           >
             <Sparkles className="w-4 h-4" />
           </button>
-
-          {/* Equalizer Link (hidden on small mobile) */}
-          <Link
-            href="/settings"
-            title="DSP Equalizer & Settings"
-            className="p-2 rounded-full glass-pill text-white/60 hover:text-white transition-all hidden sm:flex items-center justify-center"
-          >
-            <Sliders className="w-4 h-4" />
-          </Link>
 
           {/* Queue Drawer Toggle */}
           <button
