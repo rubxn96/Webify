@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/server/middleware/authorization';
 import { TelemetrySchema } from '@/server/middleware/validation';
 import { historyService } from '@/server/modules/history/history.service';
+import { trackingService } from '@/server/modules/tracking/tracking.service';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,6 +24,22 @@ export async function POST(req: NextRequest) {
       req.cookies.get('webify_session_id')?.value ||
       req.headers.get('x-session-id') ||
       undefined;
+
+    // Record into advanced tracking engine
+    trackingService
+      .recordEvent({
+        userId: user?.id,
+        sessionId,
+        trackId: parsed.data.trackId,
+        youtubeId: parsed.data.youtubeId,
+        title: parsed.data.title,
+        artist: parsed.data.artist,
+        thumbnail: parsed.data.thumbnail,
+        eventType: parsed.data.event,
+        progressSeconds: parsed.data.progressSeconds,
+        durationSeconds: parsed.data.durationSeconds,
+      })
+      .catch((err) => console.warn('[Telemetry] TrackingService record notice:', err));
 
     const telemetry = await historyService.recordInteraction({
       userId: user?.id,

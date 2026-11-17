@@ -21,6 +21,7 @@ import { useAudio } from '@/components/audio/AudioProvider';
 import { formatTime } from '@/lib/audio/timeFormat';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { TrackContextMenu } from '@/components/ui/TrackContextMenu';
+import { emitTelemetryBeacon } from '@/lib/telemetry/beacon';
 
 export default function PlaylistDetailPage() {
   const { id } = useParams();
@@ -88,6 +89,12 @@ export default function PlaylistDetailPage() {
       });
 
       if (res.ok) {
+        emitTelemetryBeacon({
+          trackId,
+          event: 'playlist_remove',
+          progressSeconds: 0,
+          durationSeconds: 0,
+        });
         fetchPlaylist();
       }
     } catch {

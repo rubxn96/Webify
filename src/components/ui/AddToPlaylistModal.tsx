@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X, Plus, Check, Music, FolderPlus, Loader2 } from 'lucide-react';
 import { Playlist, Track } from '@/types';
+import { emitTelemetryBeacon } from '@/lib/telemetry/beacon';
 
 interface AddToPlaylistModalProps {
   isOpen: boolean;
@@ -67,6 +68,15 @@ export const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({ isOpen, 
       });
 
       if (res.ok) {
+        emitTelemetryBeacon({
+          trackId: track.id,
+          event: 'playlist_add',
+          progressSeconds: 0,
+          durationSeconds: track.duration,
+          youtubeId: track.youtubeId,
+          title: track.title,
+          artist: track.artist,
+        });
         setAddedMap((prev) => ({ ...prev, [playlistId]: true }));
         setTimeout(() => {
           onClose();

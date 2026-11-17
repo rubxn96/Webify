@@ -115,6 +115,7 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Telemetry refs
   const progressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastProgressTrackRef = useRef<string | null>(null);
+  const hasEmitted80PercentRef = useRef<boolean>(false);
   const trackStartTimeRef = useRef<number>(0);
 
   // Debounced settings sync timer
@@ -268,6 +269,22 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (audioGraphRef.current) {
         audioGraphRef.current.resume().catch(() => {});
       }
+
+      // Record repeat if replaying current song
+      if (currentTrack && (currentTrack.id === track.id || currentTrack.youtubeId === track.youtubeId)) {
+        emitTelemetryBeacon({
+          trackId: track.id,
+          event: 'track_repeat',
+          progressSeconds: currentTime,
+          durationSeconds: duration || track.duration,
+          youtubeId: track.youtubeId,
+          title: track.title,
+          artist: track.artist,
+          thumbnail: track.thumbnail,
+        });
+      }
+
+      hasEmitted80PercentRef.current = false;
 
       // Record skip telemetry if previous track skipped before completion
       if (currentTrack && currentTrack.id !== track.id && duration > 0) {
@@ -843,6 +860,16 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return copy;
       });
 
+      emitTelemetryBeacon({
+        trackId: track.id,
+        event: nextLiked ? 'track_like' : 'track_dislike',
+        progressSeconds: currentTime,
+        durationSeconds: duration || track.duration,
+        youtubeId: track.youtubeId,
+        title: track.title,
+        artist: track.artist,
+      });
+
       fetch('/api/tracks/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1001,6 +1028,19 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setDuration(audioElementRef.current.duration);
       }
 
+      if (!hasEmitted80PercentRef.current && dur > 0 && cur / dur >= 0.8 && currentTrack) {
+        hasEmitted80PercentRef.current = true;
+        emitTelemetryBeacon({
+          trackId: currentTrack.id,
+          event: 'track_80_percent',
+          progressSeconds: cur,
+          durationSeconds: dur,
+          youtubeId: currentTrack.youtubeId,
+          title: currentTrack.title,
+          artist: currentTrack.artist,
+        });
+      }
+
       // Sync position to native OS lock-screen MediaSession
       if (
         typeof navigator !== 'undefined' &&
@@ -1122,6 +1162,18 @@ export const AudioProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           if (playbackMode === 'iframe') {
             setCurrentTime(cur);
             setDuration(dur);
+            if (!hasEmitted80PercentRef.current && dur > 0 && cur / dur >= 0.8 && currentTrack) {
+              hasEmitted80PercentRef.current = true;
+              emitTelemetryBeacon({
+                trackId: currentTrack.id,
+                event: 'track_80_percent',
+                progressSeconds: cur,
+                durationSeconds: dur,
+                youtubeId: currentTrack.youtubeId,
+                title: currentTrack.title,
+                artist: currentTrack.artist,
+              });
+            }
           }
         }}
         onEnded={handleTrackEnded}

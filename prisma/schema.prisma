@@ -9,38 +9,55 @@ datasource db {
 }
 
 model User {
-  id           String      @id @default(cuid())
-  email        String      @unique
-  username     String
-  passwordHash String
-  preferences  Json        @default("{\"bitrate\":\"high\",\"normalization\":true,\"crossfade\":2,\"eqEnabled\":true,\"eqPreset\":\"Flat\",\"eqBands\":[0,0,0,0,0,0,0,0,0,0]}")
-  tasteVector  Float[]     @default([])
-  playlists    Playlist[]
-  likes        UserLike[]
-  history      Telemetry[]
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id              String          @id @default(cuid())
+  email           String          @unique
+  username        String
+  passwordHash    String
+  preferences     Json            @default("{\"bitrate\":\"high\",\"normalization\":true,\"crossfade\":2,\"eqEnabled\":true,\"eqPreset\":\"Flat\",\"eqBands\":[0,0,0,0,0,0,0,0,0,0]}")
+  tasteVector     Float[]         @default([])
+  playlists       Playlist[]
+  likes           UserLike[]
+  history         Telemetry[]
+  listeningEvents ListeningEvent[]
+  userPreference  UserPreference?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 }
 
 model Track {
-  id          String          @id @default(cuid())
-  youtubeId   String          @unique
-  title       String
-  artist      String
-  album       String?
-  isrc        String?
-  duration    Int             // in seconds
-  thumbnail   String
-  embedding   Float[]         @default([]) // 8D native float vector for discovery similarity
-  audioUrl    String?
-  lyrics      String?         // LRC formatted or JSON sync lines
-  likes       UserLike[]
-  playlistMap PlaylistTrack[]
-  history     Telemetry[]
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id              String           @id @default(cuid())
+  youtubeId       String           @unique
+  title           String
+  artist          String
+  album           String?
+  isrc            String?
+  duration        Int              // in seconds
+  thumbnail       String
+  embedding       Float[]          @default([]) // 8D native float vector for discovery similarity
+  audioUrl        String?
+  lyrics          String?          // LRC formatted or JSON sync lines
+  language        String?          // 'malayalam' | 'tamil' | 'telugu' | 'kannada' | 'hindi' | 'punjabi' | 'bengali' | 'marathi' | 'english'
+  genre           String?          // 'Bollywood' | 'Indie' | 'Pop' | 'Hip-Hop' | 'Folk' | 'Classical' | 'Acoustic' | 'Rock'
+  tags            String[]         @default([]) // ['romantic', 'party', 'soulful', 'acoustic', etc.]
+  releaseDate     DateTime?
+  popularity      Int              @default(50)
+  playCount       Int              @default(0)
+  jioSaavnId      String?
+  mbid            String?
+  primaryArtists  String[]         @default([])
+  featuredArtists String[]         @default([])
+  source          String           @default("catalog")
+  likes           UserLike[]
+  playlistMap     PlaylistTrack[]
+  history         Telemetry[]
+  listeningEvents ListeningEvent[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@index([isrc])
+  @@index([language])
+  @@index([genre])
+  @@index([popularity])
 }
 
 model Playlist {
@@ -108,4 +125,63 @@ model ImportJob {
   unresolvedTracks String?  // JSON serialized array of track exceptions
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+model UserPreference {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferredLanguages  String[] @default([])
+  preferredGenres     String[] @default([])
+  topArtists          String[] @default([])
+  dislikedTrackIds    String[] @default([])
+  dislikedArtistNames String[] @default([])
+  affinityScores      Json     @default("{}")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model ListeningEvent {
+  id              String   @id @default(cuid())
+  userId          String?
+  sessionId       String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackId         String
+  track           Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  eventType       String   // 'track_start' | 'track_80_percent' | 'track_complete' | 'track_like' | 'track_dislike' | 'playlist_add' | 'playlist_remove' | 'track_repeat' | 'track_skip' | 'artist_follow' | 'search_query'
+  progressSeconds Float    @default(0)
+  durationSeconds Float    @default(0)
+  weight          Float    @default(1.0)
+  metadata        Json?    // Context (query, language, etc.)
+  createdAt       DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([sessionId, createdAt])
+  @@index([trackId, eventType])
+}
+
+model YouTubeMapping {
+  id         String   @id @default(cuid())
+  queryKey   String   @unique
+  youtubeId  String
+  title      String
+  artist     String
+  duration   Int      @default(0)
+  confidence Float    @default(0.8)
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([queryKey])
+}
+
+model RecommendationCache {
+  id        String   @id @default(cuid())
+  cacheKey  String   @unique
+  section   String
+  data      Json
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([cacheKey, expiresAt])
 }
