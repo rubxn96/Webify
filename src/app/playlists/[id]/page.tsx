@@ -15,6 +15,7 @@ import {
   Heart,
   Music,
   Share2,
+  Sparkles,
 } from 'lucide-react';
 import { Playlist, Track } from '@/types';
 import { useAudio } from '@/components/audio/AudioProvider';
@@ -159,69 +160,88 @@ export default function PlaylistDetailPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-20 animate-fadeIn select-none">
       {/* Header Banner */}
-      <div className="glass-panel flex flex-col sm:flex-row items-center sm:items-end gap-8 p-6 sm:p-10 rounded-3xl border border-white/10 shadow-2xl">
-        <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-2xl overflow-hidden bg-white/[0.04] flex-shrink-0 shadow-2xl shadow-black/80 border border-white/10">
+      <div className="glass-panel flex flex-col sm:flex-row items-center sm:items-end gap-8 p-6 sm:p-10 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden bg-surface-container-low/80">
+        <div className="relative w-44 h-44 sm:w-56 sm:h-56 rounded-2xl overflow-hidden bg-surface-container-highest flex-shrink-0 shadow-[0_16px_40px_rgba(0,0,0,0.6)] border border-white/10 group">
           <Image
             src={playlist.coverImage || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500'}
             alt={playlist.name}
             fill
-            className="object-cover"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
 
-        <div className="space-y-3 truncate w-full">
-          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-white/50">
-            <span>Playlist</span>
-            <span>&bull;</span>
+        <div className="space-y-3.5 truncate w-full flex flex-col justify-end">
+          {/* Tagline & Verified Marker */}
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-primary font-mono text-[10px] uppercase tracking-widest font-bold border border-primary/20">
+              <Sparkles className="w-3 h-3 text-primary fill-primary/30" />
+              Playlist Spotlight
+            </span>
+            <span className="text-outline text-xs">•</span>
             <button
               onClick={toggleVisibility}
               disabled={isUpdatingVisibility}
-              className="inline-flex items-center gap-1 text-white hover:text-obsidian-accent transition-colors"
+              className="inline-flex items-center gap-1 text-on-surface-variant hover:text-primary text-xs uppercase tracking-wider transition-colors"
             >
-              {playlist.isPublic ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-              <span>{playlist.isPublic ? 'Public' : 'Private'}</span>
+              {playlist.isPublic ? <Globe className="w-3.5 h-3.5 text-primary" /> : <Lock className="w-3.5 h-3.5" />}
+              <span>{playlist.isPublic ? 'Public Mix' : 'Private'}</span>
             </button>
+            <span className="text-outline text-xs">•</span>
+            <span className="text-outline text-xs">Webify Sound Engine</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white truncate">
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-on-surface truncate">
             {playlist.name}
           </h1>
 
-          {playlist.description && (
-            <p className="text-xs sm:text-sm text-white/60 line-clamp-2">
+          {playlist.description ? (
+            <p className="text-xs sm:text-sm text-on-surface-variant max-w-3xl line-clamp-2 leading-relaxed">
               {playlist.description}
+            </p>
+          ) : (
+            <p className="text-xs sm:text-sm text-on-surface-variant max-w-3xl line-clamp-2 leading-relaxed">
+              Curated high-fidelity audio stream powered by 10-band graphic DSP equalization and adaptive normalization.
             </p>
           )}
 
-          <div className="flex items-center gap-4 text-xs font-mono text-white/50 pt-1">
-            <span className="text-white font-bold">{tracks.length} tracks</span>
-            <span>&bull;</span>
+          {/* Metadata Strip */}
+          <div className="flex items-center gap-3 text-xs text-on-surface-variant flex-wrap pt-1">
+            <span className="text-on-surface font-semibold">{tracks.length} songs</span>
+            <span className="text-outline">•</span>
             <span className="tabular-nums">{formatTime(totalSeconds)} total runtime</span>
+            <span className="text-outline">•</span>
+            <div className="flex items-center gap-1 text-primary">
+              <Heart className="w-3.5 h-3.5 fill-primary text-primary" />
+              <span className="font-semibold text-on-surface">Lossless FLAC ready</span>
+            </div>
           </div>
 
-          {/* Action Row */}
-          <div className="flex items-center gap-3 pt-3">
+          {/* Tactile Action Toolbar */}
+          <div className="flex items-center gap-4 pt-3 flex-wrap">
             <button
               onClick={handlePlayAll}
               disabled={tracks.length === 0}
-              className="px-8 py-3 rounded-full bg-brand-primary text-[#0A0A0A] font-bold text-xs flex items-center gap-2 shadow-[0_12px_32px_rgba(16,229,117,0.35)] hover:shadow-[0_16px_36px_rgba(16,229,117,0.5)] active:scale-95 disabled:opacity-40 transition-all"
+              className="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_0_28px_rgba(111,255,154,0.45)] hover:scale-105 active:scale-95 transition-all disabled:opacity-40 flex-shrink-0"
+              title="Play Playlist"
             >
               {isPlaylistActive && isPlaying ? (
-                <>
-                  <Pause className="w-4 h-4 fill-[#0A0A0A]" />
-                  <span>Pause</span>
-                </>
+                <Pause className="w-6 h-6 fill-on-primary text-on-primary" />
               ) : (
-                <>
-                  <Play className="w-4 h-4 fill-[#0A0A0A] ml-0.5" />
-                  <span>Play All</span>
-                </>
+                <Play className="w-6 h-6 fill-on-primary text-on-primary ml-0.5" />
               )}
             </button>
 
             <button
+              onClick={handlePlayAll}
+              disabled={tracks.length === 0}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container-high hover:bg-surface-bright text-on-surface text-xs font-semibold transition-all border border-white/10"
+            >
+              <span>Shuffle Play</span>
+            </button>
+
+            <button
               onClick={handleDeletePlaylist}
-              className="p-3 rounded-full glass-pill text-white/50 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              className="w-11 h-11 rounded-full bg-surface-container hover:bg-red-500/20 text-on-surface-variant hover:text-red-400 flex items-center justify-center transition-colors border border-white/10"
               title="Delete Playlist"
             >
               <Trash2 className="w-4 h-4" />

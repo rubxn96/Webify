@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#131313;color:#e5e2e1;}body{overscroll-behavior-y:none;font-family:'Plus Jakarta Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-container": "#003a14", "tertiary-fixed-dim": "#4ae176", "on-secondary": "#003914", "on-error-container": "#ffdad6", "surface-container-high": "#2a2a2a", "error-container": "#93000a", "tertiary": "#70ff92", "surface-container-lowest": "#0e0e0e", "surface-tint": "#0ae474", "on-tertiary": "#003915", "secondary-container": "#02b04c", "surface-container-highest": "#353534", "background": "#131313", "outline": "#859585", "tertiary-container": "#4be277", "on-tertiary-fixed-variant": "#005321", "tertiary-fixed": "#6bff8f", "secondary": "#53e076", "surface-container": "#201f1f", "surface-bright": "#393939", "primary-container": "#10e575", "on-secondary-fixed-variant": "#005320", "inverse-surface": "#e5e2e1", "on-error": "#690005", "on-surface-variant": "#bacbb9", "on-primary-fixed-variant": "#005225", "surface-variant": "#353534", "on-primary-fixed": "#00210b", "on-tertiary-fixed": "#002109", "on-surface": "#e5e2e1", "on-tertiary-container": "#006128", "on-primary": "#003918", "on-background": "#e5e2e1", "secondary-fixed": "#72fe8f", "primary-fixed": "#62ff95", "on-secondary-fixed": "#002108", "primary-fixed-dim": "#0ae474", "surface": "#131313", "surface-dim": "#131313", "inverse-on-surface": "#313030", "surface-container-low": "#1c1b1b", "outline-variant": "#3c4a3d", "on-primary-container": "#00612d", "primary": "#6fff9a", "error": "#ffb4ab", "inverse-primary": "#006d34", "secondary-fixed-dim": "#53e076" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "space-lg": "1.5rem", "space-xl": "2rem", "space-2xl": "3rem", "gutter-desktop": "1.5rem", "margin": "1.25rem", "space-sm": "0.75rem", "margin-desktop": "2.5rem", "space-2xs": "0.25rem", "space-md": "1rem", "space-xs": "0.5rem", "gutter": "1rem" }, "fontFamily": { "headline-xl-mobile": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "headline-xl": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"] }, "fontSize": { "headline-xl-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" }], "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "700" }], "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }], "label-lg": ["14px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="Webify Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrAhGv0gQ0cIvJUBLhnqdh4yVdiQxs0qxv0xshY_Ein51mD1aIxRzY-suyt9Ge50gGlcK6Y_ayAXXklyIfMH4Eb-ADHT3-GsgQJhi5eHOm3IdcJdKzo3KXMwIme7Y2z0kjYorzZvJw7xLjyeTUnKuhJ4dycgnDhG5cINT3XYS7urfSYIveXF53WKuOH15YbPv3Z_dmh-if-QukjDL6tTJG00fzoXt-0Wwn9N_MJqD20"/><div class="flex flex-col min-w-0"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Welcome to Webify</span><h1 class="font-headline-sm text-headline-sm text-on-surface truncate">Search / Browse</h1></div></div><div class="flex items-center gap-space-xs"><button aria-label="Notifications" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[24px]">notifications</span></button><button aria-label="User Profile" class="w-11 h-11 flex items-center justify-center rounded-full"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzSvPs09Cf4CYCiVJnxbJZwWQuWNtmJ6_j45rYGzmFCi3iGGs8Ff-BQTvmn-7pHTt1amGU_H4A0U-2NvreYuZOkHXjHP6wcpJzM7_tVv9jxBf2BnradGqhFZ9UZ_cFHNxdbpOeBfVlklH6t_cEvbx1Zdt6a2mLRGOUUfUuze5TZk0uWTmePPS0EK3bZYLe0h-E6eVjNE3ltGzzMO-yB2urpQ3uKvCaYrULMZvTdQ"/></button></div></div></header><main class="flex flex-col relative w-full pt-16 pb-40 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Search Header Input Section -->
+<div class="px-margin pt-space-xs pb-space-sm">
+<div class="relative flex items-center w-full">
+<span class="material-symbols-outlined absolute left-space-md text-on-surface-variant pointer-events-none text-[22px]">search</span>
+<input class="w-full h-12 pl-12 pr-12 rounded-full bg-surface-container-high text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-body-md outline-none transition-all duration-300 focus:bg-surface-container-highest focus:shadow-[0_0_0_2px_#10e575,0_4px_20px_rgba(16,229,117,0.25)]" id="main-search-input" placeholder="Songs, Artists, Podcasts..." type="search"/>
+<button aria-label="Voice Search" class="absolute right-2 w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+</div>
+</div>
+<!-- Trending Searches Pill Cloud -->
+<section class="py-space-xs">
+<div class="px-margin flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-space-2xs">
+<span class="material-symbols-outlined text-primary text-[18px]">trending_up</span>
+<h2 class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant font-semibold">Trending Searches</h2>
+</div>
+<span class="font-label-sm text-label-sm text-primary">Live Pulse</span>
+</div>
+<!-- Horizontally scrollable pill cloud -->
+<div class="flex gap-space-xs overflow-x-auto px-margin no-scrollbar py-space-2xs">
+<button class="trending-pill flex items-center gap-space-2xs px-space-md h-9 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest active:scale-95 transition-all flex-shrink-0 text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-[15px] text-primary">whatshot</span>
+<span>Arijit Singh</span>
+</button>
+<button class="trending-pill flex items-center gap-space-2xs px-space-md h-9 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest active:scale-95 transition-all flex-shrink-0 text-body-sm font-body-sm">
+<span>Synthwave Nights</span>
+</button>
+<button class="trending-pill flex items-center gap-space-2xs px-space-md h-9 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest active:scale-95 transition-all flex-shrink-0 text-body-sm font-body-sm">
+<span>Miley Cyrus</span>
+</button>
+<button class="trending-pill flex items-center gap-space-2xs px-space-md h-9 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest active:scale-95 transition-all flex-shrink-0 text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-[15px] text-secondary">bolt</span>
+<span>Electronic Bass</span>
+</button>
+<button class="trending-pill flex items-center gap-space-2xs px-space-md h-9 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest active:scale-95 transition-all flex-shrink-0 text-body-sm font-body-sm">
+<span>Late Night Lo-Fi</span>
+</button>
+<button class="trending-pill flex items-center gap-space-2xs px-space-md h-9 rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest active:scale-95 transition-all flex-shrink-0 text-body-sm font-body-sm">
+<span>Punjabi Drill</span>
+</button>
+</div>
+</section>
+<!-- Browse All Categories (Bento Color Grid with Angled Visual Imagery) -->
+<section class="mt-space-md px-margin">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex flex-col">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Browse Categories</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Soundscapes tailored for every state of mind</span>
+</div>
+<button aria-label="Explore more categories" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+</button>
+</div>
+<!-- Category Grid: 2 columns, vibrant high-energy gradients with angled thumb overlap -->
+<div class="grid grid-cols-2 gap-space-sm">
+<!-- Pop Card -->
+<div class="category-card relative h-28 rounded-DEFAULT overflow-hidden bg-gradient-to-br from-[#E11D48] to-[#9F1239] p-space-sm flex flex-col justify-between active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(225,29,72,0.18)] cursor-pointer" role="button" tabindex="0">
+<span class="font-headline-sm text-headline-sm text-[#ffffff] font-bold z-10 drop-shadow-sm">Pop</span>
+<div class="absolute -right-3 -bottom-2 w-16 h-16 rounded-md overflow-hidden transform rotate-[18deg] shadow-lg pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Pop music concert stage lights shining on a female pop star with sparkling glitter aesthetic and vivid vibrant magenta pink lighting atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSlFIByyQw_J6lKkffv0kTGXrR7ZLi1Qa3Wg3cPf5CYTvBsqMvzDQd8Xp3gPUusqNX3hoojPI87GKs-6T2mM1MQdyTMDYoFiWXmYfbZj9DSc3-OUOIfXdpyMkGP3gLI_-AbzxllgLI_d3G6KO8MQhRX189DAByFdabQpERQVquhs24Xxd2BHW_Rt-QczNX6-JqW4LTLNNYkiyH3XRlpKdf_8QXY0uvZM2KmCK56A"/>
+</div>
+</div>
+<!-- Electronic / EDM Card -->
+<div class="category-card relative h-28 rounded-DEFAULT overflow-hidden bg-gradient-to-br from-[#02b04c] to-[#003914] p-space-sm flex flex-col justify-between active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(2,176,76,0.22)] cursor-pointer" role="button" tabindex="0">
+<div class="z-10">
+<span class="font-headline-sm text-headline-sm text-[#ffffff] font-bold leading-tight block drop-shadow-sm">EDM &amp; Waves</span>
+</div>
+<div class="absolute -right-3 -bottom-3 w-16 h-16 rounded-md overflow-hidden transform rotate-[15deg] shadow-lg pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Cyberpunk DJ music festival laser beams cutting through hazy nightclub smoke with neon green holographic light arrays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQ43dF7YYUIlE5K7ZcBK7ds-Jd-UazSMPMgGn2GqxvgP8EZr44x0zL57_TYV8ABIlMsszS3tbAXQAuu38YbljB_ez4AiDZKaanB6vplgsCJann3S1YNyxZfR8S77TC--scEnvML098AHW18U_cjpmrmmo_rxPs_YHNznSYYna6Vdok88HV8KaJxtkOPngXN7WPIbnWhGdJLO1OR27ylbBbjFW32X4tECELwCD79g"/>
+</div>
+</div>
+<!-- Hip-Hop Card -->
+<div class="category-card relative h-28 rounded-DEFAULT overflow-hidden bg-gradient-to-br from-[#D97706] to-[#78350F] p-space-sm flex flex-col justify-between active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(217,119,6,0.18)] cursor-pointer" role="button" tabindex="0">
+<span class="font-headline-sm text-headline-sm text-[#ffffff] font-bold z-10 drop-shadow-sm">Hip-Hop</span>
+<div class="absolute -right-3 -bottom-3 w-16 h-16 rounded-md overflow-hidden transform rotate-[20deg] shadow-lg pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Urban hip hop artist silhouette wearing gold chains and oversized hoodie under moody amber streetlamps with cinematic grain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFamy_XKPMOx03_bJMoPnuCF_ZesG3okfVp_yrsS1TggGCSHTAiP5a_pugR1k5d9Gwz3oOVhRmuXQhK7tSfE3XWro-dGjz2vlSPo7cS-Id6rzkraT6LsqpmjaEpOiE0pvsBPr-VmUHX7VTSTPYg2tTKzuhzPii22rz7iz9tSrmjj3-SDzjel6l_pnTWd3v1gpwvwXMWVnSHi0xfroiMHzDYV3c6gLZOFb44lYBLA"/>
+</div>
+</div>
+<!-- Bollywood Card -->
+<div class="category-card relative h-28 rounded-DEFAULT overflow-hidden bg-gradient-to-br from-[#9333EA] to-[#581C87] p-space-sm flex flex-col justify-between active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(147,51,234,0.2)] cursor-pointer" role="button" tabindex="0">
+<span class="font-headline-sm text-headline-sm text-[#ffffff] font-bold z-10 drop-shadow-sm">Bollywood</span>
+<div class="absolute -right-3 -bottom-3 w-16 h-16 rounded-md overflow-hidden transform rotate-[16deg] shadow-lg pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Cinematic Indian movie hero and romantic dance sequence with vivid violet royal hues and festival stage fireworks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDWeTtAYlnjxRl_cwfLdgCB4acyNPW2tRs26YUQcbRARi0v4fl1mib-X74ejZbRqJipmXIx9iFl-NT8VKuPF6aWsfB1mvBKwsyyIB0CvIKrM98cCiHCb_cfK1SDBwdmlo_iP4Wg-DyKqfzR1h1ki7BD9Zf3KaRlnr71JXTAYeJ5s7Hld-NHSSTbC-xE9eFYZFOubbyDYBfR1GKnv3VMsz3nMtgY4bNxHpQ6BmgrEg"/>
+</div>
+</div>
+<!-- Indie & Folk Card -->
+<div class="category-card relative h-28 rounded-DEFAULT overflow-hidden bg-gradient-to-br from-[#0284C7] to-[#0C4A6E] p-space-sm flex flex-col justify-between active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(2,132,199,0.18)] cursor-pointer" role="button" tabindex="0">
+<span class="font-headline-sm text-headline-sm text-[#ffffff] font-bold z-10 drop-shadow-sm">Indie Vibes</span>
+<div class="absolute -right-3 -bottom-3 w-16 h-16 rounded-md overflow-hidden transform rotate-[14deg] shadow-lg pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Acoustic guitar neck with warm vintage analog film light leaks and moody deep cyan studio atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcIISQyjF0txRTWEKQvSCQ_6jSPgb7ku8r_4raFbLqH9CgXzZZ8gYKt3Zw9nfTtd8EkiPt8eAff2H__umnb7QQDo4zZNyVxAyGNhLrdsSlsEDsp_li1xbSHDZ_QrgORgmf1f4kHPiwdAIovBeCjOeMlJcoAsGtGb_yvIUeb36H3LZmVPXWUGsS71hahlzmf7z4bgxV5AuFux19092PnS4yaWD4MFdsWcfi9ScIOQ"/>
+</div>
+</div>
+<!-- Chill & Lo-Fi Card -->
+<div class="category-card relative h-28 rounded-DEFAULT overflow-hidden bg-gradient-to-br from-[#0D9488] to-[#134E4A] p-space-sm flex flex-col justify-between active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(13,148,136,0.18)] cursor-pointer" role="button" tabindex="0">
+<span class="font-headline-sm text-headline-sm text-[#ffffff] font-bold z-10 drop-shadow-sm">Chill Lo-Fi</span>
+<div class="absolute -right-3 -bottom-3 w-16 h-16 rounded-md overflow-hidden transform rotate-[18deg] shadow-lg pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Rainy cozy evening window with warm cup of coffee and neon teal reflections over rainy cityscape" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp5P-gTMKDY3MG5OG8uGnC_ZtmkiONJYJzjAUxn4C_LA4ssb9sGR3ce3S1ytUC8MGWEDztIJJayg8W37YCdA7n4vywIvxWFBDTreLb6fAiuVVRwLW1t1RwiAgTBP4kEIa576VyNWpgZfaWjM7Z0C608dE6bNvjHwD5N2k_sa4fmPTFvUZwqd_2FXYy9f7TsDoNUrHI-QHTfB4v7ju7fg8cPD35aqIPYq7YKL5pEw"/>
+</div>
+</div>
+<!-- Rock & Heavy Card -->
+<div class="category-card relative h-28 rounded-DEFAULT overflow-hidden bg-gradient-to-br from-[#EA580C] to-[#7C2D12] p-space-sm flex flex-col justify-between active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(234,88,12,0.18)] cursor-pointer" role="button" tabindex="0">
+<span class="font-headline-sm text-headline-sm text-[#ffffff] font-bold z-10 drop-shadow-sm">Rock Arena</span>
+<div class="absolute -right-3 -bottom-3 w-16 h-16 rounded-md overflow-hidden transform rotate-[19deg] shadow-lg pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Electric guitarist performing high-energy rock stadium solo surrounded by sparks and warm burnt orange backlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7dYfOo27vOzZmi73kCF519fKza_oNkYoF0bzuYZJMLPmvoRYrvgc98OSvufukMGIIrjgKaN3xNUdrT4ZSY31B0oOcZWbj5UzHkKNUMgx-SZnK5gmgyNlBSVbvRAZm2JsFcFU81p7IHvU9NUbiomDWx03In79JtsEw4nScG-89866vXrsn8MUTw3YTLHUBS7FtMSQ42omWD3ccZH_e_xeyfGxJ0lGOideXq3ceOA"/>
+</div>
+</div>
+<!-- Workout & Rush Card -->
+<div class="category-card relative h-28 rounded-DEFAULT overflow-hidden bg-gradient-to-br from-[#4F46E5] to-[#312E81] p-space-sm flex flex-col justify-between active:scale-[0.98] transition-transform shadow-[0_8px_20px_rgba(79,70,229,0.22)] cursor-pointer" role="button" tabindex="0">
+<span class="font-headline-sm text-headline-sm text-[#ffffff] font-bold z-10 drop-shadow-sm">Workout</span>
+<div class="absolute -right-3 -bottom-3 w-16 h-16 rounded-md overflow-hidden transform rotate-[15deg] shadow-lg pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Athletic runner wearing wireless earphones sprinting at midnight under neon indigo blue highway overpass lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0PTbQwRFeijeUOTp25QaGQCqOvPgDu3p3IxDfZvV7tO0bYtpJD_72l7Ioos8Cf5B0WwjPqlD3ffxQycnEHdCOTywOgV_Y2Iu_6Gp44NVsAoo57YLEFXRV4SqqHbZ12ggHi9GBbuX3qBqrqYU_OJPU5gllf0l8TCcoALpuOT9L3siUH0YmhzwevYb2JKU65KAGfHLrtYmg2-LsrgpaWJ1e7O-rwflzHLTtBpK-uA"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Filter Segment Bar -->
+<section class="mt-space-lg px-margin">
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-space-2xs">
+<button class="chart-tab px-space-md h-9 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md flex items-center justify-center font-bold shadow-[0_4px_16px_rgba(16,229,117,0.2)]">
+        Top 50 Global
+      </button>
+<button class="chart-tab px-space-md h-9 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors">
+        Viral Hits
+      </button>
+<button class="chart-tab px-space-md h-9 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors">
+        New Releases
+      </button>
+<button class="chart-tab px-space-md h-9 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors">
+        Featured Mixes
+      </button>
+</div>
+</section>
+<!-- Top Results & Charts Section -->
+<section class="mt-space-md px-margin">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[22px]">leaderboard</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Trending Charts</h2>
+</div>
+<button class="font-label-md text-label-md text-primary font-semibold hover:underline">
+        See All
+      </button>
+</div>
+<!-- Track List Stack -->
+<div class="flex flex-col gap-space-2xs">
+<!-- Track Item 01 (Actively playing state preview) -->
+<div class="track-row group flex items-center justify-between p-space-xs rounded-DEFAULT bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer" data-playing="true">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<!-- Rank Number & Animated Equalizer -->
+<div class="w-6 flex items-center justify-center flex-shrink-0">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">01</span>
+</div>
+<!-- Cover Art -->
+<div class="relative w-12 h-12 rounded-md overflow-hidden flex-shrink-0 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Album art portrait of Darshan Raval with dreamy light and monochrome smoke texture with subtle mint green overlays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4HIhwO4Ug8mb4eMKFaJ4lq3RA0Of4wjpUNveDep_Wybtqj3rkNP646DAx6y6qD6AYj0wvIRb3vof_YqCOnPR8XBhgZZ0gFAqVLNBENZcYiNg43d_Z6gmVbzF5NX45KieZWyVXmCrTX_tIc1A7hfneVe39MfXqyVYp07qeVXP12Xqbp5MFH_SJ1ZEvaAH5AmZkXkwn2QUHvxa6or3_4WSLgeETqfpltNhq90qOCA"/>
+<div class="absolute inset-0 bg-surface-container-lowest/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-[24px]">play_arrow</span>
+</div>
+</div>
+<!-- Titles & Metadata -->
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-body-md text-body-md text-primary font-semibold truncate">Asal Mein</span>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="font-body-sm text-body-sm truncate">Darshan Raval • Indie Pop</span>
+<span class="w-1 h-1 rounded-full bg-on-surface-variant/40 flex-shrink-0"></span>
+<span class="font-label-sm text-label-sm flex items-center gap-0.5 text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined text-[12px]">headphones</span> 4.2M
+              </span>
+</div>
+</div>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-space-2xs flex-shrink-0">
+<button aria-label="Favorite track" class="w-9 h-9 flex items-center justify-center text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<button aria-label="More options" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Track Item 02 -->
+<div class="track-row group flex items-center justify-between p-space-xs rounded-DEFAULT bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer" data-playing="false">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<div class="w-6 flex items-center justify-center flex-shrink-0">
+<span class="font-headline-sm text-headline-sm text-on-surface-variant font-bold">02</span>
+</div>
+<div class="relative w-12 h-12 rounded-md overflow-hidden flex-shrink-0 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Miley Cyrus performing at an energetic concert stage with cinematic warm flares and dark starry backdrop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdVPOdF8In6SMjcoXdWvmP8kfhy-tGae6EbA9b88XSDC8uczxi3hN9a-PfFq-wW6arH5IDG2VwnR10_seicq5lk5JQjDbRzhY8rcBDogyXTd8SaZ7iFUsk6P2GRMzwRE4-ti6XU9wX_e6t0UWRUppEGzVjPxASFKAt24JBDLxDM6GonLHM2M1YyvtajmS1_5rwbpouDPt62G105aQhZqtnvVF0svjeStv8Kp3d6g"/>
+<div class="absolute inset-0 bg-surface-container-lowest/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-on-surface text-[24px]">play_arrow</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Flowers (Midnight Edit)</span>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="font-body-sm text-body-sm truncate">Miley Cyrus • Endless Vibes</span>
+<span class="w-1 h-1 rounded-full bg-on-surface-variant/40 flex-shrink-0"></span>
+<span class="font-label-sm text-label-sm flex items-center gap-0.5 text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined text-[12px]">headphones</span> 3.8M
+              </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-2xs flex-shrink-0">
+<button aria-label="Favorite track" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<button aria-label="More options" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Track Item 03 -->
+<div class="track-row group flex items-center justify-between p-space-xs rounded-DEFAULT bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer" data-playing="false">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<div class="w-6 flex items-center justify-center flex-shrink-0">
+<span class="font-headline-sm text-headline-sm text-on-surface-variant font-bold">03</span>
+</div>
+<div class="relative w-12 h-12 rounded-md overflow-hidden flex-shrink-0 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Male singer portrait with electric blue lighting and sunglasses in modern electronic urban album cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbmn4GktZAIm1iK2KGxz3VgJX1fQF1o9W3Z1nKhVT-j4sKohVelfESr7GPpB9EyjIZEHWq49Ex7LqtdaWcWuEyR24L6f1rqEp0UrTHIg6hWO8D4wbIp4rZsK3VqNWuaVXMDzkmP0mBkzG9BLqYWtP0pScc9bdGn0FT9O9IzLxDjaAyep9g_hE8__n8Ct8Lb-1YE4PfTu133EhIe5PDgxDgGgEMSUmLW2t-B6FY1Q"/>
+<div class="absolute inset-0 bg-surface-container-lowest/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-on-surface text-[24px]">play_arrow</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate group-hover:text-primary transition-colors">Coka (Banger Mix)</span>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="font-body-sm text-body-sm truncate">Sukh-E Muzical Doctorz</span>
+<span class="w-1 h-1 rounded-full bg-on-surface-variant/40 flex-shrink-0"></span>
+<span class="font-label-sm text-label-sm flex items-center gap-0.5 text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined text-[12px]">headphones</span> 2.9M
+              </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-2xs flex-shrink-0">
+<button aria-label="Favorite track" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<button aria-label="More options" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Track Item 04 -->
+<div class="track-row group flex items-center justify-between p-space-xs rounded-DEFAULT bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer" data-playing="false">
+<div class="flex items-center gap-space-sm min-w-0 flex-1">
+<div class="w-6 flex items-center justify-center flex-shrink-0">
+<span class="font-headline-sm text-headline-sm text-on-surface-variant font-bold">04</span>
+</div>
+<div class="relative w-12 h-12 rounded-md overflow-hidden flex-shrink-0 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Sean Paul reggae dancehall artist portrait in red atmospheric tint with dark moody aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt8IzR0WUAUm1GhAuc96xrg5idSGeB3gJiO7nVUYNgJzG5SlAJS3yiaG6iNq1A-8kLy19rDctBvR0hqMiSJM0ZxyAvKPIGM77VPGPpN51KAJuA40Gt8uZHROFsYt6U2tasV7YxNVmSvDfO5EgJTnDiL16St1CR-yUE0oVWsEf64v5x27nMHU9NOPXENiMxmhhsr12J6Iwg8zieKn0V2IrmPEPv0iNlpWpxqy5aaA"/>
+<div class="absolute inset-0 bg-surface-container-lowest/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-on-surface text-[24px]">play_arrow</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-body-md text-body-md text-on-surface font-semibold truncate group-hover:text-primary transition-colors">No Lie (Tropical Bass)</span>
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="font-body-sm text-body-sm truncate">Sean Paul &amp; Dua Lipa</span>
+<span class="w-1 h-1 rounded-full bg-on-surface-variant/40 flex-shrink-0"></span>
+<span class="font-label-sm text-label-sm flex items-center gap-0.5 text-on-surface-variant flex-shrink-0">
+<span class="material-symbols-outlined text-[12px]">headphones</span> 2.5M
+              </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-2xs flex-shrink-0">
+<button aria-label="Favorite track" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<button aria-label="More options" class="w-9 h-9 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Curated Discovery Card / Moment of Delight -->
+<section class="mt-space-lg px-margin">
+<div class="relative rounded-lg overflow-hidden bg-surface-container p-space-md flex flex-col justify-between shadow-xl">
+<!-- Glow ambient backdrop -->
+<div class="absolute -top-12 -right-12 w-40 h-40 bg-primary/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-start justify-between z-10">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-widest">Sonic Radar</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold mt-1">Can't decide what to play?</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-[220px]">
+            Shake your device or tap Surprise to curate an instant 10-track flow.
+          </p>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary-container/20 flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[28px]">auto_awesome</span>
+</div>
+</div>
+<div class="mt-space-md z-10 flex items-center gap-space-sm">
+<button class="px-space-lg h-11 rounded-full bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold flex items-center gap-space-2xs shadow-[0_4px_16px_rgba(16,229,117,0.3)] hover:brightness-110 active:scale-95 transition-all" id="surprise-me-btn">
+<span class="material-symbols-outlined text-[18px]">shuffle</span>
+<span>Surprise Mix</span>
+</button>
+<button class="px-space-md h-11 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-surface-container-highest transition-colors">
+          Browse Moods
+        </button>
+</div>
+</div>
+</section>
+</div>
+<script>
+  // Simple interactive feedback for Search input and Category pills
+  (function initBrowseInteractivity() {
+    const searchInput = document.getElementById('main-search-input');
+    const trendingPills = document.querySelectorAll('.trending-pill');
+    const chartTabs = document.querySelectorAll('.chart-tab');
+    const surpriseBtn = document.getElementById('surprise-me-btn');
+
+    if (trendingPills && searchInput) {
+      trendingPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          const query = pill.innerText.trim();
+          searchInput.value = query;
+          searchInput.focus();
+        });
+      });
+    }
+
+    if (chartTabs) {
+      chartTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          chartTabs.forEach(t => {
+            t.className = 'chart-tab px-space-md h-9 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md flex items-center justify-center transition-colors';
+          });
+          tab.className = 'chart-tab px-space-md h-9 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md flex items-center justify-center font-bold shadow-[0_4px_16px_rgba(16,229,117,0.2)]';
+        });
+      });
+    }
+
+    if (surpriseBtn) {
+      surpriseBtn.addEventListener('click', () => {
+        surpriseBtn.classList.add('scale-95', 'brightness-125');
+        setTimeout(() => surpriseBtn.classList.remove('scale-95', 'brightness-125'), 200);
+      });
+    }
+  })();
+</script></main><div class="fixed bottom-0 w-full z-50 pointer-events-none"><div class="px-margin pb-2 max-w-lg mx-auto pointer-events-auto"><aside class="relative overflow-hidden rounded-DEFAULT bg-surface-container-high/90 backdrop-blur-2xl shadow-[0_12px_32px_rgba(0,0,0,0.4)]"><div class="absolute top-0 left-0 right-0 h-0.5 bg-surface-container-highest"><div class="h-full bg-primary-container w-[42%]"></div></div><div class="h-14 px-space-sm flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0 flex-1"><div class="w-10 h-10 rounded-md bg-surface-container-highest flex-shrink-0 overflow-hidden relative"><div class="w-full h-full bg-gradient-to-tr from-primary-container/30 to-secondary/20 flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[20px]">graphic_eq</span></div></div><div class="flex flex-col min-w-0 flex-1"><span class="font-label-md text-label-md text-on-surface truncate font-semibold">Midnight Pulse</span><span class="font-body-sm text-body-sm text-on-surface-variant truncate">Kavinsky • Electronic Waves</span></div></div><div class="flex items-center gap-space-2xs flex-shrink-0"><button aria-label="Add to Favorites" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[22px]">favorite</span></button><button aria-label="Play or Pause" class="w-11 h-11 flex items-center justify-center rounded-full bg-primary-container text-on-primary-container hover:brightness-110 shadow-[0_4px_16px_rgba(16,229,117,0.25)] transition-all"><span class="material-symbols-outlined text-[22px]">pause</span></button><button aria-label="Skip Track" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[22px]">skip_next</span></button></div></div></aside></div><nav class="pb-safe bg-surface/90 backdrop-blur-2xl shadow-[0_-1px_12px_rgba(0,0,0,0.3)] pointer-events-auto" data-active-classes="text-primary font-bold"><div class="flex justify-around items-center h-16 px-space-xs max-w-lg mx-auto"><a class="flex flex-col items-center justify-center gap-space-2xs min-w-[64px] h-11 text-on-surface-variant transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[22px]">home</span><span class="font-label-sm text-label-sm">Home</span></a><a class="flex flex-col items-center justify-center gap-space-2xs min-w-[64px] h-11 text-on-surface-variant transition-colors" data-path="search-browse" href="#"><span class="material-symbols-outlined text-[22px]">explore</span><span class="font-label-sm text-label-sm">Browse</span></a><a class="flex flex-col items-center justify-center gap-space-2xs min-w-[64px] h-11 text-on-surface-variant transition-colors" data-path="favorites" href="#"><span class="material-symbols-outlined text-[22px]">favorite</span><span class="font-label-sm text-label-sm">Favorites</span></a><a class="flex flex-col items-center justify-center gap-space-2xs min-w-[64px] h-11 text-on-surface-variant transition-colors" data-path="library" href="#"><span class="material-symbols-outlined text-[22px]">library_music</span><span class="font-label-sm text-label-sm">Library</span></a></div></nav></div></body></html>

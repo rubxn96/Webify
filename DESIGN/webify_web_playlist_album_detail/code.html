@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-lowest": "#0e0e0e", "on-surface-variant": "#bacbb9", "surface-tint": "#0ae474", "on-tertiary-fixed-variant": "#005321", "surface-container-highest": "#353534", "inverse-surface": "#e5e2e1", "on-tertiary-container": "#006128", "secondary": "#53e076", "on-tertiary": "#003915", "on-primary": "#003918", "surface-dim": "#131313", "error": "#ffb4ab", "error-container": "#93000a", "secondary-fixed": "#72fe8f", "primary-container": "#10e575", "on-primary-fixed": "#00210b", "inverse-primary": "#006d34", "on-secondary": "#003914", "on-surface": "#e5e2e1", "surface": "#131313", "surface-container-high": "#2a2a2a", "inverse-on-surface": "#313030", "on-primary-fixed-variant": "#005225", "on-error-container": "#ffdad6", "on-background": "#e5e2e1", "tertiary-fixed-dim": "#4ae176", "background": "#131313", "on-secondary-fixed": "#002108", "on-error": "#690005", "on-primary-container": "#00612d", "surface-variant": "#353534", "secondary-container": "#02b04c", "secondary-fixed-dim": "#53e076", "outline": "#859585", "tertiary": "#70ff92", "on-tertiary-fixed": "#002109", "primary": "#6fff9a", "outline-variant": "#3c4a3d", "surface-container": "#201f1f", "on-secondary-fixed-variant": "#005320", "surface-bright": "#393939", "primary-fixed": "#62ff95", "tertiary-container": "#4be277", "surface-container-low": "#1c1b1b", "on-secondary-container": "#003a14", "tertiary-fixed": "#6bff8f", "primary-fixed-dim": "#0ae474" }, "borderRadius": { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, "spacing": { "space-md": "1rem", "space-2xs": "0.25rem", "space-xs": "0.5rem", "margin": "1.25rem", "space-2xl": "3rem", "space-sm": "0.75rem", "margin-desktop": "2.5rem", "space-lg": "1.5rem", "gutter-desktop": "1.5rem", "space-xl": "2rem", "gutter": "1rem" }, "fontFamily": { "body-lg": [ "Plus Jakarta Sans" ], "label-lg": [ "Plus Jakarta Sans" ], "headline-sm": [ "Plus Jakarta Sans" ], "body-md": [ "Plus Jakarta Sans" ], "label-md": [ "Plus Jakarta Sans" ], "body-sm": [ "Plus Jakarta Sans" ], "label-sm": [ "Plus Jakarta Sans" ], "headline-xl-mobile": [ "Plus Jakarta Sans" ], "headline-md": [ "Plus Jakarta Sans" ], "headline-lg-mobile": [ "Plus Jakarta Sans" ], "headline-xl": [ "Plus Jakarta Sans" ], "headline-lg": [ "Plus Jakarta Sans" ] }, "fontSize": { "body-lg": [ "16px", { "lineHeight": "24px", "fontWeight": "400" } ], "label-lg": [ "14px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" } ], "headline-sm": [ "18px", { "lineHeight": "24px", "fontWeight": "600" } ], "body-md": [ "14px", { "lineHeight": "20px", "fontWeight": "400" } ], "label-md": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" } ], "body-sm": [ "12px", { "lineHeight": "16px", "fontWeight": "400" } ], "label-sm": [ "10px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "500" } ], "headline-xl-mobile": [ "30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "headline-md": [ "20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-lg-mobile": [ "24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "700" } ], "headline-xl": [ "40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.015em", "fontWeight": "700" } ] } } } };</script></head><body class="bg-surface-container-lowest font-body-md text-on-surface antialiased selection:bg-primary selection:text-on-primary"><aside class="fixed left-0 top-0 h-[calc(100vh-5.5rem)] w-64 bg-surface-container-low z-40 flex flex-col justify-between overflow-hidden shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col flex-1 overflow-y-auto px-4 py-6 gap-6"><div class="flex items-center gap-3 px-2"><img alt="Webify Logo" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/ALJJyrDsmoop7EvG95LeQ68oOGtxT1H-xcgXxruO75yo4bmmdN6sGUrtx6FLsXMLdQRl3eyGl9q7S63Qg_W3eHk0tG7TLZLCRu14rzBsA5jjMNcADwAEowRt5lWuw3o70Dwxzjc2d4O9RT1_RP6cJYQB_dlhol9_X0k52RVua2ye5SclHqYSeSJa597b0Ky_U1P9SMRZFYq46VK1B0orDZvHiuqMHiPYi24Zoh_sB7TPt8jLwlqorzTUrrYI"/><span class="font-headline-md text-headline-md tracking-tight text-on-surface font-bold">Webify</span></div><div class="flex flex-col gap-1"><p class="px-3 pb-1 font-label-sm text-label-sm uppercase tracking-wider text-outline">Menu</p><nav class="flex flex-col gap-1" data-active-classes="bg-primary text-on-primary font-bold shadow-[0_4px_20px_rgba(16,229,117,0.2)]"><a class="flex items-center gap-3 px-3 py-2.5 rounded-full font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-xl">home</span><span>Home</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-full font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="explore" href="#"><span class="material-symbols-outlined text-xl">explore</span><span>Discover</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-full font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="radio" href="#"><span class="material-symbols-outlined text-xl">radio</span><span>Radio</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-full font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="search" href="#"><span class="material-symbols-outlined text-xl">search</span><span>Search</span></a></nav></div><div class="flex flex-col gap-1"><div class="flex items-center justify-between px-3 pb-1"><p class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Your Library</p><span class="material-symbols-outlined text-base text-outline cursor-pointer hover:text-on-surface">add</span></div><nav class="flex flex-col gap-0.5" data-active-classes="bg-surface-container-high text-primary font-bold"><a class="flex items-center justify-between px-3 py-2 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="liked-songs" href="#"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-lg">favorite</span><span>Liked Songs</span></div><span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">418</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="artists" href="#"><span class="material-symbols-outlined text-lg">person</span><span>Artists</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="albums" href="#"><span class="material-symbols-outlined text-lg">album</span><span>Albums</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-full font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="podcasts" href="#"><span class="material-symbols-outlined text-lg">podcasts</span><span>Podcasts</span></a></nav><div class="pt-3 flex flex-col gap-1"><p class="px-3 pb-1 font-label-sm text-label-sm uppercase tracking-wider text-outline">Playlists</p><div class="flex flex-col gap-0.5"><a class="px-3 py-1.5 rounded-full font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors truncate" data-path="neon-chill" href="#">Neon Chill</a><a class="px-3 py-1.5 rounded-full font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors truncate" data-path="daily-vibe" href="#">Daily Vibe</a><a class="px-3 py-1.5 rounded-full font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors truncate" data-path="workout-140bpm" href="#">Workout 140BPM</a><a class="px-3 py-1.5 rounded-full font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors truncate" data-path="synthwave-nights" href="#">Synthwave Nights</a></div></div></div></div><div class="p-4 bg-surface-container"><div class="flex items-center justify-between p-2 rounded-full bg-surface-container-high hover:bg-surface-bright transition-colors cursor-pointer"><div class="flex items-center gap-3 min-w-0"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/ALJJyrDsmoop7EvG95LeQ68oOGtxT1H-xcgXxruO75yo4bmmdN6sGUrtx6FLsXMLdQRl3eyGl9q7S63Qg_W3eHk0tG7TLZLCRu14rzBsA5jjMNcADwAEowRt5lWuw3o70Dwxzjc2d4O9RT1_RP6cJYQB_dlhol9_X0k52RVua2ye5SclHqYSeSJa597b0Ky_U1P9SMRZFYq46VK1B0orDZvHiuqMHiPYi24Zoh_sB7TPt8jLwlqorzTUrrYI"/><div class="flex flex-col min-w-0"><span class="font-label-md text-label-md text-on-surface truncate">Alex Vance</span><span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>Online</span></div></div><span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">PRO</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/80 backdrop-blur-xl z-30 flex items-center justify-between px-gutter-desktop shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-4 flex-1 max-w-xl"><div class="flex items-center gap-1"><button aria-label="Go Back" class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-lg">chevron_left</span></button><button aria-label="Go Forward" class="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-lg">chevron_right</span></button></div><div class="relative flex-1"><span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-lg">search</span><input class="w-full h-10 pl-10 pr-12 rounded-full bg-surface-container text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="What do you want to play?" type="text"/><kbd class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-surface-container-high text-outline font-label-sm text-label-sm">⌘K</kbd></div></div><div class="flex items-center gap-3"><div class="hidden lg:flex items-center gap-2"><button class="px-4 py-1.5 rounded-full bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-surface-bright transition-colors" type="button">Explore Premium</button><button class="px-4 py-1.5 rounded-full bg-surface-container text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors" type="button">Install App</button></div><button aria-label="Notifications" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors relative" type="button"><span class="material-symbols-outlined text-xl">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-primary"></span></button><div class="flex items-center gap-2 pl-2"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/ALJJyrDsmoop7EvG95LeQ68oOGtxT1H-xcgXxruO75yo4bmmdN6sGUrtx6FLsXMLdQRl3eyGl9q7S63Qg_W3eHk0tG7TLZLCRu14rzBsA5jjMNcADwAEowRt5lWuw3o70Dwxzjc2d4O9RT1_RP6cJYQB_dlhol9_X0k52RVua2ye5SclHqYSeSJa597b0Ky_U1P9SMRZFYq46VK1B0orDZvHiuqMHiPYi24Zoh_sB7TPt8jLwlqorzTUrrYI"/></div></div></header><main class="w-full pt-16 pb-28 bg-surface-container-lowest min-h-screen px-gutter-desktop"><div class="flex flex-col w-full">
+<!-- Dynamic Atmospheric Glow Underlay -->
+<div class="relative w-full overflow-hidden">
+<!-- Atmospheric Radiant Backdrop -->
+<div class="absolute -top-32 -left-20 w-[680px] h-[480px] bg-gradient-to-br from-primary-container/20 via-secondary-container/10 to-transparent blur-3xl pointer-events-none rounded-full"></div>
+<div class="absolute top-12 right-1/4 w-[420px] h-[360px] bg-primary/10 blur-[120px] pointer-events-none rounded-full"></div>
+<!-- Immersive Playlist Hero Header -->
+<section class="relative z-10 pt-6 pb-10 flex flex-col xl:flex-row items-start xl:items-end gap-8">
+<!-- High-Fidelity Cover Art with Tactile Hover Glow -->
+<div class="relative group flex-shrink-0">
+<div class="w-60 h-60 md:w-68 md:h-68 rounded-lg overflow-hidden bg-surface-container shadow-[0_20px_48px_rgba(0,0,0,0.85)] relative">
+<img class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="Intense close-up cinematic portrait of Indian male singer Darshan Raval singing passionately into a vintage studio microphone, dramatic moody sidelight in cyan and emerald green tones against deep nocturnal shadows, realistic music album cover art quality with delicate vapor haze" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHNvXyHz_F5HxRReL9RliDd6cGAp8IZWuG2AlHPCD78vm-zLRrBhBuPj1LNB0bLW7YIayH33VixEClHpsxel7cv5vT25ji4eNhxWYSNSBkEOWa4WGty5pkPKckPPJ6rB9WFrS4tJAERUxRI19nIyTJMKJtPtthzIOn_VfPg-s2dgtcus-CU86q483dXNiD4orFIPzqv114a3edSkVyhikbSwpVbABNS_Rolh9AGg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent opacity-60"></div>
+<!-- Lossless FLAC Hi-Res Audio Badge Overlay -->
+<div class="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-lowest/85 backdrop-blur-md shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider font-bold">FLAC 24•96</span>
+</div>
+<div class="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-surface-container-lowest/90 backdrop-blur-md flex items-center justify-center text-on-surface opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-lg">zoom_in</span>
+</div>
+</div>
+</div>
+<!-- Playlist Curatorial Metadata & Typographic Hierarchy -->
+<div class="flex flex-col flex-1 min-w-0 justify-end gap-2.5">
+<!-- Tagline & Verified Marker -->
+<div class="flex items-center gap-2.5 flex-wrap">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container text-primary font-label-sm text-label-sm uppercase tracking-widest font-bold">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
+            Artist Spotlight
+          </span>
+<span class="font-label-md text-label-md text-outline">•</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Official Curated Mix</span>
+<span class="font-label-md text-label-md text-outline">•</span>
+<span class="font-label-md text-label-md text-outline">Updated Today</span>
+</div>
+<!-- Master Title -->
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight font-bold leading-none">
+          Darshan Raval Essentials
+        </h1>
+<!-- Editorial Subtitle -->
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl line-clamp-2 leading-relaxed">
+          The definitive showcase of soulful indie anthems, heart-wrenching midnight ballads, and soaring cinematic hits. Engineered in studio-grade uncompressed dynamics.
+        </p>
+<!-- Metadata Strip with Interactive Elements -->
+<div class="flex items-center gap-3 pt-2 text-on-surface-variant flex-wrap font-label-md text-label-md">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
+              W
+            </div>
+<span class="text-on-surface font-semibold hover:underline cursor-pointer">Curated by Webify Sound</span>
+</div>
+<span class="text-outline">•</span>
+<span class="text-on-surface">24 songs</span>
+<span class="text-outline">•</span>
+<span>1 hr 18 min</span>
+<span class="text-outline">•</span>
+<div class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-primary text-base" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="tabular-nums font-semibold">1,420,891</span>
+<span class="text-outline font-normal">saves</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Tactile Action Toolbar -->
+<section class="sticky top-16 z-20 -mx-gutter-desktop px-gutter-desktop py-4 bg-surface-container-lowest/90 backdrop-blur-2xl flex items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<!-- Prominent Emerald Play / Pause Button with Glow Effect -->
+<button class="w-14 h-14 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_0_28px_rgba(111,255,154,0.45)] hover:scale-105 active:scale-95 transition-all group" id="btn-play-all" title="Play Playlist" type="button">
+<span class="material-symbols-outlined text-3xl font-bold tracking-tighter" id="main-play-icon">play_arrow</span>
+</button>
+<!-- Shuffle Pill CTA -->
+<button class="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-lg text-primary">shuffle</span>
+<span>Shuffle</span>
+</button>
+<!-- Favorite Toggle (Filled State) -->
+<button class="w-11 h-11 rounded-full bg-surface-container hover:bg-surface-container-high text-primary flex items-center justify-center transition-colors" title="Saved to Library" type="button">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<!-- Offline Download Toggle -->
+<button class="w-11 h-11 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Download Lossless Audio" type="button">
+<span class="material-symbols-outlined text-2xl">arrow_circle_down</span>
+</button>
+<!-- Share Context -->
+<button class="w-11 h-11 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Share playlist" type="button">
+<span class="material-symbols-outlined text-2xl">share</span>
+</button>
+<!-- More Options Menu -->
+<button class="w-11 h-11 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="More options" type="button">
+<span class="material-symbols-outlined text-2xl">more_horiz</span>
+</button>
+</div>
+<!-- Quick Track Filter & View Toggles -->
+<div class="flex items-center gap-3">
+<div class="relative w-48 lg:w-64">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-lg pointer-events-none">search</span>
+<input class="w-full h-9 pl-9 pr-4 rounded-full bg-surface-container text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-high transition-colors" id="track-search-input" placeholder="Search within playlist" type="text"/>
+</div>
+<button class="p-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors" title="Compact list view" type="button">
+<span class="material-symbols-outlined text-xl">view_stream</span>
+</button>
+</div>
+</section>
+<!-- Main Content Grid: Detailed Tracklist (Left 70%) & Contextual Sidebar (Right 30%) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-8 mt-6">
+<!-- Primary Track Listing Container -->
+<div class="xl:col-span-8 flex flex-col gap-2">
+<!-- Table Column Headers -->
+<div class="grid grid-cols-12 items-center px-4 py-2 text-outline font-label-sm text-label-sm uppercase tracking-wider select-none">
+<div class="col-span-1 text-center">#</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-2">TITLE</div>
+<div class="hidden md:block md:col-span-3">ALBUM</div>
+<div class="hidden lg:block lg:col-span-2">ADDED</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end pr-2">
+<span class="material-symbols-outlined text-base">schedule</span>
+</div>
+</div>
+<div class="h-px bg-surface-container-high/60 -mx-2 my-1"></div>
+<!-- Track List Rows -->
+<div class="flex flex-col gap-1" id="playlist-track-rows">
+<!-- Track 1: ACTIVE PLAYING TRACK -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT bg-surface-container-high/60 hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<!-- Col 1: Equalizer Soundwave -->
+<div class="col-span-1 flex items-center justify-center">
+<div class="flex items-end gap-0.5 h-4 w-4">
+<span class="w-1 bg-primary rounded-full animate-[bounce_0.8s_infinite] h-3"></span>
+<span class="w-1 bg-primary rounded-full animate-[bounce_1.1s_infinite] h-4"></span>
+<span class="w-1 bg-primary rounded-full animate-[bounce_0.6s_infinite] h-2"></span>
+</div>
+</div>
+<!-- Col 2: Title & Artist -->
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Moody dark minimal album artwork featuring an emotional artistic monochrome silhouette of a man with glowing cyan typography reading Asal Mein by Darshan Raval" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1KazQ1ZJTx8yqPBGjDoEk0dH3cW0om23o4pJTf5SBkRIsAGBUdfUYmN43kiFQJ5u2wBMJvSg8S_O5sbOxLo5FCbCPhDnBCNj-IVFKdX08sOfiJAyr61_UYCNQlEHAwhf40Kca8UI6_TQJ80xfZlL38aixu8oDz-yK_KweZkIxVHDb1MzEpaHZttI4HAZaz0rkLp1i7GjDZMsk2ioGjSiDeBuZnrE5mx7B6WODqw"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-primary truncate font-bold flex items-center gap-1.5">
+                  Asal Mein
+                  <span class="px-1.5 py-0.2 rounded bg-primary/20 text-primary text-[9px] font-bold tracking-tight">NOW PLAYING</span>
+</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval
+                </span>
+</div>
+</div>
+<!-- Col 3: Album -->
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Asal Mein - Single
+              </span>
+</div>
+<!-- Col 4: Date Added -->
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Oct 14, 2023</span>
+</div>
+<!-- Col 5: Duration & Inline Action Hover -->
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-primary hover:scale-110 transition-transform" type="button">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-primary font-semibold tabular-nums">3:54</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 2 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">2</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Vibrant night cityscape illuminated by soft purple and mint green neon lights seen through raindrops on a car windshield, evocative music single cover design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDs-IXhDMRej-YKohAiemrEZcrdeqyQTv54PJCIPIKm1noObOnSYPZiJfO2Xcm92yo15Ut7keEvXjdR55qVc3IsaMQ73pCYOXeaNmO9mIIFvTy03vOfvcNJ-YDTp-vDfFyGolMbrOHbWwGW0UC8LMJe-We1IYLIWScb9-vCH93Iz8wl2E4it18WapQ4o0lWVvsQjqI6J9o7kXnD0rLVHzD5N2-nTOGWwg5d5UFsyg"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Songs To Sing In The Car
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval • Benson Boone
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Late Night Drives EP
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Jan 22, 2024</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-on-surface-variant hover:text-primary hover:scale-110 opacity-0 group-hover:opacity-100 transition-all" type="button">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">4:12</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 3 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">3</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Sunburst golden hour festival aesthetic with silhouetted hands raised in ecstasy against deep midnight teal stage lights, album cover art format" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTwW1iaGRdiGcoXkQWEjBmH0NtN7GLS7WuGEIxdzykygin1utktoG5aQvLor8Y6qPtJAR4GkeRx_PKZFzLkJKQL6_OOyC1FY3EaB7TqjcHFzU_qnGgpwGNJkaxX7Ca_6BYN43Ma_4DiOv4dypoBGOXmTMt595w1rUmZQU4LE-d_kHghHyRT8fyRwnn_OaRdBXmJXu7yK-x8p02epRtuyDh-sjSbxuGfoGpt3hCIg"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  A Great Day!
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Kailash Kher, Paresh Kamath
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Euphoria Unlimited
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Feb 02, 2024</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-on-surface-variant hover:text-primary hover:scale-110 opacity-0 group-hover:opacity-100 transition-all" type="button">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">3:28</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 4 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">4</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Artistic rain streaks across dark charcoal canvas with soft green watercolor accents and handwritten lyrics Baarish Lete Aana" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjiUxG9RX6pwwZk5ZgQ50Mo_GpoHDa79aX2IRxNUAjAM_pAK-M52EN1tP3kPt3v84sFZ-99G2zShwCowHshLAFsw-dTmKvdb-3Lu2by1gp4CSd7m12W0hp3TDBp1ZcMTJPzo22MkGq2SdxrJaXP43JCsl14VOng8j5D6EVSDyJLjHb3Y1oHmKg6uDThc8bjhaxVZiZrhXDdji-3O4CVSbZXnIKzAc3cBj9TRI9WA"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Baarish Lete Aana
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Monsoon Memories
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Jul 18, 2023</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-primary hover:scale-110 transition-transform" type="button">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">4:46</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 5 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">5</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Abstract breeze flowing across a nighttime desert dune with soft glowing green particles and starry sky, contemporary album art cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-B40b9XZ6MEyNloD-LmOieTsO6YIm5aX7C3YMvpw3t6JumlM6L06xX78MKHljidLPepkMEsoxE9ZO9xyxtgesBVTDYMzNG-rTEV7sK8J8q0WiTI1Pie50jvqm1IbrJ-jjECJ1XEl_LgjxlfmE0szkfBhPwzEq2NUiDKNEKwBPLKIdG_RlhPRB8gkse5SPW86C_rnQX0WlnTLRWme1c9E8BGA9uIb1urEPLWypig"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Hawa Banke
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Hawa Banke - Indie Hits
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Aug 09, 2023</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-on-surface-variant hover:text-primary hover:scale-110 opacity-0 group-hover:opacity-100 transition-all" type="button">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">3:19</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 6 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">6</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Acoustic wooden guitar body with selective depth of field in a warm ambient dark recording studio with studio headphones in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBKMx-aj4rlYUzSxLLFWXmlVG4rtHYDerdqSpHPmPg-CnSQ9J0egefr-wp-OvZHHPyVk6z7Zhje9Y-uqnyEOOT763kF_4fI1O9EJWigt_NLLOQzELJBzJk2thqrsrqziHiDPP4X_9Kw4DK-I-9riuS9nL0hJjJM_D_B3hKxFRJk3VUgpiY-NTV0YaM_-lhkMWyhyoiMy21Utj5ifTI_7iU3bFT3VXb4dvO4nTuZg"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Chogada (Unplugged Acoustic)
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval, Asees Kaur
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Loveyatri Sessions
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Sep 01, 2023</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-on-surface-variant hover:text-primary hover:scale-110 opacity-0 group-hover:opacity-100 transition-all" type="button">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">4:05</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 7 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">7</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Deep moody night sky with full lunar eclipse, rimmed with soft emerald and silver glow, minimalistic modern album design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKxhLPDGikN-8S21-JE-JHs6ONxejsx5HyYFFvTaCdJAxK3JypBjA9O48S9Fv9pdEdRoA0MGy8jyYUv_H5brz3syXSeQYqlJBDK1JVLy0rHFSbGTyG8jMHg0oBZRs7MHlJUZVFIkwJceb3DqYRAgBcAxwpeZB0GnR-hDOGVB2aPUlmPoKBmwseMeir5sWbdqsEjUic45quLEjOsAMR_ANlpOxTTVO4pvM4SBUifQ"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Tera Zikr
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Tera Zikr Deluxe
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Nov 11, 2023</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-primary hover:scale-110 transition-transform" type="button">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">3:38</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 8 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">8</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Artistic double exposure portrait blending an urban metropolitan night highway light trails with a soulful male silhouette in cool mint tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmLkH3rvsuMr4MU4usudbq7znJwLsBnyP_G4UMaX77WzO47TXVw3diYbk6rFmAM6DNvv9EZ9x9arv26jstaTWk0y3kAdWY1-qDpIkolP3eLZFTXmSuLzmkpmx2I359BkyrsX8kB0zPpzd61p8xSNO89aH9crzIAD3VYzjT2j49tGBtTGH33T6lfyGsFtAcFPOY7B-768XPPEoNnAyB3uNFdwd-Tw2rvKdftzvk1Q"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Rabba Mehar Kari
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Judaiyaan
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Dec 05, 2023</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-on-surface-variant hover:text-primary hover:scale-110 opacity-0 group-hover:opacity-100 transition-all" type="button">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">3:47</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 9 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">9</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Minimalist graphic artwork with glowing emerald green audio frequency waves radiating against pitch black canvas background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtprEAJ2B_0zW8CgUF1EeSdStKEPVqtrtpJrHCKMwXP7uiL-RmJxMvPNVq9UJkbnGmq98Y2hh93JAPhoUTLC--1Fupzlg1AXC7hasI5cupv6DEZkwmhkNntBN97n-sAoI69Qd1JR4Pk4uMlIpcByFFWKJ-UzfJGHaggh1yHKfQfxtwOhml1SLpplP3zrdbhKoJw7VcJoa4C37L7i12Y533CWgpoFe2QaCEp-212A"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Do Din
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Do Din - Festive Pop
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Feb 14, 2024</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-on-surface-variant hover:text-primary hover:scale-110 opacity-0 group-hover:opacity-100 transition-all" type="button">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">2:56</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Track 10 -->
+<div class="group grid grid-cols-12 items-center px-4 py-3 rounded-DEFAULT hover:bg-surface-container-high transition-colors cursor-pointer text-on-surface">
+<div class="col-span-1 flex items-center justify-center text-outline group-hover:text-on-surface font-label-md text-label-md">
+<span class="group-hover:hidden">10</span>
+<span class="material-symbols-outlined text-xl text-primary hidden group-hover:block">play_arrow</span>
+</div>
+<div class="col-span-5 md:col-span-5 flex items-center gap-3.5 min-w-0 pr-2">
+<div class="w-11 h-11 rounded-DEFAULT bg-surface-container flex-shrink-0 overflow-hidden relative shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Introspective close-up hands playing acoustic piano keys submerged in gentle water ripples with neon mint illumination" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFQ2fRORUuuEr2bvx6jG0JmeU3KxdwdhU2VC3a5a_kNaOeowJc5YMOpmCU3XC4boYwh9tVM2sQ1Z1KbID5wQh1IvBu8Z5rlQ4OiFa4_5KaJ2qHELlnOKZiDdhcl3rrzPvwNFD5zjHwkf__IA983nzJ4PKM4rriMmFePLwbBfiHjGLApZkrxsJ-RK5LTmDzYOKam_r6jBAxIJ_bMEwTy6T6IU9g4tS7oZflCI-qZA"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Saari Ki Saari 2.0
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline">
+                  Darshan Raval, Asees Kaur
+                </span>
+</div>
+</div>
+<div class="hidden md:block md:col-span-3 min-w-0 pr-2">
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:underline block">
+                Heartstrings Redux
+              </span>
+</div>
+<div class="hidden lg:block lg:col-span-2">
+<span class="font-body-sm text-body-sm text-outline">Mar 01, 2024</span>
+</div>
+<div class="col-span-6 md:col-span-3 lg:col-span-1 flex items-center justify-end gap-2 pr-1">
+<button class="text-on-surface-variant hover:text-primary hover:scale-110 opacity-0 group-hover:opacity-100 transition-all" type="button">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+<span class="font-label-md text-label-md text-outline tabular-nums">4:31</span>
+<button class="text-on-surface-variant hover:text-on-surface opacity-0 group-hover:opacity-100 transition-opacity" type="button">
+<span class="material-symbols-outlined text-lg">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Load More Micro-Trigger -->
+<div class="pt-4 flex justify-center">
+<button class="px-6 py-2 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors flex items-center gap-2" type="button">
+<span>Show remaining 14 songs</span>
+<span class="material-symbols-outlined text-base">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Contextual Sidebar: Artist Bio, Stats, and Recommendations -->
+<div class="xl:col-span-4 flex flex-col gap-6">
+<!-- Artist Spotlight Card -->
+<div class="p-6 rounded-DEFAULT bg-surface-container-low flex flex-col gap-4 relative overflow-hidden shadow-lg">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">About the Artist</span>
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-primary font-semibold">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+              On Tour
+            </span>
+</div>
+<!-- Artist Avatar & Quick Metric -->
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-full overflow-hidden bg-surface-container flex-shrink-0 shadow-md">
+<img class="w-full h-full object-cover" data-alt="Front portrait of handsome Indian singer Darshan Raval smiling wearing stylish black denim jacket under warm cinematic ambient studio spotlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBGczE1Ts2EV_23C0d0CscyeLN9C96t1mjn-NjaSR795j3T8sxr__FOYSpUj6Zgucrxz0Y_Mie7ndfAl8fOVfAMIBIBAGW5u9_EYo_XHE9SQBF3fRKFRsuUphVvm8esm8zB6dLCu7ymZUFwxsvmU0xCBExVsq1fCJF5jIRWFUnPmGMErvNwDFX5y8V3nrXGpW0yrtASgEfnCvVbp9WLX-_tC_gfucuOunuHMSQsQ"/>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Darshan Raval</span>
+<span class="material-symbols-outlined text-primary text-base" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">12,841,209 monthly listeners</span>
+<span class="font-label-sm text-label-sm text-outline">#144 in the World</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed line-clamp-3">
+            Born in Ahmedabad, Darshan Raval rose to monumental stardom blending modern electronic pop with emotive indie-folk Indian melodies. Known for multiple diamond-certified tracks and sold-out stadium performances.
+          </p>
+<!-- Tour Indicator Widget -->
+<div class="p-3.5 rounded-DEFAULT bg-surface-container flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Next Live: Mumbai Dome</span>
+<span class="font-label-sm text-label-sm text-outline">Sat, Nov 18 • 8:00 PM IST</span>
+</div>
+<button class="px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm font-bold hover:scale-105 transition-transform" type="button">
+              Tickets
+            </button>
+</div>
+<button class="w-full py-2.5 rounded-full bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-md text-label-md transition-colors" type="button">
+            Follow Artist
+          </button>
+</div>
+<!-- Recommended Similar Compilations -->
+<div class="p-6 rounded-DEFAULT bg-surface-container-low flex flex-col gap-4 shadow-lg">
+<div class="flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">You Might Also Like</h3>
+<button class="font-label-sm text-label-sm text-primary hover:underline font-semibold" type="button">See all</button>
+</div>
+<div class="flex flex-col gap-3">
+<!-- Reco Item 1 -->
+<div class="flex items-center gap-3 p-2 rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-DEFAULT overflow-hidden bg-surface-container-high flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Moody album cover portrait of Punjabi singer Sukh-E Muzical in urban streetwear with striking blue and green ambient backlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjZAK4X7YBCDVVU-mqaLXxoKDVV8mufAJEWVwZI5rrEjV8HDlkHLn5CDfvLt1nJrCSEYwTUFFq1I5OIMUC8qRjEbWQ8tStskCh6XymWQ45x77JProesPKLfhYRyN0cX5zcQu62v3bwOOhMeVVept3TW3czY_Ec0_8U4qXhYECjz9VcS6XUDGq46ca6Dc-tfavUafu5iDBXdX3uYfbNLH69LKdTkIofagxEsQnj1A"/>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Sukh-E: Night Drive Mix
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Playlist • 48 tracks</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container-high group-hover:bg-primary group-hover:text-on-primary text-on-surface-variant flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+</button>
+</div>
+<!-- Reco Item 2 -->
+<div class="flex items-center gap-3 p-2 rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-DEFAULT overflow-hidden bg-surface-container-high flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Reggae pop artist Sean Paul wearing dark sunglasses illuminated by rich tropical green neon strobes on dark soundstage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHp04cQxM8LQjuzKHW9rW4umU4-EiYWjv7wEdAOdjYEEnhoFd_Xq7THNzOVKDCxpsE2pIJ82Ot3WV-qpyNXSkyBAOcG3e9Eqq_znH7zTWmOWB_yY75UMpoQ14QRebz-SG0pWjzuyp2umyeBIVAIZ0Ys9f4S8cJmTARurJ-aikQA403eSHT5umbounpFU8iYgJN4k7EUciUcqrgoyh_i29xLquDjkYX6o0KMltj8A"/>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Tropical Pop High-Energy
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Featuring Sean Paul, Ryan • 62 tracks</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container-high group-hover:bg-primary group-hover:text-on-primary text-on-surface-variant flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+</button>
+</div>
+<!-- Reco Item 3 -->
+<div class="flex items-center gap-3 p-2 rounded-DEFAULT hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="w-12 h-12 rounded-DEFAULT overflow-hidden bg-surface-container-high flex-shrink-0 shadow-sm">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform" data-alt="Pop superstar Miley Cyrus singing with intense expression under raw dramatic concert spotlights with mist and chromatic flares" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGR97sxekuPGI2qv_e9Iv3xAV2AyXtzawYf8rGkGMUWfI0U3RoqaRntiinkAbrpYoc_vETc2MMdvQa5VuERGFCTgi7gYyMR3ysdACTR9UvwwJ6MueZCrI0XVNaXAxBXgWni7TVWCAzM6YzI4LW8nCdzyTnqXPpjDh_7uyB_l2l36ZgBzeV5ivWYp9E8tA6heEZJpXezAUGOuaFF0oPuRr1Rn2WDp6PwTtAfyrOSA"/>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-lg text-label-lg text-on-surface truncate group-hover:text-primary transition-colors">
+                  Miley Cyrus: Complete Mix
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Curated by Webify • 34 tracks</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container-high group-hover:bg-primary group-hover:text-on-primary text-on-surface-variant flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Audio Engineering Fidelity Spec Pod -->
+<div class="p-5 rounded-DEFAULT bg-surface-container-low flex flex-col gap-3">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-xl">graphic_eq</span>
+<span class="font-label-md text-label-md font-bold uppercase tracking-wider">Hi-Res Audio Pipeline</span>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-1 font-body-sm text-body-sm">
+<div class="p-2.5 rounded-DEFAULT bg-surface-container flex flex-col">
+<span class="text-outline text-xs">Encoding</span>
+<span class="text-on-surface font-semibold">FLAC 24-bit</span>
+</div>
+<div class="p-2.5 rounded-DEFAULT bg-surface-container flex flex-col">
+<span class="text-outline text-xs">Sample Rate</span>
+<span class="text-on-surface font-semibold">96.0 kHz</span>
+</div>
+<div class="p-2.5 rounded-DEFAULT bg-surface-container flex flex-col">
+<span class="text-outline text-xs">Bitrate</span>
+<span class="text-on-surface font-semibold">4,608 kbps</span>
+</div>
+<div class="p-2.5 rounded-DEFAULT bg-surface-container flex flex-col">
+<span class="text-outline text-xs">Dynamic Range</span>
+<span class="text-on-surface font-semibold">14.2 LUFS</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initPlaylistMicroInteractions() {
+    const playBtn = document.getElementById('btn-play-all');
+    const playIcon = document.getElementById('main-play-icon');
+    let isPlaying = false;
+
+    if (playBtn && playIcon) {
+      playBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        playIcon.textContent = isPlaying ? 'pause' : 'play_arrow';
+        if (isPlaying) {
+          playBtn.classList.add('shadow-[0_0_36px_rgba(111,255,154,0.7)]');
+        } else {
+          playBtn.classList.remove('shadow-[0_0_36px_rgba(111,255,154,0.7)]');
+        }
+      });
+    }
+
+    const searchInput = document.getElementById('track-search-input');
+    const trackRows = document.querySelectorAll('#playlist-track-rows > div');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        trackRows.forEach((row) => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(query) ? 'grid' : 'none';
+        });
+      });
+    }
+  })();
+</script></main></div><footer class="fixed bottom-0 left-0 right-0 h-22 bg-surface-container-low/95 backdrop-blur-2xl z-50 px-gutter-desktop flex items-center justify-between shadow-[0_-4px_24px_rgba(0,0,0,0.4)]"><div class="flex items-center gap-3.5 w-1/4 min-w-[200px]"><div class="relative group cursor-pointer"><div class="w-14 h-14 rounded bg-surface-container-high flex items-center justify-center overflow-hidden"><span class="material-symbols-outlined text-outline text-2xl">music_note</span></div></div><div class="flex flex-col min-w-0"><span class="font-label-lg text-label-lg text-on-surface truncate hover:underline cursor-pointer">Midnight City Escape</span><span class="font-body-sm text-body-sm text-on-surface-variant truncate hover:text-primary transition-colors cursor-pointer">Solaris Pulse • Neon Horizons</span></div><button aria-label="Favorite" class="text-primary hover:scale-110 transition-transform ml-1" type="button"><span class="material-symbols-outlined text-xl">favorite</span></button></div><div class="flex flex-col items-center gap-1.5 flex-1 max-w-2xl px-6"><div class="flex items-center gap-6"><button aria-label="Shuffle" class="text-on-surface-variant hover:text-primary transition-colors" type="button"><span class="material-symbols-outlined text-xl">shuffle</span></button><button aria-label="Previous" class="text-on-surface-variant hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-2xl">skip_previous</span></button><button aria-label="Play Pause" class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:scale-105 transition-transform shadow-[0_0_16px_rgba(111,255,154,0.4)]" type="button"><span class="material-symbols-outlined text-2xl font-bold">pause</span></button><button aria-label="Next" class="text-on-surface-variant hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-2xl">skip_next</span></button><button aria-label="Repeat" class="text-on-surface-variant hover:text-primary transition-colors" type="button"><span class="material-symbols-outlined text-xl">repeat</span></button></div><div class="w-full flex items-center gap-3"><span class="font-label-sm text-label-sm text-outline tabular-nums">1:42</span><div class="relative flex-1 h-1.5 bg-surface-container-highest rounded-full overflow-hidden cursor-pointer group"><div class="absolute left-0 top-0 bottom-0 w-2/5 bg-primary rounded-full group-hover:bg-primary-fixed-dim transition-colors"></div></div><span class="font-label-sm text-label-sm text-outline tabular-nums">3:54</span></div></div><div class="flex items-center justify-end gap-3 w-1/4 min-w-[200px]"><span class="px-1.5 py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm uppercase tracking-wider font-bold">Lossless</span><button aria-label="Lyrics" class="text-on-surface-variant hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-xl">lyrics</span></button><button aria-label="Queue" class="text-on-surface-variant hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-xl">queue_music</span></button><button aria-label="Connect Device" class="text-on-surface-variant hover:text-primary transition-colors" type="button"><span class="material-symbols-outlined text-xl">devices</span></button><div class="flex items-center gap-2 w-28"><span class="material-symbols-outlined text-on-surface-variant text-lg">volume_up</span><div class="relative flex-1 h-1 bg-surface-container-highest rounded-full overflow-hidden cursor-pointer"><div class="absolute left-0 top-0 bottom-0 w-3/4 bg-on-surface rounded-full hover:bg-primary"></div></div></div></div></footer></body></html>
