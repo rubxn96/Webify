@@ -151,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
 
         {/* Mobile Brand Icon */}
         <Link href="/" className="lg:hidden flex items-center gap-2 flex-shrink-0">
-          <div className="w-7 h-7 rounded-xl bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center font-extrabold text-xs shadow-sm">
+          <div className="w-7 h-7 rounded-full bg-brand-primary/15 border border-brand-primary/30 text-brand-primary flex items-center justify-center font-extrabold text-xs shadow-sm">
             W
           </div>
           <span className="font-bold text-sm tracking-tight text-white">Webify</span>
@@ -162,9 +162,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
       <div ref={dropdownRef} className="max-w-md w-full relative">
         <form onSubmit={handleSearchSubmit} className="relative">
           {isSearching ? (
-            <Loader2 className="w-4 h-4 text-obsidian-accent animate-spin absolute left-3.5 top-2.5" />
+            <Loader2 className="w-4 h-4 text-brand-primary animate-spin absolute left-3.5 top-2.5" />
           ) : (
-            <Search className="w-4 h-4 text-white/40 absolute left-3.5 top-2.5" />
+            <Search className="w-4 h-4 text-content-muted absolute left-3.5 top-2.5" />
           )}
           <input
             type="text"
@@ -174,16 +174,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
               if (previewResults.length > 0) setIsDropdownOpen(true);
             }}
             placeholder="Search songs, artists, or paste YouTube link..."
-            className="w-full glass-pill rounded-full pl-9 pr-3 sm:pr-4 py-1.5 text-xs text-white placeholder:text-white/40 outline-none focus:border-white/30 transition-all"
+            className="w-full glass-pill rounded-full pl-9 pr-12 py-1.5 text-xs text-white placeholder:text-content-muted outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/40 transition-all"
           />
+          <kbd className="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded bg-surface-pod border border-white/10 text-content-muted font-mono text-[9px] pointer-events-none">
+            ⌘K
+          </kbd>
         </form>
 
         {/* Live Search Results Dropdown */}
         {isDropdownOpen && previewResults.length > 0 && (
           <div className="absolute top-11 inset-x-0 glass-panel rounded-2xl shadow-2xl p-2 z-50 space-y-1 animate-fadeIn border border-white/10">
-            <div className="px-3 py-1 flex items-center justify-between text-[10px] font-mono uppercase text-white/40 border-b border-white/[0.06] pb-1.5">
+            <div className="px-3 py-1 flex items-center justify-between text-[10px] font-mono uppercase text-content-muted border-b border-white/[0.06] pb-1.5">
               <span>Instant Matches</span>
-              <span>{previewResults.length} found</span>
+              <span className="text-brand-primary font-bold">{previewResults.length} found</span>
             </div>
 
             <div className="max-h-72 overflow-y-auto space-y-1 py-1">
@@ -194,7 +197,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
                   className="group flex items-center justify-between p-2 rounded-xl hover:bg-white/[0.08] cursor-pointer transition-colors"
                 >
                   <div className="flex items-center gap-2.5 truncate flex-1 mr-2">
-                    <div className="relative w-9 h-9 rounded-lg bg-white/[0.04] overflow-hidden flex-shrink-0 shadow-sm">
+                    <div className="relative w-9 h-9 rounded-lg bg-surface-pod overflow-hidden flex-shrink-0 shadow-sm">
                       <Image
                         src={track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'}
                         alt={track.title}
@@ -207,17 +210,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
                     </div>
 
                     <div className="truncate">
-                      <div className="text-xs font-semibold text-white/95 group-hover:text-obsidian-accent truncate">
+                      <div className="text-xs font-semibold text-white/95 group-hover:text-brand-primary transition-colors truncate">
                         {track.title}
                       </div>
-                      <div className="text-[11px] text-white/50 truncate">
+                      <div className="text-[11px] text-content-secondary truncate">
                         {track.artist}
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-[10px] font-mono text-white/40 tabular-nums hidden sm:inline">
+                    <span className="text-[10px] font-mono text-content-muted tabular-nums hidden sm:inline">
                       {formatTime(track.duration)}
                     </span>
                     {track.source === 'youtube' ? (
@@ -226,8 +229,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
                         YouTube
                       </span>
                     ) : (
-                      <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-white/[0.06] border border-white/10 text-[9px] font-mono text-white/60">
-                        <Disc className="w-2.5 h-2.5 text-obsidian-accent" />
+                      <span className="flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-brand-primary/10 border border-brand-primary/20 text-[9px] font-mono text-brand-primary">
+                        <Disc className="w-2.5 h-2.5" />
                         Catalog
                       </span>
                     )}
@@ -241,7 +244,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
                 setIsDropdownOpen(false);
                 router.push(`/search?q=${encodeURIComponent(query.trim())}`);
               }}
-              className="p-2 text-center text-xs text-obsidian-accent hover:underline cursor-pointer border-t border-white/[0.06] font-medium"
+              className="p-2 text-center text-xs text-brand-primary hover:underline cursor-pointer border-t border-white/[0.06] font-semibold"
             >
               See all results for &ldquo;{query}&rdquo; &rarr;
             </div>
@@ -256,7 +259,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileSidebar }) => {
           className="p-2 text-white/60 hover:text-white transition-colors flex items-center gap-1.5 text-xs font-medium"
           title="Favorites / Liked Songs"
         >
-          <Heart className="w-4 h-4 text-obsidian-accent fill-obsidian-accent" />
+          <Heart className="w-4 h-4 text-brand-primary fill-brand-primary" />
           <span className="hidden sm:inline">Favorites</span>
         </Link>
 

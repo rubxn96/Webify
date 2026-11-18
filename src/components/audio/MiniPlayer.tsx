@@ -72,11 +72,11 @@ export const MiniPlayer: React.FC = () => {
         className="group relative -top-[1px] h-[3px] hover:h-[5px] w-full bg-white/[0.08] cursor-pointer transition-all duration-150"
       >
         <div
-          className="h-full bg-obsidian-accent relative transition-all duration-100 ease-linear shadow-[0_0_8px_rgba(250,45,72,0.6)]"
+          className="h-full bg-brand-primary relative transition-all duration-100 ease-linear shadow-[0_0_10px_rgba(16,229,117,0.7)]"
           style={{ width: `${progressPercent}%` }}
         >
           <span
-            className={`absolute right-0 -top-1 w-2.5 h-2.5 bg-white rounded-full shadow-md transition-opacity ${
+            className={`absolute right-0 -top-1 w-2.5 h-2.5 bg-brand-primary rounded-full shadow-[0_0_8px_rgba(111,255,154,0.9)] transition-opacity ${
               isHoveringScrub ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -88,7 +88,7 @@ export const MiniPlayer: React.FC = () => {
         <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0 max-w-[55%] sm:max-w-[32%]">
           <div
             onClick={() => setIsFullPlayerOpen(true)}
-            className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/[0.04] border border-white/10 overflow-hidden flex-shrink-0 cursor-pointer group shadow-md shadow-black/40"
+            className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-surface-pod border border-white/10 overflow-hidden flex-shrink-0 cursor-pointer group shadow-md shadow-black/40"
           >
             <Image
               src={currentTrack.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200'}
@@ -104,11 +104,11 @@ export const MiniPlayer: React.FC = () => {
           <div className="truncate">
             <div
               onClick={() => setIsFullPlayerOpen(true)}
-              className="text-white text-xs sm:text-sm font-semibold tracking-tight truncate hover:underline cursor-pointer"
+              className="text-white text-xs sm:text-sm font-semibold tracking-tight truncate hover:text-brand-primary hover:underline cursor-pointer transition-colors"
             >
               {currentTrack.title}
             </div>
-            <div className="text-white/55 text-[11px] sm:text-xs truncate mt-0.5">
+            <div className="text-content-secondary text-[11px] sm:text-xs truncate mt-0.5">
               {currentTrack.artist}
             </div>
           </div>
@@ -116,11 +116,11 @@ export const MiniPlayer: React.FC = () => {
           <button
             onClick={() => toggleLike(currentTrack)}
             title={isLiked ? 'Remove from Liked' : 'Save to Liked'}
-            className="p-1.5 text-white/40 hover:text-white transition-colors flex-shrink-0"
+            className="p-1.5 text-content-muted hover:text-white transition-colors flex-shrink-0"
           >
             <Heart
               className={`w-4 h-4 transition-transform active:scale-125 ${
-                isLiked ? 'fill-obsidian-accent text-obsidian-accent' : ''
+                isLiked ? 'fill-brand-primary text-brand-primary' : ''
               }`}
             />
           </button>
@@ -134,8 +134,8 @@ export const MiniPlayer: React.FC = () => {
               title={isShuffle ? 'Shuffle Mode On' : 'Shuffle Mode Off'}
               className={`p-1.5 rounded-full transition-colors hidden sm:block ${
                 isShuffle
-                  ? 'text-obsidian-accent bg-obsidian-accent/15'
-                  : 'text-white/40 hover:text-white'
+                  ? 'text-brand-primary bg-brand-primary/15'
+                  : 'text-content-muted hover:text-white'
               }`}
             >
               <Shuffle className="w-3.5 h-3.5" />
@@ -152,12 +152,12 @@ export const MiniPlayer: React.FC = () => {
             <button
               onClick={togglePlay}
               title={isPlaying ? 'Pause' : 'Play'}
-              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl"
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-brand-primary text-[#0A0A0A] flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_4px_20px_rgba(16,229,117,0.35)] hover:shadow-[0_6px_24px_rgba(16,229,117,0.5)]"
             >
               {isPlaying ? (
-                <Pause className="w-4 h-4 fill-black" />
+                <Pause className="w-4 h-4 fill-[#0A0A0A]" />
               ) : (
-                <Play className="w-4 h-4 fill-black ml-0.5" />
+                <Play className="w-4 h-4 fill-[#0A0A0A] ml-0.5" />
               )}
             </button>
 
@@ -170,7 +170,7 @@ export const MiniPlayer: React.FC = () => {
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-white/40 font-mono tracking-tight mt-1">
+          <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-content-muted font-mono tracking-tight mt-1">
             <span style={{ fontVariantNumeric: 'tabular-nums' }}>
               {formatTime(currentTime)}
             </span>
@@ -189,7 +189,7 @@ export const MiniPlayer: React.FC = () => {
             title="Lyrics"
             className={`p-2 rounded-full glass-pill transition-all ${
               isLyricsOpen
-                ? 'text-obsidian-accent border-obsidian-accent/40 bg-white/10'
+                ? 'text-brand-primary border-brand-primary/40 bg-brand-primary/10 shadow-[0_0_12px_rgba(16,229,117,0.25)]'
                 : 'text-white/60 hover:text-white'
             }`}
           >
@@ -202,7 +202,7 @@ export const MiniPlayer: React.FC = () => {
             title="Queue"
             className={`p-2 rounded-full glass-pill transition-all ${
               isQueueOpen
-                ? 'text-obsidian-accent border-obsidian-accent/40 bg-white/10'
+                ? 'text-brand-primary border-brand-primary/40 bg-brand-primary/10 shadow-[0_0_12px_rgba(16,229,117,0.25)]'
                 : 'text-white/60 hover:text-white'
             }`}
           >
@@ -229,7 +229,7 @@ export const MiniPlayer: React.FC = () => {
               step="0.01"
               value={isMuted ? 0 : volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
-              className="w-18 h-1 accent-obsidian-accent bg-white/15 rounded-full cursor-pointer"
+              className="w-18 h-1 accent-brand-primary bg-white/15 rounded-full cursor-pointer"
             />
           </div>
 
@@ -237,7 +237,7 @@ export const MiniPlayer: React.FC = () => {
           <button
             onClick={() => setIsFullPlayerOpen(true)}
             title="Expand Full Player"
-            className="p-2 rounded-full glass-pill text-white/60 hover:text-white transition-all ml-0.5"
+            className="p-2 rounded-full glass-pill text-white/60 hover:text-white hover:text-brand-primary transition-all ml-0.5"
           >
             <Maximize2 className="w-4 h-4" />
           </button>

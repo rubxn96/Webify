@@ -46,7 +46,7 @@ export const LyricsViewer: React.FC = () => {
       {/* Header */}
       <div className="p-4 border-b border-white/[0.06] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-obsidian-accent" />
+          <Sparkles className="w-4 h-4 text-brand-primary" />
           <h3 className="text-sm font-semibold tracking-tight text-white">
             Lyrics
           </h3>
@@ -76,7 +76,7 @@ export const LyricsViewer: React.FC = () => {
       >
         {parsedLyrics.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-white/40 py-16">
-            <Sparkles className="w-8 h-8 mb-3 opacity-30 text-obsidian-accent" />
+            <Sparkles className="w-8 h-8 mb-3 opacity-30 text-brand-primary" />
             <p className="text-sm font-medium">No synced lyrics available for this track.</p>
           </div>
         ) : (
@@ -89,7 +89,7 @@ export const LyricsViewer: React.FC = () => {
                 onClick={() => seek(line.time)}
                 className={`cursor-pointer transition-all duration-300 font-bold tracking-tight leading-relaxed select-none ${
                   isActive
-                    ? 'text-white font-extrabold text-2xl scale-[1.02] origin-left drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]'
+                    ? 'text-brand-bright font-extrabold text-2xl scale-[1.02] origin-left drop-shadow-[0_0_24px_rgba(16,229,117,0.4)]'
                     : 'text-white/30 text-lg hover:text-white/60 font-semibold'
                 }`}
               >

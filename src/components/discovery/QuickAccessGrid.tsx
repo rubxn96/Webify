@@ -42,11 +42,11 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
               key={track.id}
               onClick={handleTileClick}
               className={`glass-card group flex items-center justify-between rounded-2xl p-2 pr-3.5 cursor-pointer transition-all duration-200 ${
-                isCurrent ? 'ring-1 ring-obsidian-accent/50 bg-white/[0.08]' : ''
+                isCurrent ? 'ring-1 ring-brand-primary/50 bg-brand-primary/10' : ''
               }`}
             >
               <div className="flex items-center gap-3 truncate flex-1 min-w-0">
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-white/[0.04] shadow-md shadow-black/30">
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-surface-pod shadow-md shadow-black/30">
                   <Image
                     src={track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200'}
                     alt={track.title}
@@ -58,12 +58,12 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
                 <div className="truncate pr-2">
                   <h4
                     className={`text-sm font-semibold tracking-tight truncate ${
-                      isCurrent ? 'text-obsidian-accent' : 'text-white/95'
+                      isCurrent ? 'text-brand-primary' : 'text-white/95 group-hover:text-brand-primary transition-colors'
                     }`}
                   >
                     {track.title}
                   </h4>
-                  <p className="text-xs text-white/55 truncate mt-0.5">{track.artist}</p>
+                  <p className="text-xs text-content-secondary truncate mt-0.5">{track.artist}</p>
                 </div>
               </div>
 
@@ -73,18 +73,18 @@ export const QuickAccessGrid: React.FC<QuickAccessGridProps> = ({ tracks }) => {
                   <TrackContextMenu track={track} />
                 </div>
 
-                {/* Glass Play Button */}
+                {/* Emerald Play Button */}
                 <div
-                  className={`w-9 h-9 rounded-full bg-white text-black flex items-center justify-center shadow-lg transition-all ${
+                  className={`w-10 h-10 rounded-full bg-brand-primary text-[#0A0A0A] flex items-center justify-center shadow-[0_4px_16px_rgba(16,229,117,0.35)] transition-all ${
                     isCurrent
-                      ? 'opacity-100'
+                      ? 'opacity-100 scale-100'
                       : 'opacity-0 group-hover:opacity-100 group-hover:scale-105'
                   }`}
                 >
                   {isCurrent && isPlaying ? (
-                    <Pause className="w-4 h-4 fill-black" />
+                    <Pause className="w-4 h-4 fill-[#0A0A0A]" />
                   ) : (
-                    <Play className="w-4 h-4 fill-black ml-0.5" />
+                    <Play className="w-4 h-4 fill-[#0A0A0A] ml-0.5" />
                   )}
                 </div>
               </div>

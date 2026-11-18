@@ -105,11 +105,12 @@ export default function DiscoverPage() {
   return (
     <div className="space-y-12 max-w-7xl mx-auto pb-28 animate-fadeIn select-none">
       {/* Editorial Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-900/40 via-indigo-950/40 to-black/60 border border-white/10 p-6 sm:p-10 backdrop-blur-2xl shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-surface-card via-surface-cardElevated to-surface-pod border border-white/10 p-6 sm:p-10 backdrop-blur-2xl shadow-2xl">
+        <div className="absolute top-0 right-10 w-96 h-96 bg-brand-primary/10 rounded-full blur-[110px] pointer-events-none -z-0" />
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-purple-300 border-purple-500/20">
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/15 border border-brand-primary/30 text-brand-primary text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5" />
               <span>Hybrid Neural Discovery Engine</span>
             </div>
 
@@ -117,7 +118,7 @@ export default function DiscoverPage() {
               Discover &amp; For You
             </h1>
 
-            <p className="text-xs sm:text-sm text-white/60">
+            <p className="text-xs sm:text-sm text-content-secondary">
               Personalized recommendations synthesizing content similarity, collaborative filtering,
               and real-time listening history across Indian regional languages.
             </p>
@@ -126,9 +127,9 @@ export default function DiscoverPage() {
           {data.madeForYou && data.madeForYou.length > 0 && (
             <button
               onClick={() => handlePlayQueue(data.madeForYou)}
-              className="px-7 py-3.5 rounded-full bg-white text-black font-semibold text-xs flex items-center gap-2.5 shadow-2xl hover:bg-white/90 active:scale-95 transition-all flex-shrink-0"
+              className="px-8 py-3.5 rounded-full bg-brand-primary text-[#0A0A0A] font-bold text-xs flex items-center gap-2.5 shadow-[0_12px_32px_rgba(16,229,117,0.35)] hover:shadow-[0_16px_36px_rgba(16,229,117,0.5)] active:scale-95 transition-all flex-shrink-0"
             >
-              <Play className="w-4 h-4 fill-black ml-0.5" />
+              <Play className="w-4 h-4 fill-[#0A0A0A] ml-0.5" />
               <span>Play Your Mix</span>
             </button>
           )}
@@ -145,14 +146,14 @@ export default function DiscoverPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-xl glass-pill text-obsidian-accent">
+              <div className="p-2 rounded-xl glass-pill text-brand-primary">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
                   Made For You
                 </h2>
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-content-muted">
                   Calculated with 40% content similarity, 30% collaborative graph, and 20% taste persona.
                 </p>
               </div>
@@ -160,7 +161,7 @@ export default function DiscoverPage() {
 
             <button
               onClick={() => handlePlayQueue(data.madeForYou)}
-              className="text-xs text-obsidian-accent font-semibold hover:underline flex items-center gap-1"
+              className="text-xs text-brand-primary font-bold hover:underline flex items-center gap-1"
             >
               <span>Play All</span> &rarr;
             </button>
@@ -174,14 +175,14 @@ export default function DiscoverPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-xl glass-pill text-indigo-400">
+              <div className="p-2 rounded-xl glass-pill text-brand-primary">
                 <Headphones className="w-5 h-5" />
               </div>
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
                   Recommended For You
                 </h2>
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-content-muted">
                   Fine-tuned to your audio attributes, mood vectors, and listening duration.
                 </p>
               </div>
@@ -189,7 +190,7 @@ export default function DiscoverPage() {
 
             <button
               onClick={() => handlePlayQueue(data.recommendedForYou)}
-              className="text-xs text-indigo-400 font-semibold hover:underline flex items-center gap-1"
+              className="text-xs text-brand-primary font-bold hover:underline flex items-center gap-1"
             >
               <span>Play All</span> &rarr;
             </button>
@@ -332,17 +333,17 @@ export default function DiscoverPage() {
           </div>
 
           {/* Language Selector Pills */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl glass-panel border border-white/10 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-1.5 p-1 rounded-full bg-surface-pod/90 border border-white/10 overflow-x-auto scrollbar-none">
             {INDIAN_LANGUAGES.map((lang) => {
               const isSelected = selectedLanguage === lang.id;
               return (
                 <button
                   key={lang.id}
                   onClick={() => setSelectedLanguage(lang.id)}
-                  className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                     isSelected
-                      ? 'bg-emerald-500 text-black shadow-md'
-                      : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
+                      ? 'bg-brand-primary text-[#0A0A0A] font-bold shadow-[0_4px_16px_rgba(16,229,117,0.3)]'
+                      : 'text-content-secondary hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
                   {lang.label}

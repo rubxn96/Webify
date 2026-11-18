@@ -51,14 +51,14 @@ export default function FavoritesPage() {
       {/* Hero Header */}
       <div className="glass-panel relative rounded-3xl overflow-hidden p-6 sm:p-10 flex flex-col sm:flex-row items-center sm:items-end gap-8 shadow-2xl border border-white/10">
         {/* Heart Artwork Box */}
-        <div className="w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-2xl bg-gradient-to-br from-rose-500 via-rose-600 to-indigo-700 flex items-center justify-center text-white shadow-2xl shadow-rose-900/40 flex-shrink-0">
-          <Heart className="w-20 h-20 fill-white drop-shadow-md animate-pulseSubtle" />
+        <div className="w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 rounded-2xl bg-gradient-to-br from-brand-primary via-emerald-600 to-teal-800 flex items-center justify-center text-[#0A0A0A] shadow-2xl shadow-brand-primary/20 flex-shrink-0">
+          <Heart className="w-20 h-20 fill-[#0A0A0A] drop-shadow-md animate-pulseSubtle" />
         </div>
 
         {/* Header Details */}
         <div className="space-y-3 flex-1 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold uppercase tracking-wider text-white/90">
-            <Sparkles className="w-3.5 h-3.5 text-obsidian-accent" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-primary/15 border border-brand-primary/30 text-brand-primary text-xs font-bold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-brand-primary" />
             <span>Pinned Collection</span>
           </div>
 
@@ -66,12 +66,12 @@ export default function FavoritesPage() {
             Liked Songs
           </h1>
 
-          <p className="text-xs sm:text-sm text-white/60 max-w-xl">
+          <p className="text-xs sm:text-sm text-content-secondary max-w-xl">
             Your personal vault of favorite tracks, synchronized across live YouTube searches and catalog releases.
           </p>
 
-          <div className="flex items-center justify-center sm:justify-start gap-3 text-xs font-mono text-white/50 pt-1">
-            <span className="text-white font-bold">{tracks.length} tracks</span>
+          <div className="flex items-center justify-center sm:justify-start gap-3 text-xs font-mono text-content-muted pt-1">
+            <span className="text-brand-primary font-bold">{tracks.length} tracks</span>
             <span>&bull;</span>
             <span className="tabular-nums">{formatTime(totalSeconds)} total runtime</span>
           </div>
@@ -81,16 +81,16 @@ export default function FavoritesPage() {
             <button
               onClick={handlePlayAll}
               disabled={tracks.length === 0}
-              className="px-7 py-3 rounded-full bg-white text-black font-semibold text-xs flex items-center gap-2 shadow-xl hover:bg-white/90 active:scale-95 disabled:opacity-40 transition-all"
+              className="px-8 py-3.5 rounded-full bg-brand-primary text-[#0A0A0A] font-bold text-xs flex items-center gap-2 shadow-[0_12px_32px_rgba(16,229,117,0.35)] hover:shadow-[0_16px_36px_rgba(16,229,117,0.5)] active:scale-95 disabled:opacity-40 transition-all"
             >
               {isPlayingAnyFavorite && isPlaying ? (
                 <>
-                  <Pause className="w-4 h-4 fill-black" />
+                  <Pause className="w-4 h-4 fill-[#0A0A0A]" />
                   <span>Pause</span>
                 </>
               ) : (
                 <>
-                  <Play className="w-4 h-4 fill-black ml-0.5" />
+                  <Play className="w-4 h-4 fill-[#0A0A0A] ml-0.5" />
                   <span>Play All</span>
                 </>
               )}

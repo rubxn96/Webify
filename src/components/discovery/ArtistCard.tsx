@@ -23,7 +23,7 @@ export const ArtistCard: React.FC<ArtistCardProps> = ({ artistData }) => {
   return (
     <div
       onClick={handlePlayArtist}
-      className="glass-card group p-4 rounded-3xl cursor-pointer transition-all duration-300 border border-white/10 hover:border-obsidian-accent/40 hover:bg-white/[0.08] flex flex-col items-center text-center relative overflow-hidden"
+      className="glass-card group p-4 rounded-3xl cursor-pointer transition-all duration-300 border border-white/10 hover:border-brand-primary/40 hover:bg-white/[0.08] flex flex-col items-center text-center relative overflow-hidden"
     >
       {/* Background radial glow */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40 pointer-events-none" />
@@ -43,15 +43,15 @@ export const ArtistCard: React.FC<ArtistCardProps> = ({ artistData }) => {
 
         {/* Hover Play Glass Overlay */}
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-          <div className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center shadow-2xl transform active:scale-90">
-            <Play className="w-4 h-4 fill-black ml-0.5" />
+          <div className="w-10 h-10 rounded-full bg-brand-primary text-[#0A0A0A] flex items-center justify-center shadow-[0_4px_16px_rgba(16,229,117,0.4)] transform active:scale-90">
+            <Play className="w-4 h-4 fill-[#0A0A0A] ml-0.5" />
           </div>
         </div>
       </div>
 
       {/* Artist Info */}
       <div className="w-full space-y-1 relative z-10">
-        <h4 className="text-sm font-bold text-white group-hover:text-obsidian-accent transition-colors truncate">
+        <h4 className="text-sm font-bold text-white group-hover:text-brand-primary transition-colors truncate">
           {artistData.artist}
         </h4>
 
@@ -64,14 +64,14 @@ export const ArtistCard: React.FC<ArtistCardProps> = ({ artistData }) => {
           {artistData.genres.slice(0, 1).map((g) => (
             <span
               key={g}
-              className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-obsidian-accent/15 text-obsidian-accent border border-obsidian-accent/25"
+              className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-primary/15 text-brand-primary border border-brand-primary/25"
             >
               {g}
             </span>
           ))}
         </div>
 
-        <p className="text-[11px] text-white/40 pt-1">
+        <p className="text-[11px] text-content-muted pt-1">
           {artistData.tracks.length} recommended tracks
         </p>
       </div>

@@ -117,22 +117,22 @@ export const PlaylistImporter: React.FC = () => {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://open.spotify.com/playlist/... or https://music.apple.com/..."
-                className="flex-1 glass-pill rounded-2xl px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30 transition-all shadow-inner"
+                className="flex-1 glass-pill rounded-full px-5 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-brand-primary transition-all shadow-inner"
                 disabled={loading}
               />
               <button
                 type="submit"
                 disabled={loading || !url.trim()}
-                className="px-6 py-3 rounded-2xl bg-white text-black hover:bg-white/90 disabled:opacity-40 font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-xl flex-shrink-0"
+                className="px-6 py-3 rounded-full bg-brand-primary text-content-inverse hover:bg-brand-bright disabled:opacity-40 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-emerald-glow flex-shrink-0"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin text-black" />
+                    <Loader2 className="w-4 h-4 animate-spin text-content-inverse" />
                     <span>Resolving Catalog...</span>
                   </>
                 ) : (
                   <>
-                    <Download className="w-4 h-4 text-black" />
+                    <Download className="w-4 h-4 text-content-inverse" />
                     <span>Import Playlist</span>
                   </>
                 )}
@@ -194,27 +194,27 @@ export const PlaylistImporter: React.FC = () => {
             </div>
 
             {/* Progress Bar */}
-            <div className="h-2 w-full bg-obsidian-sidebar rounded-full overflow-hidden border border-obsidian-border">
+            <div className="h-2 w-full bg-surface-canvas rounded-full overflow-hidden border border-white/10">
               <div
                 className={`h-full transition-all duration-300 ${
                   jobStatus.status === 'completed'
-                    ? 'bg-emerald-500'
+                    ? 'bg-brand-primary shadow-emerald-glow'
                     : jobStatus.status === 'failed'
                     ? 'bg-red-500'
-                    : 'bg-obsidian-accent'
+                    : 'bg-brand-primary'
                 }`}
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
 
             {jobStatus.status === 'completed' && (
-              <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between">
-                <div className="text-xs text-emerald-400 font-medium">
+              <div className="p-4 rounded-2xl bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-between">
+                <div className="text-xs text-brand-primary font-medium">
                   Playlist imported successfully! Added to your library.
                 </div>
                 <button
                   onClick={() => router.push('/playlists')}
-                  className="px-3 py-1.5 rounded bg-emerald-500 text-obsidian-canvas font-medium text-xs flex items-center gap-1 hover:bg-emerald-400 transition-colors"
+                  className="px-4 py-2 rounded-full bg-brand-primary text-content-inverse font-bold text-xs flex items-center gap-1.5 hover:bg-brand-bright transition-all shadow-emerald-glow"
                 >
                   <Music2 className="w-3.5 h-3.5" />
                   <span>View in Library</span>

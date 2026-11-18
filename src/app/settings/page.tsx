@@ -35,7 +35,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Tab Quick Filters */}
-        <div className="flex items-center gap-1.5 p-1 rounded-2xl glass-panel border border-white/10 overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 p-1 rounded-full glass-panel border border-white/10 overflow-x-auto scrollbar-none">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isCurrent = activeTab === tab.id;
@@ -43,10 +43,10 @@ export default function SettingsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap ${
                   isCurrent
-                    ? 'bg-obsidian-accent text-white shadow-md font-semibold'
-                    : 'text-white/60 hover:text-white hover:bg-white/[0.06]'
+                    ? 'bg-brand-primary text-content-inverse shadow-emerald-glow'
+                    : 'text-content-secondary hover:text-white hover:bg-white/[0.06]'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />

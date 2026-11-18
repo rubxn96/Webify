@@ -91,7 +91,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         </button>
 
         <div className="text-center space-y-1">
-          <div className="w-12 h-12 rounded-2xl glass-pill text-obsidian-accent mx-auto flex items-center justify-center mb-2 shadow-md">
+          <div className="w-12 h-12 rounded-2xl glass-pill text-brand-primary mx-auto flex items-center justify-center mb-2 shadow-emerald-glow">
             <Lock className="w-5 h-5" />
           </div>
           <h3 className="text-2xl font-bold tracking-tight text-white">
@@ -117,7 +117,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 Username
               </label>
               <div className="relative">
-                <UserIcon className="w-4 h-4 text-white/40 absolute left-3.5 top-3.5" />
+                <UserIcon className="w-4 h-4 text-white/40 absolute left-4 top-3.5" />
                 <input
                   type="text"
                   required
@@ -125,7 +125,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Audiophile"
-                  className="w-full glass-pill rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30"
+                  className="w-full glass-pill rounded-full pl-11 pr-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-brand-primary transition-all shadow-inner"
                 />
               </div>
             </div>
@@ -136,14 +136,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               Email Address
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-white/40 absolute left-3.5 top-3.5" />
+              <Mail className="w-4 h-4 text-white/40 absolute left-4 top-3.5" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="user@webify.audio"
-                className="w-full glass-pill rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30"
+                className="w-full glass-pill rounded-full pl-11 pr-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-brand-primary transition-all shadow-inner"
               />
             </div>
           </div>
@@ -153,14 +153,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-white/40 absolute left-3.5 top-3.5" />
+              <Lock className="w-4 h-4 text-white/40 absolute left-4 top-3.5" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full glass-pill rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30"
+                className="w-full glass-pill rounded-full pl-11 pr-4 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-brand-primary transition-all shadow-inner"
               />
             </div>
           </div>
@@ -168,16 +168,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-2xl bg-white text-black text-sm font-semibold hover:bg-white/90 active:scale-95 transition-all shadow-xl flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
+            className="w-full py-3.5 rounded-full bg-brand-primary text-content-inverse text-sm font-bold hover:bg-brand-bright active:scale-95 transition-all shadow-emerald-glow flex items-center justify-center gap-2 mt-2 disabled:opacity-50"
           >
             {isRegister ? (
               <>
-                <UserPlus className="w-4 h-4 text-black" />
+                <UserPlus className="w-4 h-4 text-content-inverse" />
                 <span>{loading ? 'Creating Account...' : 'Create Account'}</span>
               </>
             ) : (
               <>
-                <LogIn className="w-4 h-4 text-black" />
+                <LogIn className="w-4 h-4 text-content-inverse" />
                 <span>{loading ? 'Logging In...' : 'Log In'}</span>
               </>
             )}
@@ -187,7 +187,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         <div className="flex items-center justify-between text-xs pt-3 border-t border-white/[0.06]">
           <button
             onClick={fillDemo}
-            className="text-obsidian-accent hover:underline font-mono text-[11px]"
+            className="text-brand-primary hover:underline font-mono text-[11px]"
           >
             Fill Demo Account
           </button>

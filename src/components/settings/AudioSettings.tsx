@@ -72,20 +72,20 @@ export const AudioSettings: React.FC = () => {
                 <div
                   key={tier.id}
                   onClick={() => updateSettings({ bitrate: tier.id as 'auto' | 'normal' | 'high' })}
-                  className={`p-4 rounded-2xl cursor-pointer transition-all ${
+                  className={`p-4 rounded-2xl cursor-pointer transition-all border ${
                     isSelected
-                      ? 'glass-card border-white/20 bg-white/10 shadow-lg'
-                      : 'glass-card hover:bg-white/[0.06]'
+                      ? 'border-brand-primary bg-brand-primary/10 shadow-emerald-glow ring-1 ring-brand-primary/40'
+                      : 'glass-card border-white/10 hover:border-white/20 hover:bg-white/[0.06]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-white">{tier.label}</span>
                     <div
-                      className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                        isSelected ? 'border-obsidian-accent bg-obsidian-accent' : 'border-white/20'
+                      className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                        isSelected ? 'border-brand-primary bg-brand-primary' : 'border-white/20'
                       }`}
                     >
-                      {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                      {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-surface-canvas" />}
                     </div>
                   </div>
                   <p className="text-[11px] text-white/50 mt-1">{tier.desc}</p>
@@ -99,7 +99,7 @@ export const AudioSettings: React.FC = () => {
         <div className="pt-2 flex items-center justify-between">
           <div className="space-y-1 pr-4">
             <div className="flex items-center gap-2">
-              <Gauge className="w-4 h-4 text-obsidian-accent" />
+              <Gauge className="w-4 h-4 text-brand-primary" />
               <span className="text-xs font-mono uppercase text-white/50 tracking-wider">
                 Audio Normalization (-14 LUFS Baseline)
               </span>
@@ -112,7 +112,7 @@ export const AudioSettings: React.FC = () => {
           <button
             onClick={() => updateSettings({ normalization: !userSettings.normalization })}
             className={`w-12 h-6 rounded-full transition-colors p-1 flex items-center flex-shrink-0 ${
-              userSettings.normalization ? 'bg-obsidian-accent justify-end' : 'bg-white/10 justify-start'
+              userSettings.normalization ? 'bg-brand-primary justify-end shadow-emerald-glow' : 'bg-white/10 justify-start'
             }`}
           >
             <div className="w-4 h-4 rounded-full bg-white shadow-md" />
@@ -125,7 +125,7 @@ export const AudioSettings: React.FC = () => {
             <span className="text-xs font-mono uppercase text-white/50 tracking-wider">
               Track Crossfade
             </span>
-            <span style={{ fontVariantNumeric: 'tabular-nums' }} className="text-xs font-mono text-obsidian-accent font-semibold">
+            <span style={{ fontVariantNumeric: 'tabular-nums' }} className="text-xs font-mono text-brand-primary font-semibold">
               {userSettings.crossfade}s
             </span>
           </div>
@@ -137,7 +137,7 @@ export const AudioSettings: React.FC = () => {
             step="1"
             value={userSettings.crossfade}
             onChange={(e) => updateSettings({ crossfade: parseInt(e.target.value, 10) })}
-            className="w-full h-1.5 accent-obsidian-accent bg-white/15 rounded-full cursor-pointer"
+            className="w-full h-1.5 accent-brand-primary bg-white/15 rounded-full cursor-pointer"
           />
 
           <div className="flex justify-between text-[10px] font-mono text-white/40">

@@ -72,25 +72,25 @@ function SearchContent() {
       {/* Search Header Form */}
       <div className="max-w-3xl mx-auto space-y-4">
         <form onSubmit={handleSubmit} className="relative">
-          <Search className="w-5 h-5 text-white/40 absolute left-4 top-3.5" />
+          <Search className="w-5 h-5 text-content-muted absolute left-4 top-3.5" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search songs, artists, or paste YouTube link..."
-            className="w-full glass-pill rounded-2xl pl-12 pr-28 py-3.5 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/30 transition-all shadow-xl"
+            className="w-full glass-pill rounded-full pl-12 pr-28 py-3.5 text-sm text-white placeholder:text-content-muted outline-none focus:border-brand-primary/60 focus:ring-1 focus:ring-brand-primary/40 transition-all shadow-xl"
           />
           <button
             type="submit"
-            className="absolute right-2 top-2 px-5 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-white/90 active:scale-95 transition-all shadow-md"
+            className="absolute right-2 top-2 px-6 py-2 rounded-full bg-brand-primary text-[#0A0A0A] text-xs font-bold hover:shadow-[0_4px_16px_rgba(16,229,117,0.4)] active:scale-95 transition-all shadow-md"
           >
             Search
           </button>
         </form>
 
         {/* Quick Suggestion Chips */}
-        <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-white/50">
-          <span className="font-mono text-[11px] text-white/40">Trending:</span>
+        <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-content-secondary">
+          <span className="font-mono text-[11px] text-content-muted">Trending:</span>
           {quickPicks.map((pick) => (
             <button
               key={pick}
@@ -99,7 +99,7 @@ function SearchContent() {
                 setQuery(pick);
                 performSearch(pick, activeFilter);
               }}
-              className="px-3 py-1 rounded-full glass-pill text-[11px] text-white/70 hover:text-white transition-all"
+              className="px-3.5 py-1.5 rounded-full glass-pill text-[11px] text-content-secondary hover:text-brand-primary hover:border-brand-primary/40 transition-all"
             >
               {pick}
             </button>
@@ -112,10 +112,10 @@ function SearchContent() {
             <button
               type="button"
               onClick={() => handleFilterChange('all')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 activeFilter === 'all'
-                  ? 'bg-white/20 text-white font-semibold border border-white/20'
-                  : 'glass-pill text-white/60 hover:text-white'
+                  ? 'bg-brand-primary text-[#0A0A0A] font-bold shadow-[0_4px_16px_rgba(16,229,117,0.25)]'
+                  : 'glass-pill text-content-secondary hover:text-white'
               }`}
             >
               <Globe className="w-3.5 h-3.5" />
@@ -125,23 +125,23 @@ function SearchContent() {
             <button
               type="button"
               onClick={() => handleFilterChange('youtube')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 activeFilter === 'youtube'
-                  ? 'bg-red-500/20 text-red-400 font-semibold border border-red-500/30'
-                  : 'glass-pill text-white/60 hover:text-white'
+                  ? 'bg-red-500 text-white font-bold shadow-[0_4px_16px_rgba(239,68,68,0.3)]'
+                  : 'glass-pill text-content-secondary hover:text-white'
               }`}
             >
-              <Youtube className="w-3.5 h-3.5 text-red-400 fill-red-400" />
+              <Youtube className="w-3.5 h-3.5" />
               <span>YouTube Stream ({youtubeCount})</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleFilterChange('catalog')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 activeFilter === 'catalog'
-                  ? 'bg-white/20 text-white font-semibold border border-white/20'
-                  : 'glass-pill text-white/60 hover:text-white'
+                  ? 'bg-brand-primary text-[#0A0A0A] font-bold shadow-[0_4px_16px_rgba(16,229,117,0.25)]'
+                  : 'glass-pill text-content-secondary hover:text-white'
               }`}
             >
               <Disc className="w-3.5 h-3.5" />

@@ -35,7 +35,7 @@ export const EqualizerGraph: React.FC = () => {
           <button
             onClick={() => updateSettings({ eqEnabled: !userSettings.eqEnabled })}
             className={`w-12 h-6 rounded-full transition-colors p-1 flex items-center ${
-              userSettings.eqEnabled ? 'bg-obsidian-accent justify-end' : 'bg-white/10 justify-start'
+              userSettings.eqEnabled ? 'bg-brand-primary justify-end shadow-emerald-glow' : 'bg-white/10 justify-start'
             }`}
           >
             <div className="w-4 h-4 rounded-full bg-white shadow-md" />
@@ -55,13 +55,13 @@ export const EqualizerGraph: React.FC = () => {
               <button
                 key={preset}
                 onClick={() => setEqPreset(preset)}
-                className={`px-3 py-2 rounded-xl text-xs font-medium transition-all text-center flex items-center justify-center gap-1.5 ${
+                className={`px-3 py-2 rounded-full text-xs font-medium transition-all text-center flex items-center justify-center gap-1.5 ${
                   isSelected
-                    ? 'bg-white text-black font-semibold shadow-lg'
+                    ? 'bg-brand-primary text-content-inverse font-bold shadow-emerald-glow'
                     : 'glass-pill text-white/60 hover:text-white'
                 }`}
               >
-                {isSelected && <Check className="w-3 h-3 flex-shrink-0" />}
+                {isSelected && <Check className="w-3 h-3 flex-shrink-0 stroke-[3]" />}
                 {preset}
               </button>
             );
@@ -89,7 +89,7 @@ export const EqualizerGraph: React.FC = () => {
                   style={{ fontVariantNumeric: 'tabular-nums' }}
                   className={`text-[10px] font-mono font-medium ${
                     gain > 0
-                      ? 'text-obsidian-accent'
+                      ? 'text-brand-primary'
                       : gain < 0
                       ? 'text-blue-400'
                       : 'text-obsidian-secondary'
@@ -107,7 +107,7 @@ export const EqualizerGraph: React.FC = () => {
                     step="0.5"
                     value={gain}
                     onChange={(e) => setEqBandGain(index, parseFloat(e.target.value))}
-                    className="slider-vertical h-36 w-2 accent-obsidian-accent cursor-pointer bg-obsidian-card rounded"
+                    className="slider-vertical h-36 w-2 accent-brand-primary cursor-pointer bg-obsidian-card rounded"
                     style={{
                       writingMode: 'vertical-lr',
                       direction: 'rtl',

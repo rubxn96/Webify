@@ -47,25 +47,25 @@ export const QueueDrawer: React.FC = () => {
       {/* Header */}
       <div className="p-4 border-b border-white/[0.06] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ListMusic className="w-4 h-4 text-obsidian-accent" />
+          <ListMusic className="w-4 h-4 text-brand-primary" />
           <h3 className="text-sm font-semibold tracking-tight text-white">
             Playing Next
           </h3>
-          <span className="text-xs text-white/40 font-mono">
+          <span className="text-xs text-content-muted font-mono">
             ({queue.length})
           </span>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-semibold hidden sm:inline">
-            Dynamic
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-primary/15 text-brand-primary border border-brand-primary/30 font-bold hidden sm:inline">
+            Dynamic Pulse
           </span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={shuffleQueue}
             disabled={queue.length <= 1}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full glass-pill text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-30 active:scale-95 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-30 active:scale-95 transition-all"
             title="Shuffle Upcoming Queue"
           >
-            <Shuffle className="w-3.5 h-3.5 text-obsidian-accent" />
+            <Shuffle className="w-3.5 h-3.5 text-brand-primary" />
             <span>Shuffle</span>
           </button>
           <button
@@ -79,12 +79,13 @@ export const QueueDrawer: React.FC = () => {
 
       {/* Now Playing Banner */}
       {currentTrack && (
-        <div className="p-3.5 border-b border-white/[0.06] bg-white/[0.03]">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-obsidian-accent font-semibold mb-1.5">
+        <div className="p-3.5 border-b border-white/[0.06] bg-surface-pod/80">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-brand-primary font-bold mb-1.5 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-primary animate-pulse" />
             Now Playing
           </div>
           <div className="flex items-center gap-3">
-            <div className="relative w-11 h-11 rounded-xl bg-white/[0.04] overflow-hidden flex-shrink-0 shadow-sm border border-white/10">
+            <div className="relative w-11 h-11 rounded-xl bg-surface-base overflow-hidden flex-shrink-0 shadow-sm border border-white/10">
               <Image
                 src={currentTrack.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'}
                 alt={currentTrack.title}
@@ -96,11 +97,11 @@ export const QueueDrawer: React.FC = () => {
               <div className="text-xs font-semibold text-white truncate">
                 {currentTrack.title}
               </div>
-              <div className="text-[11px] text-white/50 truncate mt-0.5">
+              <div className="text-[11px] text-content-secondary truncate mt-0.5">
                 {currentTrack.artist}
               </div>
             </div>
-            <span className="text-[11px] font-mono text-white/40 tabular-nums">
+            <span className="text-[11px] font-mono text-content-muted tabular-nums">
               {formatTime(currentTrack.duration)}
             </span>
           </div>
@@ -150,7 +151,7 @@ export const QueueDrawer: React.FC = () => {
                     <div
                       className={`text-xs truncate ${
                         isCurrent
-                          ? 'font-bold text-obsidian-accent'
+                          ? 'font-bold text-brand-primary'
                           : 'group-hover:text-white font-semibold text-white/90'
                       }`}
                     >

@@ -3,15 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --color-canvas: #0A0A0C;
-  --color-sidebar: #121216;
-  --color-card: #16161D;
-  --color-hover: #20202A;
+  --color-canvas: #0A0A0A;
+  --color-sidebar: #131313;
+  --color-card: #181818;
+  --color-hover: #222222;
   --color-border: rgba(255, 255, 255, 0.08);
-  --color-primary: #FFFFFF;
-  --color-secondary: #9898A6;
-  --color-accent: #FA2D48; /* Apple Music signature coral crimson */
-  --color-accent-hover: #E0243E;
+  --color-primary: #E5E2E1;
+  --color-secondary: #BACBB9;
+  --color-accent: #10E575; /* Webify Pulse Electric Emerald */
+  --color-accent-hover: #6FFF9A;
+  --color-accent-glow: rgba(16, 229, 117, 0.22);
 }
 
 html[data-theme='light'] {
@@ -22,14 +23,15 @@ html[data-theme='light'] {
   --color-border: rgba(0, 0, 0, 0.08);
   --color-primary: #0F172A;
   --color-secondary: #64748B;
-  --color-accent: #FA2D48;
-  --color-accent-hover: #E0243E;
+  --color-accent: #0DAA54;
+  --color-accent-hover: #10E575;
+  --color-accent-glow: rgba(16, 229, 117, 0.15);
 }
 
 body {
   background-color: var(--color-canvas);
   color: var(--color-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   letter-spacing: -0.015em;
   overflow: hidden;
   user-select: none;
@@ -37,13 +39,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Liquid Glass Utilities inspired by Apple Music / macOS Tahoe */
+/* Liquid Glass Utilities inspired by Webify Pulse & Stitch Design System */
 .glass-panel {
-  background: rgba(18, 18, 24, 0.72);
+  background: rgba(18, 18, 18, 0.82);
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.07), 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 8px 32px 0 rgba(0, 0, 0, 0.45);
 }
 
 .glass-card {
@@ -51,28 +53,29 @@ body {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 4px 20px 0 rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04), 0 4px 20px 0 rgba(0, 0, 0, 0.25);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
   background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), 0 12px 36px 0 rgba(0, 0, 0, 0.45);
+  border-color: rgba(16, 229, 117, 0.28);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 12px 36px 0 rgba(0, 0, 0, 0.5);
   transform: translateY(-2px);
 }
 
 .glass-pill {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
 }
 
 .glass-pill:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(16, 229, 117, 0.3);
 }
 
 /* Tabular nums for timecodes & indices */

@@ -204,16 +204,16 @@ export default function PlaylistDetailPage() {
             <button
               onClick={handlePlayAll}
               disabled={tracks.length === 0}
-              className="px-7 py-3 rounded-full bg-white text-black font-semibold text-xs flex items-center gap-2 shadow-xl hover:bg-white/90 active:scale-95 disabled:opacity-40 transition-all"
+              className="px-8 py-3 rounded-full bg-brand-primary text-[#0A0A0A] font-bold text-xs flex items-center gap-2 shadow-[0_12px_32px_rgba(16,229,117,0.35)] hover:shadow-[0_16px_36px_rgba(16,229,117,0.5)] active:scale-95 disabled:opacity-40 transition-all"
             >
               {isPlaylistActive && isPlaying ? (
                 <>
-                  <Pause className="w-4 h-4 fill-black" />
+                  <Pause className="w-4 h-4 fill-[#0A0A0A]" />
                   <span>Pause</span>
                 </>
               ) : (
                 <>
-                  <Play className="w-4 h-4 fill-black ml-0.5" />
+                  <Play className="w-4 h-4 fill-[#0A0A0A] ml-0.5" />
                   <span>Play All</span>
                 </>
               )}
@@ -254,15 +254,15 @@ export default function PlaylistDetailPage() {
               <div
                 key={`${track.id}-${idx}`}
                 className={`grid grid-cols-12 px-6 py-3.5 items-center border-b border-white/[0.04] hover:bg-white/[0.06] transition-colors group ${
-                  isCurrent ? 'bg-white/[0.08] text-obsidian-accent' : 'text-white/60'
+                  isCurrent ? 'bg-brand-primary/10 text-brand-primary' : 'text-white/60'
                 }`}
               >
                 {/* Index / Play Hover */}
                 <div className="col-span-1 text-xs font-mono">
-                  <span className="group-hover:hidden text-white/40 tabular-nums">{idx + 1}</span>
+                  <span className="group-hover:hidden text-content-muted tabular-nums">{idx + 1}</span>
                   <button
                     onClick={() => (isCurrent ? togglePlay() : playTrack(track, tracks, true))}
-                    className="hidden group-hover:block text-white hover:text-obsidian-accent"
+                    className="hidden group-hover:block text-white hover:text-brand-primary transition-colors"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
                   </button>
@@ -273,7 +273,7 @@ export default function PlaylistDetailPage() {
                   onClick={() => (isCurrent ? togglePlay() : playTrack(track, tracks, true))}
                   className="col-span-6 flex items-center gap-3.5 truncate pr-4 cursor-pointer"
                 >
-                  <div className="relative w-10 h-10 rounded-xl bg-white/[0.04] overflow-hidden flex-shrink-0 shadow-sm border border-white/10">
+                  <div className="relative w-10 h-10 rounded-xl bg-surface-pod overflow-hidden flex-shrink-0 shadow-sm border border-white/10">
                     <Image
                       src={track.thumbnail || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'}
                       alt={track.title}
@@ -284,12 +284,12 @@ export default function PlaylistDetailPage() {
                   <div className="truncate">
                     <div
                       className={`text-xs font-semibold truncate ${
-                        isCurrent ? 'text-obsidian-accent font-bold' : 'text-white/95'
+                        isCurrent ? 'text-brand-primary font-bold' : 'text-white/95 group-hover:text-brand-primary transition-colors'
                       }`}
                     >
                       {track.title}
                     </div>
-                    <div className="text-[11px] text-white/50 truncate mt-0.5">{track.artist}</div>
+                    <div className="text-[11px] text-content-secondary truncate mt-0.5">{track.artist}</div>
                   </div>
                 </div>
 
@@ -304,7 +304,7 @@ export default function PlaylistDetailPage() {
                     onClick={() => toggleLike(track)}
                     className="p-1 hover:text-white transition-colors"
                   >
-                    <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-obsidian-accent text-obsidian-accent' : 'text-white/40'}`} />
+                    <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-brand-primary text-brand-primary' : 'text-content-muted'}`} />
                   </button>
 
                   <span className="text-[11px] text-white/40 mr-1 tabular-nums">

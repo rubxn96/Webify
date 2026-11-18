@@ -63,7 +63,7 @@ export default function LibraryPage() {
       {/* Header */}
       <div className="flex items-center justify-between pb-6 border-b border-white/[0.06]">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-2xl glass-pill text-obsidian-accent">
+          <div className="p-2.5 rounded-2xl glass-pill text-brand-primary shadow-emerald-glow">
             <Library className="w-6 h-6" />
           </div>
           <div>
@@ -78,9 +78,9 @@ export default function LibraryPage() {
 
         <button
           onClick={() => setIsCreating(true)}
-          className="px-5 py-2 rounded-full bg-white text-black text-xs font-semibold flex items-center gap-2 hover:bg-white/90 active:scale-95 transition-all shadow-lg"
+          className="px-5 py-2 rounded-full bg-brand-primary text-content-inverse text-xs font-bold flex items-center gap-2 hover:bg-brand-bright active:scale-95 transition-all shadow-emerald-glow"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 text-content-inverse stroke-[2.5]" />
           <span>New Playlist</span>
         </button>
       </div>
@@ -94,18 +94,18 @@ export default function LibraryPage() {
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="Enter playlist name..."
-            className="flex-1 glass-card rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-white/40 outline-none focus:border-white/30"
+            className="flex-1 glass-card rounded-full px-4 py-2 text-xs text-white placeholder:text-white/40 outline-none focus:border-brand-primary"
           />
           <button
             type="submit"
-            className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-white/90 transition-all"
+            className="px-5 py-2 rounded-full bg-brand-primary text-content-inverse text-xs font-bold hover:bg-brand-bright transition-all shadow-emerald-glow"
           >
             Create
           </button>
           <button
             type="button"
             onClick={() => setIsCreating(false)}
-            className="px-3 py-1.5 rounded-xl glass-pill text-xs text-white/60 hover:text-white"
+            className="px-4 py-2 rounded-full glass-pill text-xs text-white/60 hover:text-white"
           >
             Cancel
           </button>
@@ -167,7 +167,7 @@ export default function LibraryPage() {
               </div>
 
               <div className="px-0.5">
-                <h4 className="text-sm font-semibold tracking-tight text-white/95 truncate group-hover:text-obsidian-accent transition-colors">
+                <h4 className="text-sm font-semibold tracking-tight text-white/95 truncate group-hover:text-brand-primary transition-colors">
                   {playlist.name}
                 </h4>
                 <p className="text-xs text-white/50 truncate mt-0.5">

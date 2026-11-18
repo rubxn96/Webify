@@ -96,15 +96,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
         {/* Brand / Logo & Mobile Close */}
         <div className="p-5 pb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-obsidian-accent/15 border border-obsidian-accent/30 text-obsidian-accent flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-brand-primary/15 border border-brand-primary/30 text-brand-primary flex items-center justify-center shadow-[0_0_12px_rgba(16,229,117,0.25)]">
               <Disc3 className="w-5 h-5 animate-spin-slow" />
             </div>
             <div>
               <span className="text-sm font-extrabold tracking-tight text-white block">
                 WEBIFY
               </span>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 block -mt-1">
-                Hi-Fi Audio
+              <span className="text-[10px] font-mono uppercase tracking-widest text-brand-primary/70 block -mt-1">
+                Pulse Hi-Fi
               </span>
             </div>
           </div>
@@ -113,7 +113,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
           {onCloseMobile && (
             <button
               onClick={onCloseMobile}
-              className="lg:hidden p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10"
+              className="lg:hidden p-1.5 rounded-full text-white/60 hover:text-white hover:bg-white/10"
             >
               <X className="w-5 h-5" />
             </button>
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
         <div className="flex-1 overflow-y-auto px-3 space-y-5 scrollbar-thin">
           {/* Section: Discover */}
           <div className="space-y-1">
-            <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+            <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-content-muted">
               Discover
             </div>
             {discoverLinks.map((item) => {
@@ -136,15 +136,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
                   key={item.href}
                   href={item.href}
                   onClick={() => onCloseMobile && onCloseMobile()}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium tracking-tight transition-all ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 ${
                     isActive
-                      ? 'glass-pill bg-white/10 text-white font-semibold shadow-sm'
-                      : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
+                      ? 'bg-brand-primary text-[#0A0A0A] font-bold shadow-[0_4px_20px_rgba(16,229,117,0.25)]'
+                      : 'text-content-secondary hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
                   <Icon
                     className={`w-4 h-4 ${
-                      isActive ? 'text-obsidian-accent' : 'text-white/60'
+                      isActive ? 'text-[#0A0A0A]' : 'text-content-muted'
                     }`}
                   />
                   <span>{item.label}</span>
@@ -155,7 +155,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
 
           {/* Section: Library */}
           <div className="space-y-1">
-            <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+            <div className="px-3 text-[10px] font-semibold uppercase tracking-wider text-content-muted">
               Library
             </div>
 
@@ -163,20 +163,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
             <Link
               href="/favorites"
               onClick={() => onCloseMobile && onCloseMobile()}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold tracking-tight transition-all ${
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 ${
                 pathname === '/favorites'
-                  ? 'glass-pill bg-white/10 text-white shadow-sm'
-                  : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
+                  ? 'bg-brand-primary text-[#0A0A0A] font-bold shadow-[0_4px_20px_rgba(16,229,117,0.25)]'
+                  : 'text-content-secondary hover:text-white hover:bg-white/[0.06]'
               }`}
             >
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-rose-500 to-indigo-600 flex items-center justify-center text-white shadow-sm flex-shrink-0">
-                <Heart className="w-3.5 h-3.5 fill-white" />
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center shadow-sm flex-shrink-0 ${
+                pathname === '/favorites' ? 'bg-[#0A0A0A] text-brand-primary' : 'bg-gradient-to-br from-brand-primary to-emerald-700 text-[#0A0A0A]'
+              }`}>
+                <Heart className={`w-3.5 h-3.5 fill-current`} />
               </div>
               <div className="truncate flex-1">
                 <span>Liked Songs</span>
               </div>
               {likedTrackIds.size > 0 && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 font-bold border border-rose-500/20 tabular-nums">
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold tabular-nums ${
+                  pathname === '/favorites'
+                    ? 'bg-[#0A0A0A]/20 text-[#0A0A0A]'
+                    : 'bg-brand-primary/15 text-brand-primary border border-brand-primary/30'
+                }`}>
                   {likedTrackIds.size}
                 </span>
               )}
@@ -191,15 +197,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
                   key={item.href}
                   href={item.href}
                   onClick={() => onCloseMobile && onCloseMobile()}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium tracking-tight transition-all ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-xs font-semibold tracking-tight transition-all duration-200 ${
                     isActive
-                      ? 'glass-pill bg-white/10 text-white font-semibold shadow-sm'
-                      : 'text-white/60 hover:text-white hover:bg-white/[0.05]'
+                      ? 'bg-brand-primary text-[#0A0A0A] font-bold shadow-[0_4px_20px_rgba(16,229,117,0.25)]'
+                      : 'text-content-secondary hover:text-white hover:bg-white/[0.06]'
                   }`}
                 >
                   <Icon
                     className={`w-4 h-4 ${
-                      isActive ? 'text-obsidian-accent' : 'text-white/60'
+                      isActive ? 'text-[#0A0A0A]' : 'text-content-muted'
                     }`}
                   />
                   <span>{item.label}</span>
@@ -210,11 +216,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
 
           {/* Section: Playlists */}
           <div className="space-y-1 pt-1">
-            <div className="flex items-center justify-between px-3 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+            <div className="flex items-center justify-between px-3 text-[10px] font-semibold uppercase tracking-wider text-content-muted">
               <span>Playlists</span>
               <button
                 onClick={() => setIsCreating(true)}
-                className="p-1 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                className="p-1 rounded-full hover:bg-white/10 text-content-muted hover:text-brand-primary transition-colors"
                 title="Create Playlist"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -231,7 +237,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
                   onChange={(e) => setNewPlaylistName(e.target.value)}
                   placeholder="Playlist name..."
                   onBlur={() => !newPlaylistName && setIsCreating(false)}
-                  className="w-full glass-card rounded-lg px-2.5 py-1 text-xs text-white placeholder:text-white/40 outline-none focus:border-obsidian-accent"
+                  className="w-full glass-card rounded-full px-3 py-1.5 text-xs text-white placeholder:text-white/40 outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                 />
               </form>
             )}
@@ -245,17 +251,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
                     key={playlist.id}
                     href={`/playlists/${playlist.id}`}
                     onClick={() => onCloseMobile && onCloseMobile()}
-                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs truncate transition-all ${
+                    className={`flex items-center justify-between px-3.5 py-2 rounded-full text-xs truncate transition-all duration-200 ${
                       isCurrentPlaylist
-                        ? 'bg-white/10 text-obsidian-accent font-semibold'
-                        : 'text-white/60 hover:text-white hover:bg-white/[0.04]'
+                        ? 'bg-brand-primary/15 text-brand-primary font-bold border border-brand-primary/25'
+                        : 'text-content-secondary hover:text-white hover:bg-white/[0.04]'
                     }`}
                   >
                     <span className="truncate">{playlist.name}</span>
                     {playlist.isPublic ? (
-                      <Globe className="w-3 h-3 text-white/30 flex-shrink-0" />
+                      <Globe className="w-3 h-3 text-content-muted flex-shrink-0" />
                     ) : (
-                      <Lock className="w-3 h-3 text-white/30 flex-shrink-0" />
+                      <Lock className="w-3 h-3 text-content-muted flex-shrink-0" />
                     )}
                   </Link>
                 );
